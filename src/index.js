@@ -1,9 +1,10 @@
 // ICP.gershon.ai — 12-point USA Market Launch analysis (Gershon Consulting)
 // Cloudflare Worker + Workers AI (no external API keys) + KV for reports.
 import PAGE from "./page.html";
+import HOME from "./home.html";
 import SEED from "./seed.json";
 
-export const VERSION = "1.0.2";
+export const VERSION = "1.1.0";
 const MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
 
 export const SECTIONS = ["Pitches creation","Problem identification","Ideal customer profiles","Market opportunity","Market entry justification","At a glance","Competition","Balanced scorecard","Tradeshow and conference opportunities","LinkedIn Sales Navigator","LinkedIn search links","Outreach email"];
@@ -180,7 +181,9 @@ export default {
       const r = await analyze(env, { url: "https://www.cloudflare.com/", name: "", notes: "" });
       return json({ ok: Object.keys(r.sections).length === 11 && !r.errors.length, company: r.company, filled: Object.keys(r.sections), searches: r.searches, errors: r.errors, source: r.source, sections: r.sections });
     }
-    if (p === "/" || p === "/index.html") return new Response(PAGE, { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
+    const html = b => new Response(b, { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
+    if (p === "/" || p === "/index.html") return html(HOME);
+    if (p === "/app" || p === "/app/") return html(PAGE);
     if (!p.startsWith("/api/")) return new Response("Not found", { status: 404 });
 
     const state = await authed(req, env);

@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 // Load index.js without the wrangler-only imports.
 const src = readFileSync(new URL("../src/index.js", import.meta.url), "utf8")
   .replace('import PAGE from "./page.html";', 'const PAGE = "";')
+  .replace('import HOME from "./home.html";', 'const HOME = "";')
   .replace('import SEED from "./seed.json";', 'const SEED = {};');
 const mod = await import("data:text/javascript," + encodeURIComponent(src));
 
