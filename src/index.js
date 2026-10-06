@@ -3,7 +3,7 @@
 import PAGE from "./page.html";
 import SEED from "./seed.json";
 
-export const VERSION = "1.0.0";
+export const VERSION = "1.0.1";
 const MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
 
 export const SECTIONS = ["Pitches creation","Problem identification","Ideal customer profiles","Market opportunity","Market entry justification","At a glance","Competition","Balanced scorecard","Tradeshow and conference opportunities","LinkedIn Sales Navigator","LinkedIn search links","Outreach email"];
@@ -159,6 +159,14 @@ export default {
   async fetch(req, env) {
     const u = new URL(req.url), p = u.pathname;
     if (p === "/api/health") return json({ ok: true, version: VERSION, model: MODEL });
+    if (p === "/api/selftest") {
+      // Public end-to-end check (site read + Workers AI), max once per 10 minutes, nothing saved.
+      const last = +(await env.STORE.get("selftest:last") || 0);
+      if (Date.now() - last < 600000) return json({ error: "Self-test ran recently, retry later" }, 429);
+      await env.STORE.put("selftest:last", String(Date.now()));
+      const r = await analyze(env, { url: "https://www.cloudflare.com/", name: "", notes: "" });
+      return json({ ok: Object.keys(r.sections).length === 11 && !r.errors.length, company: r.company, filled: Object.keys(r.sections), searches: r.searches, errors: r.errors, source: r.source, sections: r.sections });
+    }
     if (p === "/" || p === "/index.html") return new Response(PAGE, { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
     if (!p.startsWith("/api/")) return new Response("Not found", { status: 404 });
 
