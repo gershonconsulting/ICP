@@ -4,7 +4,7 @@ import PAGE from "./page.html";
 import HOME from "./home.html";
 import SEED from "./seed.json";
 
-export const VERSION = "1.2.0";
+export const VERSION = "1.2.1";
 const MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
 
 export const SECTIONS = ["Pitches creation","Problem identification","Ideal customer profiles","Market opportunity","Market entry justification","At a glance","Competition","Balanced scorecard","Tradeshow and conference opportunities","LinkedIn Sales Navigator","LinkedIn search links","Outreach email"];
@@ -159,8 +159,9 @@ export async function verifyEvents(env, events, win) {
     if (!e.url) return e;
     try {
       const text = htmlToText(await getPage(e.url)).slice(0, 7000);
-      const out = await runAI(env, `Text from the official website of "${e.name}" (${e.url}):\n${text}\n\nFind the dates and city of the edition of this event that takes place between ${win.start} and ${win.end}. Reply with exactly one line: START=YYYY-MM-DD; END=YYYY-MM-DD; CITY=City, State — or reply NONE if the text does not state those dates.`, 120);
-      const st = (out.match(/START=(\d{4}-\d{2}-\d{2})/) || [])[1], en = (out.match(/END=(\d{4}-\d{2}-\d{2})/) || [])[1], city = (out.match(/CITY=([^;\n]+)/) || [])[1];
+      const out = await runAI(env, `Text from the official website of "${e.name}" (${e.url}):\n${text}\n\nFind the dates and city of the edition of this event that takes place between ${win.start} and ${win.end}. Reply with exactly one line: START=YYYY-MM-DD; END=YYYY-MM-DD; CITY=City, State; COUNTRY=Country — or reply NONE if the text does not state those dates.`, 140);
+      const st = (out.match(/START=(\d{4}-\d{2}-\d{2})/) || [])[1], en = (out.match(/END=(\d{4}-\d{2}-\d{2})/) || [])[1], city = (out.match(/CITY=([^;\n]+)/) || [])[1], country = ((out.match(/COUNTRY=([^;\n]+)/) || [])[1] || "").trim();
+      if (country && !/^(us|usa|u\.s\.a?\.?|united states( of america)?)$/i.test(country)) return { ...e, drop: true };
       if (st && st >= win.start && st <= win.end) return { ...e, start: st, end: en && en >= st ? en : st, location: city ? city.trim() : e.location, verified: true };
     } catch {}
     return e;
@@ -189,7 +190,7 @@ export async function analyze(env, { url, name, notes }) {
     } catch (e) { report.errors.push("Sections " + g.join(", ") + ": " + (e.message || e)); }
   }));
   events = events.filter(e => e.start >= win.start && e.start <= win.end);
-  report.events = (await verifyEvents(env, events, win)).filter(e => e.start >= win.start && e.start <= win.end).sort((a, b) => a.start.localeCompare(b.start));
+  report.events = (await verifyEvents(env, events, win)).filter(e => !e.drop && e.start >= win.start && e.start <= win.end).map(({ drop, ...e }) => e).sort((a, b) => a.start.localeCompare(b.start));
   report.sections[9] = [report.sections[9], eventsTable(report.events)].filter(Boolean).join("\n\n");
   if (!report.company) report.company = url.replace(/^https?:\/\/(www\.)?/, "").replace(/\/.*$/, "");
   return report;
