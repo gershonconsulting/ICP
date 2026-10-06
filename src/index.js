@@ -3,7 +3,7 @@
 import PAGE from "./page.html";
 import SEED from "./seed.json";
 
-export const VERSION = "1.0.1";
+export const VERSION = "1.0.2";
 const MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
 
 export const SECTIONS = ["Pitches creation","Problem identification","Ideal customer profiles","Market opportunity","Market entry justification","At a glance","Competition","Balanced scorecard","Tradeshow and conference opportunities","LinkedIn Sales Navigator","LinkedIn search links","Outreach email"];
@@ -80,7 +80,8 @@ function window6(now = new Date()) {
 }
 
 export function buildPrompt(group, { url, name, notes, site, win, today }) {
-  const want = group.map(n => `=== SECTION ${n} === ${SECTIONS[n - 1]}: ${SPEC[n]}`).join("\n");
+  const want = group.map(n => `Section ${n} (${SECTIONS[n - 1]}): ${SPEC[n]}`).join("\n");
+  const markers = group.map(n => `=== SECTION ${n} ===`).join(", ");
   const extra = group.includes(10) ? `\n=== SEARCHES === 4-5 lines, one per Sales Navigator segment, each "Segment name | 3-6 LinkedIn keywords".` : "";
   return `You are the "USA Market Launch" analyst of Gershon Consulting, a New York firm that helps non-US companies enter the US market through LinkedIn outbound and commercial representation. Today is ${today}. US campaign window for events: ${win}.
 
@@ -94,8 +95,20 @@ ${site || "(website could not be read)"}
 
 Write the following sections of the 12-point US market analysis for THIS company, in English, in markdown (paragraphs, **bold**, "- " bullets, pipe tables). Be specific and commercial, no filler. Never invent precise figures; label estimates as illustrative.
 
-Output format, exactly: first a line "=== COMPANY === <official company name>", then for each section its marker line followed by the section content. Do not add anything else.
-${want}${extra}`;
+Sections to write:
+${want}
+
+Events (section 9) must fall within ${win}; drop anything outside that window.
+
+Output format, exactly: first a line "=== COMPANY === <official company name>", then for each section a line with only its marker (${markers}) followed by the section content. Do not repeat these instructions or the section title in the content. Do not add anything else.${extra}`;
+}
+
+// Drop a first line where the model echoed the section title or its instruction.
+export function cleanEcho(body, n) {
+  const lines = body.split("\n"); const first = (lines[0] || "").replace(/[#*_:]/g, "").trim().toLowerCase();
+  const title = (SECTIONS[n - 1] || "").toLowerCase(), spec = (SPEC[n] || "").slice(0, 40).toLowerCase();
+  if (first && (first === title || first.startsWith(title + " ") || (spec && first.includes(spec.replace(/[#*_:]/g, "").slice(0, 30))))) lines.shift();
+  return lines.join("\n").trim();
 }
 
 export function parseOutput(text, group) {
@@ -105,7 +118,7 @@ export function parseOutput(text, group) {
   const cm = String(text).match(/=== *COMPANY *===\s*([^\n]+)/); if (cm) out.company = cm[1].replace(/[*#]/g, "").trim();
   for (let i = 1; i < parts.length; i += 2) {
     const key = parts[i], body = (parts[i + 1] || "").trim();
-    if (key.startsWith("SECTION")) { const n = +key.split(" ")[1]; if (group.includes(n) && body) out.sections[n] = body; }
+    if (key.startsWith("SECTION")) { const n = +key.split(" ")[1]; if (group.includes(n) && body) out.sections[n] = cleanEcho(body, n); }
     else if (key === "SEARCHES") out.searches = body.split("\n").map(l => l.replace(/^[-*\d.\s]+/, "").split("|").map(s => s.trim())).filter(a => a.length >= 2 && a[0] && a[1]).map(a => ({ label: a[0].replace(/\*/g, ""), keywords: a[1].replace(/["*]/g, "") })).slice(0, 6);
   }
   return out;

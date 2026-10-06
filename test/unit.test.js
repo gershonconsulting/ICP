@@ -27,3 +27,9 @@ test("prompt has all 12 sections across groups", () => {
   const all = [[1,2,3],[4,5,6],[7,8,9],[10,12]].map(g => mod.buildPrompt(g, { url: "u", win: "w", today: "t" })).join("");
   for (const n of [1,2,3,4,5,6,7,8,9,10,12]) assert.ok(all.includes("=== SECTION " + n + " ==="));
 });
+test("cleanEcho drops echoed instruction line", () => {
+  const p = mod.parseOutput("=== SECTION 4 ===\nMarket opportunity: A two-layer opportunity model (immediate commercial...\nReal content", [4]);
+  assert.equal(p.sections[4], "Real content");
+  const q = mod.parseOutput("=== SECTION 4 ===\nReal content only", [4]);
+  assert.equal(q.sections[4], "Real content only");
+});
