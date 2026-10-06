@@ -1,0 +1,28 @@
+ICP.gershon.ai — HANDOFF (v1.0.0, 2026-10-05)
+==============================================
+
+WHAT IT IS
+- The GPT USA 12-point analysis as a web app. Input: company URL (+ optional name, notes). Output: 12 sections, saved reports list,
+  "Copy as prospect email" (subject "Customized GPT USA by Gershon Consulting for <Company>" + Aina's standard intro).
+- Modeled on events.gershon.ai. AI = Cloudflare Workers AI (@cf/meta/llama-3.3-70b-instruct-fp8-fast) — no Anthropic/OpenAI keys
+  (Olivier's "Intelligence" standard). Do NOT use the Fable model anywhere (Olivier's instruction).
+- Meteor Biotech report is seeded on first start (src/seed.json).
+
+DONE ✅
+- ✅ Worker code, page, API (/api/session, /api/setup, /api/login, /api/reports, /api/reports/:slug, /api/analyze, /api/health)
+- ✅ Unit tests (npm test) pass; API flow tested with mock KV; wrangler dry-run bundle OK (43 KB)
+- ✅ Push-to-deploy workflow .github/workflows/deploy.yml (tests -> ensure KV -> wrangler deploy -> smoke test)
+- ✅ Prototype (claude.ai artifact, uses Claude in-chat): https://claude.ai/artifact/8Srmd5UsYJ8m9DBhHf3u8k
+
+PENDING ❌
+- ❌ Repo secrets CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID must exist for this repo (same values as gershonconsulting/client).
+     Token needs: Workers Scripts Edit, Workers KV Storage Edit, Workers AI Read/Edit, Zone gershon.ai Workers Routes Edit
+     (custom domain), Account Settings Read. -> Charles: GitHub repo Settings -> Secrets and variables -> Actions, then Actions -> re-run.
+- ❌ First visit to https://icp.gershon.ai sets the team password — Olivier (or whoever opens it first) chooses it.
+- ❌ Some sites block automated reading (meteorbiotech.com returns 403 to bots). The app falls back to r.jina.ai, then tells the
+     user to paste the website text in Notes. Possible upgrade: Cloudflare Browser Rendering binding.
+- ❌ Next idea (option 3): auto-run for Basil-coloured prospect calls on Olivier's calendar and draft the GPT USA email 48h before.
+
+NOTES
+- KV namespace title: icp-gershon-ai-store (created by scripts/ensure-kv.mjs in CI; id substituted into wrangler.toml at deploy).
+- workers.dev URL: https://icp-gershon-ai.oattia.workers.dev (account subdomain as events.gershon.ai).

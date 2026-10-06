@@ -1,0 +1,19 @@
+name = "icp-gershon-ai"
+main = "src/index.js"
+compatibility_date = "2026-09-01"
+workers_dev = true
+
+# Custom domain icp.gershon.ai (gershon.ai zone is on Cloudflare)
+routes = [
+  { pattern = "icp.gershon.ai", custom_domain = true }
+]
+
+# Workers AI — no external API key (Gershon "Intelligence" standard)
+[ai]
+binding = "AI"
+
+# KV for reports, sessions and the team password hash.
+# The deploy workflow creates the namespace "icp-gershon-ai-store" if missing and fills in the id.
+[[kv_namespaces]]
+binding = "STORE"
+id = "__KV_ID__"
