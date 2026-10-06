@@ -4,7 +4,7 @@ import PAGE from "./page.html";
 import HOME from "./home.html";
 import SEED from "./seed.json";
 
-export const VERSION = "1.2.1";
+export const VERSION = "1.3.0";
 const MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
 
 export const SECTIONS = ["Pitches creation","Problem identification","Ideal customer profiles","Market opportunity","Market entry justification","At a glance","Competition","Balanced scorecard","Tradeshow and conference opportunities","LinkedIn Sales Navigator","LinkedIn search links","Outreach email"];
@@ -89,7 +89,7 @@ export function windowBounds(now = new Date()) {
 export function buildPrompt(group, { url, name, notes, site, win, today }) {
   const want = group.map(n => `Section ${n} (${SECTIONS[n - 1]}): ${SPEC[n]}`).join("\n");
   const markers = group.map(n => `=== SECTION ${n} ===`).join(", ");
-  let extra = group.includes(10) ? `\n=== SEARCHES === 4-5 lines, one per Sales Navigator segment, each "Segment name | 3-6 LinkedIn keywords".` : "";
+  let extra = group.includes(10) ? `\n=== SEARCHES === 4-5 lines, one per Sales Navigator segment, each "Segment name | keywords", where keywords are 1-4 short job-title or role phrases from the ICP separated by commas (for example: Head of Translational Medicine, Biomarker Discovery).` : "";
   if (group.includes(9)) extra += `\n=== EVENTS === 5-7 lines, one per real US tradeshow or conference taking place within ${win}, each exactly "Event name | start YYYY-MM-DD | end YYYY-MM-DD | City, State | importance 1-5 | official website URL". US locations only.`;
   return `You are the "USA Market Launch" analyst of Gershon Consulting, a New York firm that helps non-US companies enter the US market through LinkedIn outbound and commercial representation. Today is ${today}. US campaign window for events: ${win}.
 
