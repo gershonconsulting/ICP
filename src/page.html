@@ -2,115 +2,137 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>ICP.gershon.ai</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ICP by Gershon.AI — App</title>
+<link rel="icon" href="data:image/svg+xml,<svg viewBox='0 0 64 64' aria-hidden='true'><defs><linearGradient id='icpg' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%233b5bfd'/><stop offset='.5' stop-color='%236366f1'/><stop offset='1' stop-color='%2322d3ee'/></linearGradient></defs><rect x='2' y='2' width='60' height='60' rx='18' fill='url(%23icpg)'/><circle cx='32' cy='32' r='17' fill='none' stroke='%23fff' stroke-opacity='.55' stroke-width='3'/><circle cx='32' cy='32' r='9.5' fill='none' stroke='%23fff' stroke-opacity='.85' stroke-width='3'/><circle cx='32' cy='32' r='3.6' fill='%23fff'/><path d='M32 32 L49 15' stroke='%23fff' stroke-width='3.2' stroke-linecap='round'/><path d='M44 14 h6 v6' fill='none' stroke='%23fff' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/></svg>">
 <style>
 :root{
-  --paper:#F6F8FB; --sheet:#FFFFFF; --ink:#0F2338; --muted:#5A6A7E; --line:#D5DDE7;
-  --harbor:#1C4E89; --harbor-soft:#E3ECF7; --flare:#D9482B;
-  --sans:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
-  --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
-  box-sizing:border-box;
-  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#0b1020; --bg2:#0e1530; --paper:#ffffff; --app:#f6f8fc;
+  --text:#1a2133; --muted:#5b6478; --line:#e6e9f2; --soft:#f5f7fc;
+  --brand:#3b5bfd; --brand2:#22d3ee; --brand-ink:#1e34c4; --brand-light:#eef2ff;
+  --grad:linear-gradient(120deg,#3b5bfd 0%,#6366f1 45%,#22d3ee 100%);
+  --ok:#16a34a; --warn:#b76b00; --err:#cc1016;
+  --shadow:0 18px 50px rgba(18,28,64,.14); --radius:16px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
 }
-@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
-  --paper:#0E1824; --sheet:#132131; --ink:#E8EEF5; --muted:#9BABBF; --line:#26384D;
-  --harbor:#7FB0EE; --harbor-soft:#1A3049; --flare:#F07A5F; } }
-:root[data-theme="dark"]{ --paper:#0E1824; --sheet:#132131; --ink:#E8EEF5; --muted:#9BABBF; --line:#26384D;
-  --harbor:#7FB0EE; --harbor-soft:#1A3049; --flare:#F07A5F; }
-*,*::before,*::after{box-sizing:inherit}
-html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 16px)}
-body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5}
-a{color:var(--harbor)}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:var(--font);color:var(--text);line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
 button,input,textarea{font:inherit;color:inherit}
-:focus-visible{outline:2px solid var(--harbor);outline-offset:2px}
-.top{display:flex;align-items:baseline;gap:18px;padding:22px 28px 18px;border-bottom:1px solid var(--line)}
-.mark{font-weight:800;font-stretch:118%;font-size:22px;letter-spacing:-.01em}
-.mark span{color:var(--muted);font-weight:500;font-stretch:100%}
-.top p{margin:0;color:var(--muted);font-size:14px}
-.wrap{display:grid;grid-template-columns:330px minmax(0,1fr);min-height:calc(100vh - 70px)}
-aside{border-right:1px solid var(--line);padding:24px 24px 40px;background:var(--sheet)}
-label{display:block;font-weight:600;font-size:13px;margin:14px 0 6px}
-input,textarea{width:100%;border:1px solid var(--line);border-radius:6px;padding:10px 12px;background:var(--paper)}
-textarea{min-height:96px;resize:vertical}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;font-weight:600;font-size:.95rem;padding:.75rem 1.2rem;border-radius:12px;border:1px solid transparent;cursor:pointer;transition:.18s;white-space:nowrap;background:none}
+.btn-primary{background:var(--grad);color:#fff;box-shadow:0 8px 22px rgba(59,91,253,.35)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 12px 28px rgba(59,91,253,.45)}
+.btn-primary:disabled{opacity:.6;transform:none;cursor:progress}
+.btn-ghost{background:#fff;border-color:var(--line);color:var(--text)}
+.btn-ghost:hover{border-color:#c8cfe6;background:var(--soft)}
+.btn-ghost:disabled{opacity:.5;cursor:default}
+.btn-lite{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.22);color:#fff}
+.btn-lite:hover{background:rgba(255,255,255,.16)}
+.brand{display:flex;align-items:center;gap:.6rem;font-weight:800;font-size:1.12rem;letter-spacing:-.02em}
+.brand small{display:block;font-weight:600;font-size:.62rem;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-top:-2px}
+.mark{width:30px;height:30px;flex:none}
+
+body{background:var(--app);font-size:14.5px}
+.app{display:grid;grid-template-columns:264px minmax(0,1fr);min-height:100vh}
+.sidebar{background:#fff;border-right:1px solid var(--line);padding:18px 14px;position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column;gap:6px}
+.sidebar .brand{padding:4px 8px 16px}
+.newbtn{width:100%;margin-bottom:8px}
+.nav-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);padding:14px 10px 6px}
+.hist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.hist button{width:100%;text-align:left;border:0;background:none;padding:9px 10px;border-radius:9px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px;font-weight:500;transition:background .15s,color .15s}
+.hist button:hover{background:var(--brand-light);color:var(--brand-ink)}
+.hist button[aria-current="true"]{background:var(--brand);color:#fff}
+.hist button[aria-current="true"] small{color:#dfe5ff}
+.hist small{color:var(--muted);font-size:12px;flex:none}
+.hist .hint{padding:8px 10px}
+.spacer{flex:1}
+.side-foot{border-top:1px solid var(--line);padding:12px 10px 4px;font-size:12px;color:var(--muted);display:flex;justify-content:space-between}
+.side-foot a:hover{color:var(--brand-ink)}
+.topbar{position:sticky;top:0;z-index:10;height:64px;background:rgba(255,255,255,.86);backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 28px;gap:16px}
+.topbar h1{font-size:17px;font-weight:700;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top-actions{display:flex;gap:8px}
+.top-actions .btn{padding:.55rem .95rem;font-size:.88rem;border-radius:10px}
+.content{padding:28px;max-width:1180px}
+.panel{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:24px}
 .hint{color:var(--muted);font-size:12.5px;margin:6px 0 0}
-.go{margin-top:18px;width:100%;border:0;border-radius:6px;padding:12px 14px;background:var(--harbor);color:#fff;font-weight:700;cursor:pointer}
-:root[data-theme="dark"] .go{color:#0E1824}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .go{color:#0E1824}}
-.go:disabled{opacity:.55;cursor:progress}
-.ghost{border:1px solid var(--line);background:transparent;border-radius:6px;padding:8px 12px;cursor:pointer;font-weight:600;font-size:13px}
-h2.side{font-size:13px;font-weight:700;margin:34px 0 8px}
-.hist{list-style:none;margin:0;padding:0}
-.hist button{width:100%;text-align:left;border:0;background:none;padding:9px 8px;border-radius:6px;cursor:pointer;display:flex;justify-content:space-between;gap:8px}
-.hist button:hover,.hist button[aria-current="true"]{background:var(--harbor-soft)}
-.hist small{color:var(--muted)}
-main{padding:0 0 60px;min-width:0}
-.empty{max-width:620px;margin:80px auto;padding:0 28px}
-.empty h1{font-size:40px;line-height:1.05;font-stretch:115%;font-weight:800;margin:0 0 16px;letter-spacing:-.02em}
-.empty p{font-family:var(--serif);font-size:18px;line-height:1.6;color:var(--muted)}
-.report{display:grid;grid-template-columns:200px minmax(0,1fr);gap:36px;padding:28px 36px}
-.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px);align-self:start}
-.toc ol{list-style:none;margin:0;padding:0;counter-reset:s}
-.toc li a{display:flex;gap:10px;text-decoration:none;color:var(--muted);padding:5px 0;font-size:13.5px}
-.toc li a b{color:var(--ink);font-weight:700;min-width:20px;font-variant-numeric:tabular-nums}
-.toc li a.busy{opacity:.45}
-.toc li a:hover{color:var(--ink)}
-.head{border-bottom:3px solid var(--ink);padding-bottom:18px;margin-bottom:8px}
-.head h1{margin:0;font-size:46px;line-height:1;font-weight:800;font-stretch:120%;letter-spacing:-.02em}
-.head .meta{color:var(--muted);margin-top:10px;font-size:14px}
-.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
-section.s{padding:26px 0;border-bottom:1px solid var(--line)}
-section.s>h2{display:flex;gap:14px;align-items:baseline;margin:0 0 12px;font-size:21px;font-weight:700;font-stretch:108%}
-section.s>h2 .n{font-size:34px;font-weight:800;color:var(--harbor);font-stretch:125%;min-width:46px;line-height:1}
-.body{font-family:var(--serif);font-size:16.5px;line-height:1.65;max-width:72ch}
-.body h3{font-family:var(--sans);font-size:15px;font-weight:700;margin:18px 0 6px}
-.body p{margin:0 0 12px}
-.body ul{margin:0 0 12px;padding-left:20px}
-.tbl{overflow-x:auto;margin:8px 0 14px}
-.body table{border-collapse:collapse;font-family:var(--sans);font-size:14px;min-width:100%}
-.body th,.body td{text-align:left;vertical-align:top;padding:8px 12px 8px 0;border-bottom:1px solid var(--line)}
-.body th{font-weight:700;border-bottom:2px solid var(--ink)}
-.pending{font-family:var(--sans);color:var(--muted);font-size:14px}
-.pending::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--flare);margin-right:8px;animation:p 1.2s ease-in-out infinite}
+label{display:block;font-weight:600;font-size:13px;margin:16px 0 6px}
+label span{font-weight:400;color:var(--muted)}
+input,textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px 13px;background:#fff;transition:border-color .15s,box-shadow .15s}
+input:focus,textarea:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 4px rgba(59,91,253,.12)}
+textarea{min-height:110px;resize:vertical}
+.err{color:var(--err);font-size:13.5px;margin-top:10px}
+.newgrid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:22px}
+@media(max-width:980px){.newgrid{grid-template-columns:1fr}}
+.hero-panel{background:radial-gradient(700px 300px at 90% -20%,#1b2a63 0,transparent 60%),linear-gradient(180deg,#0b1020,#0e1734);color:#eaf0ff;border:0}
+.hero-panel h2{margin:0;font-size:1.6rem;letter-spacing:-.02em;color:#fff}
+.hero-panel p{color:#c3ccea;margin:.5rem 0 0}
+.chips{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:18px}
+.chip{display:flex;gap:10px;align-items:center;background:rgba(120,150,255,.1);border:1px solid rgba(140,165,255,.22);border-radius:10px;padding:8px 10px;font-size:.86rem;color:#dbe3ff}
+.chip b{font-size:.75rem;color:var(--brand2);min-width:18px}
+.go{width:100%;margin-top:20px;padding:.9rem 1.2rem}
+.rhead{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:24px 26px;position:relative;overflow:hidden}
+.rhead::before{content:"";position:absolute;inset:0 0 auto 0;height:4px;background:var(--grad)}
+.rhead .eyebrow{font-size:.74rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--brand)}
+.rhead h2{margin:.35rem 0 0;font-size:clamp(1.6rem,3vw,2.2rem);letter-spacing:-.025em;font-weight:800}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;padding:5px 10px;border-radius:999px;background:var(--soft);border:1px solid var(--line);color:#3a4258}
+.pill.ok{background:#e6f6ec;border-color:#c7ebd4;color:#126b35}
+.pill.warn{background:#fff4e5;border-color:#ffe0b3;color:var(--warn)}
+.pill a{color:var(--brand-ink)}
+.report{display:grid;grid-template-columns:230px minmax(0,1fr);gap:22px;margin-top:22px}
+@media(max-width:1060px){.report{grid-template-columns:1fr}.toc{position:static!important}}
+.toc{position:sticky;top:84px;align-self:start;background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:12px}
+.toc ol{list-style:none;margin:0;padding:0}
+.toc a{display:flex;gap:10px;align-items:center;padding:7px 8px;border-radius:8px;color:#3a4258;font-size:13.5px;font-weight:500}
+.toc a:hover{background:var(--brand-light);color:var(--brand-ink)}
+.toc a b{font-size:11px;font-weight:800;color:var(--brand);min-width:20px}
+.toc a.busy{opacity:.45}
+.secs{display:flex;flex-direction:column;gap:16px;min-width:0}
+section.s{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;scroll-margin-top:84px}
+section.s>h3{display:flex;gap:12px;align-items:center;margin:0 0 14px;font-size:1.08rem;letter-spacing:-.01em}
+section.s>h3 .n{width:34px;height:34px;border-radius:10px;background:var(--grad);color:#fff;font-weight:800;font-size:.85rem;display:grid;place-items:center;box-shadow:0 6px 14px rgba(59,91,253,.3);flex:none}
+.body{font-size:15px;line-height:1.65;color:#2a3247;max-width:78ch}
+.body h4{font-size:14px;font-weight:700;margin:16px 0 4px;color:var(--text)}
+.body p{margin:0 0 10px}
+.body ul{margin:0 0 10px;padding-left:20px}
+.body strong{color:var(--text)}
+.tbl{overflow-x:auto;margin:6px 0 12px;border:1px solid var(--line);border-radius:12px}
+.body table{border-collapse:collapse;font-size:13.5px;min-width:100%}
+.body th,.body td{text-align:left;vertical-align:top;padding:10px 12px;border-bottom:1px solid var(--line)}
+.body tr:last-child td{border-bottom:0}
+.body th{background:var(--soft);font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700}
+.pending{color:var(--muted);font-size:14px}
+.pending::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--brand2);margin-right:8px;animation:p 1.2s ease-in-out infinite}
 @keyframes p{50%{opacity:.25}}
-@media (prefers-reduced-motion:reduce){.pending::before{animation:none}}
-.links a{display:block;padding:10px 0;border-bottom:1px solid var(--line);text-decoration:none;font-family:var(--sans);font-weight:600}
-.links a small{display:block;color:var(--muted);font-weight:400}
-.err{color:var(--flare);font-size:13.5px;margin-top:10px}
-.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 20px);transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:6px;font-size:14px;display:none}
-@media (max-width:900px){.wrap{grid-template-columns:1fr}aside{border-right:0;border-bottom:1px solid var(--line)}.report{grid-template-columns:1fr;padding:20px}.toc{position:static}.head h1{font-size:34px}}
+.skel{height:12px;border-radius:6px;background:linear-gradient(90deg,#eef1f8,#f7f9fd,#eef1f8);background-size:200% 100%;animation:sh 1.4s linear infinite;margin:8px 0}
+@keyframes sh{to{background-position:-200% 0}}
+@media (prefers-reduced-motion:reduce){.pending::before,.skel{animation:none}}
+.links{display:grid;gap:8px}
+.links a{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;font-weight:600;transition:.15s}
+.links a:hover{border-color:#c9d2ee;background:var(--brand-light);color:var(--brand-ink)}
+.links a small{display:block;color:var(--muted);font-weight:400;font-size:12.5px}
+.links a .go-ic{color:var(--brand);font-size:1.1rem}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--bg);color:#fff;padding:11px 18px;border-radius:12px;font-size:14px;display:none;box-shadow:var(--shadow);z-index:50}
+.gate{min-height:100vh;display:grid;place-items:center;padding:24px;background:radial-gradient(1200px 600px at 78% -10%,#1b2a63 0,transparent 55%),linear-gradient(180deg,#0b1020,#0e1734)}
+.gate .panel{width:100%;max-width:400px;box-shadow:0 30px 80px rgba(0,0,0,.4)}
+.gate .brand{margin-bottom:18px}
+.gate h2{margin:0;font-size:1.35rem;letter-spacing:-.02em}
+.gate p{color:var(--muted);margin:.4rem 0 0}
+.menu-btn{display:none}
+@media(max-width:860px){.app{grid-template-columns:1fr}.sidebar{position:fixed;inset:0 auto 0 0;width:280px;z-index:60;transform:translateX(-100%);transition:transform .2s;box-shadow:var(--shadow)}.sidebar.open{transform:none}.menu-btn{display:inline-flex}.content{padding:18px}.topbar{padding:0 16px}.top-actions .lbl{display:none}}
 </style>
 </head>
 <body>
-<header class="top"><div class="mark">ICP <span>gershon.ai</span></div><p>The 12-point USA Market Launch analysis, for any company URL.</p></header>
-<div class="wrap">
-<aside>
-  <label for="url">Company website</label>
-  <input id="url" placeholder="https://meteorbiotech.com" autocomplete="off">
-  <label for="name">Company name <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
-  <input id="name" placeholder="Meteor Biotech">
-  <label for="ctx">What you know about them <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
-  <textarea id="ctx" placeholder="Paste the About page, a deck summary, call notes…"></textarea>
-  <p class="hint">ICP reads the website itself (home page plus about, product and technology pages). Notes you paste here take priority.</p>
-  <button class="go" id="go">Run the 12-point analysis</button>
-  <div class="err" id="err" role="alert"></div>
-  <h2 class="side">Reports</h2>
-  <ul class="hist" id="hist"><li class="hint">Loading…</li></ul>
-</aside>
-<main id="main">
-  <div class="empty" id="welcome"><h1>From a website to a US go-to-market brief.</h1><p>Enter a company URL. You get the same twelve sections as the USA Market Launch GPT: pitches, problem, ideal customer profiles, market, entry case, key facts, competition, scorecard, US events for the next six months, Sales Navigator targeting, ready-made LinkedIn searches and an outreach email.</p></div>
-</main>
-</div>
+<div id="root"></div>
 <div class="toast" id="toast" role="status"></div>
 <script>
+const MARK='<svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="icpg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3b5bfd"/><stop offset=".5" stop-color="#6366f1"/><stop offset="1" stop-color="#22d3ee"/></linearGradient></defs><rect x="2" y="2" width="60" height="60" rx="18" fill="url(#icpg)"/><circle cx="32" cy="32" r="17" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="3"/><circle cx="32" cy="32" r="9.5" fill="none" stroke="#fff" stroke-opacity=".85" stroke-width="3"/><circle cx="32" cy="32" r="3.6" fill="#fff"/><path d="M32 32 L49 15" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/><path d="M44 14 h6 v6" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const SECTIONS=["Pitches creation","Problem identification","Ideal customer profiles","Market opportunity","Market entry justification","At a glance","Competition","Balanced scorecard","Tradeshow and conference opportunities","LinkedIn Sales Navigator","LinkedIn search links","Outreach email"];
 const $=s=>document.querySelector(s);
-let current=null, reports=[];
-const slug=u=>u.toLowerCase().replace(/^https?:\/\//,"").replace(/^www\./,"").replace(/\/.*$/,"").replace(/[^a-z0-9.-]/g,"").replace(/\./g,"-")||("c"+Date.now());
-const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+let current=null, reports=[], busy=false, timer;
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 function inline(s){return esc(s).replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>").replace(/(^|[^*])\*(?!\s)(.+?)\*/g,"$1<em>$2</em>").replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>')}
 function md(src){
   const lines=String(src||"").replace(/\r/g,"").split("\n");let out="",i=0;
@@ -120,77 +142,124 @@ function md(src){
       const body=rows.filter(r=>!/^\s*\|?[\s:\-|]+\|?\s*$/.test(r));
       if(body.length){out+='<div class="tbl"><table><thead><tr>'+cells(body[0]).map(c=>"<th>"+inline(c)+"</th>").join("")+"</tr></thead><tbody>"+body.slice(1).map(r=>"<tr>"+cells(r).map(c=>"<td>"+inline(c)+"</td>").join("")+"</tr>").join("")+"</tbody></table></div>"}continue}
     if(/^\s*[-*]\s+/.test(l)){out+="<ul>";while(i<lines.length&&/^\s*[-*]\s+/.test(lines[i])){out+="<li>"+inline(lines[i].replace(/^\s*[-*]\s+/,""))+"</li>";i++}out+="</ul>";continue}
-    if(/^#{1,4}\s/.test(l)){out+="<h3>"+inline(l.replace(/^#+\s*/,""))+"</h3>";i++;continue}
+    if(/^#{1,4}\s/.test(l)){out+="<h4>"+inline(l.replace(/^#+\s*/,""))+"</h4>";i++;continue}
     if(!l.trim()){i++;continue}
     const para=[];while(i<lines.length&&lines[i].trim()&&!/^\s*(\||[-*]\s|#{1,4}\s)/.test(lines[i])){para.push(lines[i]);i++}
     out+="<p>"+para.map(inline).join("<br>")+"</p>";
   }return out}
 function liUrl(k){
-  const kw=encodeURIComponent(k).replace(/%20/g,"%20");
-  return "https://www.linkedin.com/sales/search/people?query=(recentSearchParam%3A(doLogHistory%3Atrue)%2Ckeywords%3A"+kw+"%2Cfilters%3AList((type%3ASENIORITY_LEVEL%2Cvalues%3AList((id%3A120%2Ctext%3ASenior%2CselectionType%3AINCLUDED)%2C(id%3A310%2Ctext%3ACXO%2CselectionType%3AINCLUDED)))%2C(type%3AREGION%2Cvalues%3AList((id%3A103644278%2Ctext%3AUnited%20States%2CselectionType%3AINCLUDED)))%2C(type%3ARELATIONSHIP%2Cvalues%3AList((id%3AS%2Ctext%3A2nd%20degree%20connections%2CselectionType%3AINCLUDED)))))&viewAllFilters=true"}
-function window6(){const d=new Date(),f=new Date(d.getFullYear(),d.getMonth()+1,1),t=new Date(d.getFullYear(),d.getMonth()+6,1);const o={month:"long",year:"numeric"};return f.toLocaleDateString("en-US",o)+" to "+t.toLocaleDateString("en-US",o)}
-function render(r,busy){
-  current=r;
-  const toc=SECTIONS.map((t,i)=>`<li><a href="#s${i+1}" class="${busy&&!r.sections[i+1]&&i!==10?"busy":""}"><b>${i+1}</b>${esc(t)}</a></li>`).join("");
+  return "https://www.linkedin.com/sales/search/people?query=(recentSearchParam%3A(doLogHistory%3Atrue)%2Ckeywords%3A"+encodeURIComponent(k)+"%2Cfilters%3AList((type%3ASENIORITY_LEVEL%2Cvalues%3AList((id%3A120%2Ctext%3ASenior%2CselectionType%3AINCLUDED)%2C(id%3A310%2Ctext%3ACXO%2CselectionType%3AINCLUDED)))%2C(type%3AREGION%2Cvalues%3AList((id%3A103644278%2Ctext%3AUnited%20States%2CselectionType%3AINCLUDED)))%2C(type%3ARELATIONSHIP%2Cvalues%3AList((id%3AS%2Ctext%3A2nd%20degree%20connections%2CselectionType%3AINCLUDED)))))&viewAllFilters=true"}
+const fmtDate=(d,o)=>new Date(d).toLocaleDateString("en-US",o||{day:"numeric",month:"long",year:"numeric"});
+async function api(path,opt={}){const r=await fetch(path,{...opt,headers:{"content-type":"application/json"},credentials:"same-origin"});let d={};try{d=await r.json()}catch(e){}if(!r.ok)throw Object.assign(new Error(d.error||("Error "+r.status)),{status:r.status});return d}
+function toast(t){const el=$("#toast");el.textContent=t;el.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(()=>el.style.display="none",4200)}
+
+function shell(){
+  $("#root").innerHTML=`<div class="app">
+  <aside class="sidebar" id="side">
+    <a class="brand" href="/">${MARK}<span>ICP<small>by Gershon.AI</small></span></a>
+    <button class="btn btn-primary newbtn" id="newbtn">+ New analysis</button>
+    <div class="nav-label">Reports</div>
+    <ul class="hist" id="hist"><li class="hint">Loading…</li></ul>
+    <div class="spacer"></div>
+    <div class="side-foot"><a href="/">← Home</a><span id="ver"></span></div>
+  </aside>
+  <div>
+    <div class="topbar"><div style="display:flex;align-items:center;gap:10px;min-width:0"><button class="btn btn-ghost menu-btn" id="menu" aria-label="Menu">☰</button><h1 id="title">New analysis</h1></div><div class="top-actions" id="actions"></div></div>
+    <main class="content" id="main"></main>
+  </div></div>`;
+  $("#newbtn").onclick=()=>{showNew();closeSide()};
+  $("#menu").onclick=()=>$("#side").classList.toggle("open");
+}
+const closeSide=()=>$("#side").classList.remove("open");
+function setTop(title,actions){$("#title").textContent=title;$("#actions").innerHTML=actions||""}
+
+function showNew(prefill={}){
+  current=null;paintHist();setTop("New analysis");
+  $("#main").innerHTML=`<div class="newgrid">
+   <div class="panel">
+     <h2 style="margin:0;font-size:1.25rem;letter-spacing:-.01em">Analyse a company</h2>
+     <p class="hint" style="font-size:13.5px">ICP reads the website (home, about, product and technology pages) and writes the 12-point US market launch analysis.</p>
+     <label for="url">Company website</label><input id="url" placeholder="https://company.com" autocomplete="off" value="${esc(prefill.url||"")}">
+     <label for="name">Company name <span>(optional)</span></label><input id="name" placeholder="Leave empty to detect it" value="${esc(prefill.name||"")}">
+     <label for="ctx">What you know about them <span>(optional)</span></label><textarea id="ctx" placeholder="Call notes, deck summary, or the website text if the site blocks automated reading…"></textarea>
+     <p class="hint">Notes you paste here take priority over the website.</p>
+     <button class="btn btn-primary go" id="go">Run the 12-point analysis</button>
+     <div class="err" id="err" role="alert"></div>
+   </div>
+   <div class="panel hero-panel">
+     <h2>What you get</h2><p>The same 12 sections as the USA Market Launch GPT, saved for the whole team.</p>
+     <div class="chips">${SECTIONS.map((t,i)=>`<div class="chip"><b>${String(i+1).padStart(2,"0")}</b>${esc(t)}</div>`).join("")}</div>
+   </div></div>`;
+  $("#go").onclick=run;$("#url").addEventListener("keydown",e=>{if(e.key==="Enter")run()});$("#url").focus();
+}
+
+function render(r,isBusy){
+  current=r;paintHist();
+  setTop(r.company,isBusy?"":`<button class="btn btn-ghost" id="rerun">↻ <span class="lbl">Run again</span></button><button class="btn btn-primary" id="copyEmail">✉ <span class="lbl">Copy prospect email</span></button>`);
+  const src=r.source;
+  const pills=[`<span class="pill"><a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.url.replace(/^https?:\/\//,"").replace(/\/$/,""))}</a></span>`,
+    `<span class="pill">📅 ${fmtDate(r.createdAt)}</span>`,
+    r.window?`<span class="pill">🎪 Events ${esc(r.window)}</span>`:"",
+    src?(src.siteRead?`<span class="pill ok">✓ Website read (${(src.pages||[]).length} pages)</span>`:`<span class="pill warn">Website not readable — based on notes and general knowledge</span>`):""].join("");
+  const toc=SECTIONS.map((t,i)=>`<li><a href="#s${i+1}" class="${isBusy&&!r.sections[i+1]&&i!==10?"busy":""}"><b>${String(i+1).padStart(2,"0")}</b>${esc(t)}</a></li>`).join("");
+  const skel='<div class="skel" style="width:92%"></div><div class="skel" style="width:78%"></div><div class="skel" style="width:85%"></div>';
   const secs=SECTIONS.map((t,i)=>{const n=i+1;let b;
-    if(n===11){const L=r.searches||[];b=L.length?'<p>Senior and CXO decision-makers, United States, 2nd-degree connections, one search per segment.</p><div class="links">'+L.map(x=>`<a href="${liUrl(x.keywords)}" target="_blank" rel="noopener">${esc(x.label)}<small>${esc(x.keywords)}</small></a>`).join("")+"</div>":(busy?'<p class="pending">Building the searches</p>':"<p>No searches.</p>")}
-    else b=r.sections[n]?md(r.sections[n]):(busy?'<p class="pending">Writing this section</p>':'<p class="hint">Not generated.</p>');
-    return `<section class="s" id="s${n}"><h2><span class="n">${n}</span>${esc(t)}</h2><div class="body">${b}</div></section>`}).join("");
-  $("#main").innerHTML=`<div class="report"><nav class="toc" aria-label="Sections"><ol>${toc}</ol></nav><div><div class="head"><h1>${esc(r.company)}</h1><div class="meta"><a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.url.replace(/^https?:\/\//,""))}</a> — analysed ${new Date(r.createdAt).toLocaleDateString("en-US",{day:"numeric",month:"long",year:"numeric"})}${r.window?" — events window "+esc(r.window):""}</div>
-  <div class="actions"><button class="ghost" id="copyEmail" ${busy?"disabled":""}>Copy as prospect email</button><button class="ghost" id="rerun" ${busy?"disabled":""}>Run again</button></div></div>${secs}</div></div>`;
-  if(!busy){$("#copyEmail").onclick=()=>copyEmail(r);$("#rerun").onclick=()=>{$("#url").value=r.url;$("#name").value=r.company;run()}}
-  paintHist();
+    if(n===11){const L=r.searches||[];b=L.length?'<p>Senior and CXO decision-makers, United States, 2nd-degree connections — one search per segment.</p><div class="links">'+L.map(x=>`<a href="${liUrl(x.keywords)}" target="_blank" rel="noopener"><span>${esc(x.label)}<small>${esc(x.keywords)}</small></span><span class="go-ic">↗</span></a>`).join("")+"</div>":(isBusy?skel:'<p class="hint">No searches.</p>')}
+    else b=r.sections[n]?md(r.sections[n]):(isBusy?skel:'<p class="hint">Not generated — use Run again.</p>');
+    return `<section class="s" id="s${n}"><h3><span class="n">${String(n).padStart(2,"0")}</span>${esc(t)}</h3><div class="body">${b}</div></section>`}).join("");
+  $("#main").innerHTML=`<div class="rhead"><div class="eyebrow">USA Market Launch · 12-point analysis</div><h2>${esc(r.company)}</h2><div class="meta">${pills}</div>${isBusy?'<p class="pending" style="margin:14px 0 0">Reading the website and writing the analysis — about a minute.</p>':""}</div>
+  <div class="report"><nav class="toc" aria-label="Sections"><ol>${toc}</ol></nav><div class="secs">${secs}</div></div>`;
+  if(!isBusy){$("#copyEmail").onclick=()=>copyEmail(r);$("#rerun").onclick=()=>showNew({url:r.url,name:r.company})}
 }
 function emailHtml(r){
   const intro=`<p>Hi [First Name],</p><p>Ahead of your meeting with Olivier Attia, we'd like to share a tool we've been developing internally to support companies exploring expansion into the US market.</p><p>The content below was generated using our proprietary GPT for US Market Expansion. We invite you to test it and explore some of the insights it can provide regarding your company and potential US market opportunities.</p><p>The direct link is: <a href="https://bit.ly/GPTUSA">https://bit.ly/GPTUSA</a></p><p>The content below has been prepared specifically for your company. We would greatly appreciate your feedback, either by email or during your discussion with Olivier, as it will help us continue improving the tool.</p>`;
-  const body=SECTIONS.map((t,i)=>{const n=i+1;const c=n===11?(r.searches||[]).map(x=>`<p><a href="${liUrl(x.keywords)}">${esc(x.label)}</a></p>`).join(""):md(r.sections[n]);return `<h3>${n}. ${esc(t)}</h3>${c}`}).join("");
-  return intro+body;
+  return intro+SECTIONS.map((t,i)=>{const n=i+1;const c=n===11?(r.searches||[]).map(x=>`<p><a href="${liUrl(x.keywords)}">${esc(x.label)}</a></p>`).join(""):md(r.sections[n]);return `<h3>${n}. ${esc(t)}</h3>${c}`}).join("");
 }
 async function copyEmail(r){
   const subject="Customized GPT USA by Gershon Consulting for "+r.company;const html=emailHtml(r);
-  try{await navigator.clipboard.write([new ClipboardItem({"text/html":new Blob([html],{type:"text/html"}),"text/plain":new Blob([subject+"\n\n"+html.replace(/<[^>]+>/g,"\n").replace(/\n{3,}/g,"\n\n")],{type:"text/plain"})})]);toast("Copied. Subject: "+subject)}
+  try{await navigator.clipboard.write([new ClipboardItem({"text/html":new Blob([html],{type:"text/html"}),"text/plain":new Blob([subject+"\n\n"+html.replace(/<[^>]+>/g,"\n").replace(/\n{3,}/g,"\n\n")],{type:"text/plain"})})]);toast("Copied — subject: "+subject)}
   catch(e){toast("Copy blocked by the browser — select the report text instead")}
 }
-function toast(t){const el=$("#toast");el.textContent=t;el.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(()=>el.style.display="none",4200)}
 function paintHist(){
-  const h=$("#hist");if(!reports.length){h.innerHTML='<li class="hint">'+"No reports yet. Run your first one above."+"</li>";return}
-  h.innerHTML=reports.map(r=>`<li><button data-id="${esc(r.slug)}" aria-current="${current&&current.slug===r.slug}"><span>${esc(r.company)}</span><small>${new Date(r.createdAt).toLocaleDateString("en-US",{month:"short",day:"numeric"})}</small></button></li>`).join("");
-  h.querySelectorAll("button").forEach(b=>b.onclick=()=>open(b.dataset.id));
+  const h=$("#hist");if(!h)return;
+  if(!reports.length){h.innerHTML='<li class="hint">No reports yet.</li>';return}
+  h.innerHTML=reports.map(r=>`<li><button data-id="${esc(r.slug)}" aria-current="${!!(current&&current.slug===r.slug)}"><span>${esc(r.company)}</span><small>${fmtDate(r.createdAt,{month:"short",day:"numeric"})}</small></button></li>`).join("");
+  h.querySelectorAll("button").forEach(b=>b.onclick=()=>{openReport(b.dataset.id);closeSide()});
 }
-
-async function api(path,opt={}){const r=await fetch(path,{...opt,headers:{"content-type":"application/json"},credentials:"same-origin"});let d={};try{d=await r.json()}catch(e){}if(!r.ok)throw Object.assign(new Error(d.error||("Error "+r.status)),{status:r.status});return d}
 async function loadList(){try{reports=(await api("/api/reports")).reports}catch(e){reports=[]}paintHist()}
-async function open(id){try{render(await api("/api/reports/"+id),false)}catch(e){toast(e.message)}}
-let timer;
+async function openReport(id){try{render(await api("/api/reports/"+id),false);history.replaceState(null,"","/app#"+id)}catch(e){toast(e.message)}}
 async function run(){
-  $("#err").textContent="";
+  if(busy)return;$("#err").textContent="";
   let url=$("#url").value.trim();if(!url){$("#err").textContent="Enter the company website first.";$("#url").focus();return}
   if(!/^https?:\/\//.test(url))url="https://"+url;
   const name=$("#name").value.trim(),notes=$("#ctx").value.trim();
+  busy=true;$("#go").disabled=true;$("#go").textContent="Analysing…";
   const stub={slug:"",url,company:name||url.replace(/^https?:\/\/(www\.)?/,"").replace(/\/.*$/,""),createdAt:new Date().toISOString(),window:"",sections:{},searches:[]};
-  $("#go").disabled=true;let s=0;$("#go").textContent="Reading the website…";clearInterval(timer);
-  timer=setInterval(()=>{s++;$("#go").textContent=s<8?"Reading the website…":"Writing the analysis… "+s+"s"},1000);
-  render(stub,true);
-  try{const r=await api("/api/analyze",{method:"POST",body:JSON.stringify({url,name,notes})});render(r,false);
-    if(r.errors&&r.errors.length)$("#err").textContent=r.errors.join(". ")+". Use Run again to fill the gaps.";
-    else if(r.source&&!r.source.siteRead)$("#err").textContent="The website could not be read ("+(r.source.error||"blocked")+"), so the analysis relied on general knowledge. Paste the site text in the notes for a sharper result.";
-    await loadList();toast("Report saved")}
-  catch(e){$("#err").textContent=e.message;$("#main").innerHTML="";if(e.status===401)gate("no")}
-  finally{clearInterval(timer);$("#go").disabled=false;$("#go").textContent="Run the 12-point analysis"}
+  try{const p=api("/api/analyze",{method:"POST",body:JSON.stringify({url,name,notes})});render(stub,true);
+    const r=await p;render(r,false);await loadList();history.replaceState(null,"","/app#"+r.slug);
+    if(r.errors&&r.errors.length)toast(r.errors.join(". ")+". Use Run again to fill the gaps.");else toast("Report saved");}
+  catch(e){if(e.status===401)return gate("no");showNew({url,name});$("#ctx").value=notes;$("#err").textContent=e.message}
+  finally{busy=false}
 }
 function gate(state){
   const setup=state==="setup";
-  $("#main").innerHTML=`<div class="empty"><h1>${setup?"Choose the team password.":"Sign in to ICP."}</h1><p>${setup?"This is the first visit. Pick a password of at least 8 characters to share with the Gershon team.":"Enter the Gershon team password."}</p><input id="pw" type="password" autocomplete="current-password" style="max-width:320px"><button class="go" id="pwgo" style="max-width:320px">${setup?"Set password":"Sign in"}</button><div class="err" id="pwerr"></div></div>`;
-  document.querySelector("aside").style.visibility="hidden";
-  const go=async()=>{try{await api(setup?"/api/setup":"/api/login",{method:"POST",body:JSON.stringify({password:$("#pw").value})});location.reload()}catch(e){$("#pwerr").textContent=e.message}};
+  $("#root").innerHTML=`<div class="gate"><div class="panel"><a class="brand" href="/">${MARK}<span>ICP<small>by Gershon.AI</small></span></a>
+  <h2>${setup?"Choose the team password":"Sign in"}</h2><p>${setup?"First visit: pick a password of at least 8 characters to share with the Gershon team.":"Enter the Gershon team password."}</p>
+  <label for="pw">Password</label><input id="pw" type="password" autocomplete="${setup?"new-password":"current-password"}">
+  <button class="btn btn-primary go" id="pwgo">${setup?"Set password and open ICP":"Sign in"}</button><div class="err" id="pwerr"></div></div></div>`;
+  const go=async()=>{try{await api(setup?"/api/setup":"/api/login",{method:"POST",body:JSON.stringify({password:$("#pw").value})});start()}catch(e){$("#pwerr").textContent=e.message}};
   $("#pwgo").onclick=go;$("#pw").addEventListener("keydown",e=>{if(e.key==="Enter")go()});$("#pw").focus();
 }
-$("#go").onclick=run;
-$("#url").addEventListener("keydown",e=>{if(e.key==="Enter")run()});
-(async()=>{let st;try{st=(await api("/api/session")).state}catch(e){st="no"}
-  if(st!=="ok")return gate(st);
-  await loadList();if(reports.length)open(reports[0].slug);
-})();
+async function start(){
+  let s;try{s=await api("/api/session")}catch(e){s={state:"no"}}
+  if(s.state!=="ok")return gate(s.state);
+  shell();$("#ver").textContent="v"+(s.version||"");
+  await loadList();
+  const want=location.hash.slice(1);
+  if(want&&reports.some(r=>r.slug===want))openReport(want);else if(reports.length)openReport(reports[0].slug);else showNew();
+}
+start();
+
 </script>
 </body>
 </html>
