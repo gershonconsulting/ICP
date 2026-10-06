@@ -13,7 +13,6 @@ routes = [
 binding = "AI"
 
 # KV for reports, sessions and the team password hash.
-# The deploy workflow creates the namespace "icp-gershon-ai-store" if missing and fills in the id.
+# No id: Wrangler provisions the namespace automatically on first deploy (Workers Builds).
 [[kv_namespaces]]
 binding = "STORE"
-id = "__KV_ID__"
