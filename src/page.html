@@ -48,7 +48,7 @@ body{background:var(--app);font-size:14.5px}
 .hist small{color:var(--muted);font-size:12px;flex:none}
 .hist .hint{padding:8px 10px}
 .spacer{flex:1}
-.side-foot{border-top:1px solid var(--line);padding:12px 10px 4px;font-size:12px;color:var(--muted);display:flex;justify-content:space-between}
+.side-foot{border-top:1px solid var(--line);padding:12px 10px 4px;font-size:12px;color:var(--muted);display:flex;justify-content:space-between;gap:8px}
 .side-foot a:hover{color:var(--brand-ink)}
 .topbar{position:sticky;top:0;z-index:10;height:64px;background:rgba(255,255,255,.86);backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 28px;gap:16px}
 .topbar h1{font-size:17px;font-weight:700;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -98,6 +98,8 @@ section.s>h3 .n{width:34px;height:34px;border-radius:10px;background:var(--grad)
 .body p{margin:0 0 10px}
 .body ul{margin:0 0 10px;padding-left:20px}
 .body strong{color:var(--text)}
+.body a{color:var(--brand-ink);font-weight:600}
+.body:has(.cal-wrap){max-width:none}
 .tbl{overflow-x:auto;margin:6px 0 12px;border:1px solid var(--line);border-radius:12px}
 .body table{border-collapse:collapse;font-size:13.5px;min-width:100%}
 .body th,.body td{text-align:left;vertical-align:top;padding:10px 12px;border-bottom:1px solid var(--line)}
@@ -122,6 +124,47 @@ section.s>h3 .n{width:34px;height:34px;border-radius:10px;background:var(--grad)
 .gate p{color:var(--muted);margin:.4rem 0 0}
 .menu-btn{display:none}
 @media(max-width:860px){.app{grid-template-columns:1fr}.sidebar{position:fixed;inset:0 auto 0 0;width:280px;z-index:60;transform:translateX(-100%);transition:transform .2s;box-shadow:var(--shadow)}.sidebar.open{transform:none}.menu-btn{display:inline-flex}.content{padding:18px}.topbar{padding:0 16px}.top-actions .lbl{display:none}}
+.menu{position:relative}
+.menu-pop{position:absolute;right:0;top:calc(100% + 6px);background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:6px;min-width:220px;display:none;z-index:30}
+.menu-pop.open{display:block}
+.menu-pop button{display:flex;gap:10px;align-items:center;width:100%;text-align:left;border:0;background:none;padding:9px 10px;border-radius:8px;cursor:pointer;font-weight:500}
+.menu-pop button:hover{background:var(--brand-light);color:var(--brand-ink)}
+.menu-pop small{display:block;color:var(--muted);font-weight:400;font-size:12px}
+.icon-btn{padding:.55rem .7rem!important}
+.seg{display:inline-flex;background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:3px;margin-left:auto}
+.seg button{border:0;background:none;padding:5px 12px;border-radius:8px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer}
+.seg button[aria-pressed="true"]{background:#fff;color:var(--brand-ink);box-shadow:0 1px 3px rgba(18,28,64,.12)}
+section.s>h3 .seg{font-size:13px}
+.cal-wrap{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
+.cal{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff}
+.cal h5{margin:0 0 8px;font-size:13.5px;font-weight:700}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.cal-grid .dow{font-size:10.5px;font-weight:700;color:var(--muted);text-align:center;padding-bottom:4px}
+.cal-grid .d{min-height:30px;border-radius:6px;font-size:11px;color:#6b7590;padding:3px 4px;background:var(--soft);position:relative}
+.cal-grid .d.blank{background:none}
+.cal-grid .d.on{color:#fff;font-weight:700}
+.cal-grid .d.on.multi{background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.25) 0 4px,transparent 4px 8px)}
+.legend{display:grid;gap:8px;margin-top:16px}
+.lg{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--line);border-radius:12px}
+.lg .sw{width:12px;height:12px;border-radius:4px;flex:none}
+.lg .t{flex:1;min-width:0}
+.lg .t b{display:block;font-size:14px}
+.lg .t span{font-size:12.5px;color:var(--muted)}
+.lg .v{font-size:11.5px;font-weight:700;padding:3px 8px;border-radius:999px;background:#e6f6ec;color:#126b35;white-space:nowrap}
+.lg .v.no{background:#fff4e5;color:var(--warn)}
+.lg a.ics{font-size:12.5px;font-weight:600;color:var(--brand-ink);white-space:nowrap;cursor:pointer}
+.cal-actions{display:flex;justify-content:flex-end;margin-top:12px}
+.modal-bg{position:fixed;inset:0;background:rgba(11,16,32,.55);backdrop-filter:blur(3px);display:grid;place-items:center;z-index:80;padding:16px}
+.modal{background:#fff;border-radius:18px;box-shadow:0 30px 80px rgba(0,0,0,.35);width:100%;max-width:520px;padding:24px;max-height:92vh;overflow:auto}
+.modal h2{margin:0;font-size:1.2rem;letter-spacing:-.01em}
+.modal .row{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;flex-wrap:wrap}
+.check{display:flex;gap:10px;align-items:flex-start;font-weight:500;font-size:13.5px;margin-top:14px;cursor:pointer}
+.check input{width:auto;margin-top:3px}
+.status{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;padding:4px 10px;border-radius:999px}
+.status.ok{background:#e6f6ec;color:#126b35}.status.no{background:#fff4e5;color:var(--warn)}
+.linkbtn{border:0;background:none;color:var(--brand-ink);font-weight:600;cursor:pointer;padding:0;font-size:13px}
+.side-foot button{border:0;background:none;color:inherit;cursor:pointer;font-size:12px;padding:0}
+.side-foot button:hover{color:var(--brand-ink)}
 </style>
 </head>
 <body>
@@ -161,7 +204,7 @@ function shell(){
     <div class="nav-label">Reports</div>
     <ul class="hist" id="hist"><li class="hint">Loading…</li></ul>
     <div class="spacer"></div>
-    <div class="side-foot"><a href="/">← Home</a><span id="ver"></span></div>
+    <div class="side-foot"><a href="/">← Home</a><button id="setBtn">⚙ Settings</button><span id="ver"></span></div>
   </aside>
   <div>
     <div class="topbar"><div style="display:flex;align-items:center;gap:10px;min-width:0"><button class="btn btn-ghost menu-btn" id="menu" aria-label="Menu">☰</button><h1 id="title">New analysis</h1></div><div class="top-actions" id="actions"></div></div>
@@ -169,6 +212,7 @@ function shell(){
   </div></div>`;
   $("#newbtn").onclick=()=>{showNew();closeSide()};
   $("#menu").onclick=()=>$("#side").classList.toggle("open");
+  $("#setBtn").onclick=()=>{closeSide();openSettings()};
 }
 const closeSide=()=>$("#side").classList.remove("open");
 function setTop(title,actions){$("#title").textContent=title;$("#actions").innerHTML=actions||""}
@@ -195,7 +239,7 @@ function showNew(prefill={}){
 
 function render(r,isBusy){
   current=r;paintHist();
-  setTop(r.company,isBusy?"":`<button class="btn btn-ghost" id="rerun">↻ <span class="lbl">Run again</span></button><button class="btn btn-primary" id="copyEmail">✉ <span class="lbl">Copy prospect email</span></button>`);
+  setTop(r.company,isBusy?"":`<button class="btn btn-ghost icon-btn" id="rerun" title="Run again">↻</button><button class="btn btn-ghost" id="copyEmail" title="Copy the prospect email">⧉ <span class="lbl">Copy</span></button><div class="menu" id="dlMenu"><button class="btn btn-ghost" id="dlBtn" aria-haspopup="true">⬇ <span class="lbl">Download</span></button><div class="menu-pop" id="dlPop"><button data-k="pdf">📄<span>PDF<small>Formatted report, A4</small></span></button><button data-k="html">🌐<span>HTML<small>Opens in any browser</small></span></button><button data-k="ics">📅<span>Events calendar (.ics)<small>Outlook, Google, Apple</small></span></button></div></div><button class="btn btn-primary" id="sendBtn">✉ <span class="lbl">Send by email</span></button>`);
   const src=r.source;
   const pills=[`<span class="pill"><a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.url.replace(/^https?:\/\//,"").replace(/\/$/,""))}</a></span>`,
     `<span class="pill">📅 ${fmtDate(r.createdAt)}</span>`,
@@ -206,10 +250,11 @@ function render(r,isBusy){
   const secs=SECTIONS.map((t,i)=>{const n=i+1;let b;
     if(n===11){const L=r.searches||[];b=L.length?'<p>Senior and CXO decision-makers, United States, 2nd-degree connections — one search per segment.</p><div class="links">'+L.map(x=>`<a href="${liUrl(x.keywords)}" target="_blank" rel="noopener"><span>${esc(x.label)}<small>${esc(x.keywords)}</small></span><span class="go-ic">↗</span></a>`).join("")+"</div>":(isBusy?skel:'<p class="hint">No searches.</p>')}
     else b=r.sections[n]?md(r.sections[n]):(isBusy?skel:'<p class="hint">Not generated — use Run again.</p>');
-    return `<section class="s" id="s${n}"><h3><span class="n">${String(n).padStart(2,"0")}</span>${esc(t)}</h3><div class="body">${b}</div></section>`}).join("");
+    const seg=(n===9&&!isBusy)?`<span class="seg" id="seg9"><button data-v="list" aria-pressed="true">List</button><button data-v="cal" aria-pressed="false">Calendar</button></span>`:"";
+    return `<section class="s" id="s${n}"><h3><span class="n">${String(n).padStart(2,"0")}</span>${esc(t)}${seg}</h3><div class="body">${b}</div></section>`}).join("");
   $("#main").innerHTML=`<div class="rhead"><div class="eyebrow">USA Market Launch · 12-point analysis</div><h2>${esc(r.company)}</h2><div class="meta">${pills}</div>${isBusy?'<p class="pending" style="margin:14px 0 0">Reading the website and writing the analysis — about a minute.</p>':""}</div>
   <div class="report"><nav class="toc" aria-label="Sections"><ol>${toc}</ol></nav><div class="secs">${secs}</div></div>`;
-  if(!isBusy){$("#copyEmail").onclick=()=>copyEmail(r);$("#rerun").onclick=()=>showNew({url:r.url,name:r.company})}
+  if(!isBusy){$("#copyEmail").onclick=()=>copyEmail(r);$("#rerun").onclick=()=>showNew({url:r.url,name:r.company});bindReportActions(r)}
 }
 function emailHtml(r){
   const intro=`<p>Hi [First Name],</p><p>Ahead of your meeting with Olivier Attia, we'd like to share a tool we've been developing internally to support companies exploring expansion into the US market.</p><p>The content below was generated using our proprietary GPT for US Market Expansion. We invite you to test it and explore some of the insights it can provide regarding your company and potential US market opportunities.</p><p>The direct link is: <a href="https://bit.ly/GPTUSA">https://bit.ly/GPTUSA</a></p><p>The content below has been prepared specifically for your company. We would greatly appreciate your feedback, either by email or during your discussion with Olivier, as it will help us continue improving the tool.</p>`;
@@ -258,6 +303,118 @@ async function start(){
   const want=location.hash.slice(1);
   if(want&&reports.some(r=>r.slug===want))openReport(want);else if(reports.length)openReport(reports[0].slug);else showNew();
 }
+// ===== v1.2: downloads, email, settings, events calendar =====
+const PALETTE=["#3b5bfd","#0ea5b7","#7c3aed","#e8590c","#16a34a","#db2777","#ca8a04","#475569"];
+let settings=null, view9="list";
+const ymd=s=>{const[a,b,c]=s.split("-").map(Number);return new Date(Date.UTC(a,b-1,c))};
+const MON=["January","February","March","April","May","June","July","August","September","October","November","December"];
+const MS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+function fmtRange(a,b){const A=ymd(a),B=ymd(b);const y1=A.getUTCFullYear(),m1=A.getUTCMonth(),d1=A.getUTCDate(),y2=B.getUTCFullYear(),m2=B.getUTCMonth(),d2=B.getUTCDate();
+  if(a===b)return `${MS[m1]} ${d1}, ${y1}`;if(y1===y2&&m1===m2)return `${MS[m1]} ${d1}–${d2}, ${y1}`;if(y1===y2)return `${MS[m1]} ${d1} – ${MS[m2]} ${d2}, ${y1}`;return `${MS[m1]} ${d1}, ${y1} – ${MS[m2]} ${d2}, ${y2}`}
+function calMonths(r){
+  const ev=r.events||[];let s=r.windowStart,e=r.windowEnd;
+  if(!s&&ev.length){s=ev[0].start;e=ev.reduce((m,x)=>x.end>m?x.end:m,ev[0].end)}
+  if(!s)return[];const out=[];let d=ymd(s.slice(0,8)+"01");const end=ymd(e);
+  while(d<=end&&out.length<12){out.push([d.getUTCFullYear(),d.getUTCMonth()]);d=new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth()+1,1))}return out}
+function calendarHtml(r){
+  const ev=(r.events||[]).map((x,i)=>({...x,color:PALETTE[i%PALETTE.length]}));
+  if(!ev.length)return '<p class="hint">This report has no dated events yet. Use Run again to get them.</p>';
+  const months=calMonths(r).map(([y,m])=>{
+    const first=new Date(Date.UTC(y,m,1)),days=new Date(Date.UTC(y,m+1,0)).getUTCDate(),lead=(first.getUTCDay()+6)%7;
+    let cells=["M","T","W","T","F","S","S"].map(x=>`<div class="dow">${x}</div>`).join("")+'<div class="d blank"></div>'.repeat(lead);
+    for(let d=1;d<=days;d++){const iso=`${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;const hit=ev.filter(x=>iso>=x.start&&iso<=x.end);
+      const title=hit.map(x=>x.name).join(" / ");
+      cells+=hit.length?`<div class="d on${hit.length>1?" multi":""}" style="background-color:${hit[0].color}" title="${esc(title)}">${d}</div>`:`<div class="d">${d}</div>`}
+    return `<div class="cal"><h5>${MON[m]} ${y}</h5><div class="cal-grid">${cells}</div></div>`}).join("");
+  const legend=ev.map((x,i)=>`<div class="lg"><span class="sw" style="background:${x.color}"></span><div class="t"><b>${x.url?`<a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.name)}</a>`:esc(x.name)}</b><span>${fmtRange(x.start,x.end)} · ${esc(x.location)} · ${x.score}/5</span></div><span class="v${x.verified?"":" no"}">${x.verified?"✓ Verified":"To confirm"}</span><a class="ics" data-i="${i}">+ Calendar</a></div>`).join("");
+  return `<div class="cal-wrap">${months}</div><div class="legend">${legend}</div><div class="cal-actions"><button class="btn btn-ghost" id="icsAll">⬇ Add all to my calendar (.ics)</button></div>`;
+}
+function icsFor(list,company){
+  const pad=n=>String(n).padStart(2,"0"),dt=s=>s.replace(/-/g,""),next=s=>{const d=ymd(s);d.setUTCDate(d.getUTCDate()+1);return d.toISOString().slice(0,10)};
+  const stamp=new Date().toISOString().replace(/[-:]/g,"").slice(0,15)+"Z";
+  const escI=s=>String(s||"").replace(/[\\,;]/g,m=>"\\"+m).replace(/\n/g,"\\n");
+  return ["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Gershon.AI//ICP//EN","CALSCALE:GREGORIAN","X-WR-CALNAME:"+escI("US events — "+company),
+    ...list.flatMap((e,i)=>["BEGIN:VEVENT","UID:"+dt(e.start)+"-"+i+"-"+(company||"icp").replace(/\W/g,"")+"@icp.gershon.ai","DTSTAMP:"+stamp,"DTSTART;VALUE=DATE:"+dt(e.start),"DTEND;VALUE=DATE:"+dt(next(e.end)),"SUMMARY:"+escI(e.name),"LOCATION:"+escI(e.location),"DESCRIPTION:"+escI(`Importance ${e.score}/5 for ${company}. ${e.verified?"Dates checked on the official website.":"Dates to confirm."} ${e.url||""}`),...(e.url?["URL:"+e.url]:[]),"END:VEVENT"]),
+    "END:VCALENDAR"].join("\r\n");
+}
+function download(name,content,type){const b=content instanceof Blob?content:new Blob([content],{type});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500)}
+const fileBase=r=>(r.company||"report").replace(/[^\w]+/g,"-").replace(/^-|-$/g,"")+"-ICP-"+(r.createdAt||"").slice(0,10);
+
+// Standalone, printable report document (used for HTML download, PDF and the email attachment)
+function docBody(r,intro,pdf){
+  const tbl='style="border-collapse:collapse;width:100%;font-size:13px;margin:8px 0 14px"';
+  const fix=h=>h.replace(/<div class="tbl"><table>/g,`<table ${tbl}>`).replace(/<\/table><\/div>/g,"</table>").replace(/<th>/g,'<th style="text-align:left;background:#f5f7fc;border:1px solid #e6e9f2;padding:7px 9px;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;color:#5b6478">').replace(/<td>/g,'<td style="border:1px solid #e6e9f2;padding:7px 9px;vertical-align:top">');
+  const head=`<div style="border-radius:14px;padding:22px 24px;background:#0b1020;background-image:linear-gradient(120deg,#0b1020,#16245a);color:#fff;margin-bottom:18px"><div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#9fb3ff;font-weight:700">USA Market Launch · 12-point analysis</div><div style="font-size:26px;font-weight:800;letter-spacing:-.02em;margin-top:4px">${esc(r.company)}</div><div style="font-size:13px;color:#c3ccea;margin-top:6px">${esc(r.url)} · ${fmtDate(r.createdAt)}${r.window?" · Events "+esc(r.window):""}</div></div>`;
+  const introHtml=intro?`<div style="font-size:14px;line-height:1.6;margin-bottom:18px"><p>Hi [First Name],</p><p>Ahead of your meeting with Olivier Attia, we'd like to share a tool we've been developing internally to support companies exploring expansion into the US market.</p><p>The content below was generated using our proprietary GPT for US Market Expansion. We invite you to test it and explore some of the insights it can provide regarding your company and potential US market opportunities.</p><p>The direct link is: <a href="https://bit.ly/GPTUSA">https://bit.ly/GPTUSA</a></p><p>The content below has been prepared specifically for your company. We would greatly appreciate your feedback, either by email or during your discussion with Olivier, as it will help us continue improving the tool.</p></div>`:"";
+  const secs=SECTIONS.map((t,i)=>{const n=i+1;let c=n===11?(r.searches||[]).map(x=>`<p style="margin:4px 0"><a href="${liUrl(x.keywords)}">${esc(x.label)}</a> <span style="color:#5b6478;font-size:12px">(${esc(x.keywords)})</span></p>`).join(""):fix(md(r.sections[n]));
+    return `<div data-sec style="page-break-inside:avoid;break-inside:avoid;border:1px solid #e6e9f2;border-radius:12px;padding:16px 18px;margin:0 0 12px"><div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><span style="display:inline-block;min-width:28px;height:28px;line-height:28px;text-align:center;border-radius:8px;background:#3b5bfd;color:#fff;font-weight:800;font-size:12px">${String(n).padStart(2,"0")}</span><b style="font-size:16px">${esc(t)}</b></div><div style="font-size:13.5px;line-height:1.6;color:#2a3247">${c}</div></div>`}).join("");
+  return `<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,Helvetica,Arial,sans-serif;color:#1a2133;${pdf?"":"max-width:820px;margin:0 auto"}">${introHtml}${head}${secs}<div style="font-size:11.5px;color:#5b6478;margin-top:16px;text-align:center">Prepared by Gershon Consulting · icp.gershon.ai</div></div>`;
+}
+function docHtml(r,intro){return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${esc(r.company)} — US market launch analysis</title><style>body{margin:0;padding:28px 18px;background:#fff}a{color:#1e34c4}@media print{body{padding:0}}</style></head><body>${docBody(r,intro)}</body></html>`}
+let pdfLib;
+function loadPdfLib(){return pdfLib||(pdfLib=new Promise((ok,ko)=>{const s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";s.onload=()=>ok(window.html2pdf);s.onerror=()=>{pdfLib=null;ko(new Error("Could not load the PDF tool"))};document.head.appendChild(s)}))}
+async function downloadPdf(r){
+  toast("Preparing the PDF…");
+  try{const h2p=await loadPdfLib();
+    await h2p().set({margin:[10,10,12,10],filename:fileBase(r)+".pdf",image:{type:"jpeg",quality:.95},html2canvas:{scale:2,useCORS:true,backgroundColor:"#ffffff",scrollX:0,scrollY:0},jsPDF:{unit:"mm",format:"a4",orientation:"portrait"},pagebreak:{mode:["css","legacy"],avoid:"div[data-sec]"}}).from(docBody(r,false,true),"string").save();
+    toast("PDF downloaded")}catch(e){toast("PDF failed: "+e.message)}
+}
+function bindReportActions(r){
+  const dm=$("#dlMenu"),pop=$("#dlPop");
+  if(dm){$("#dlBtn").onclick=e=>{e.stopPropagation();pop.classList.toggle("open")};document.addEventListener("click",()=>pop.classList.remove("open"),{once:true});
+    pop.querySelectorAll("button").forEach(b=>b.onclick=()=>{pop.classList.remove("open");const k=b.dataset.k;
+      if(k==="pdf")downloadPdf(r);
+      if(k==="html"){download(fileBase(r)+".html",docHtml(r,false),"text/html");toast("HTML downloaded")}
+      if(k==="ics"){if(!(r.events||[]).length)return toast("No dated events in this report yet");download(fileBase(r)+"-events.ics",icsFor(r.events,r.company),"text/calendar");toast("Calendar file downloaded")}})}
+  if($("#sendBtn"))$("#sendBtn").onclick=()=>openSend(r);
+  bindCal(r);
+}
+function bindCal(r){
+  const seg=$("#seg9");if(!seg)return;
+  seg.querySelectorAll("button").forEach(b=>b.onclick=()=>{view9=b.dataset.v;paint9(r)});
+  paint9(r);
+}
+function paint9(r){
+  const box=$("#s9 .body");if(!box)return;
+  $("#seg9").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.v===view9)));
+  box.innerHTML=view9==="cal"?calendarHtml(r):md(r.sections[9]);
+  box.querySelectorAll("a.ics").forEach(a=>a.onclick=()=>{const e=r.events[+a.dataset.i];download((e.name.replace(/[^\w]+/g,"-"))+".ics",icsFor([e],r.company),"text/calendar")});
+  if($("#icsAll"))$("#icsAll").onclick=()=>download(fileBase(r)+"-events.ics",icsFor(r.events,r.company),"text/calendar");
+}
+function modal(html){const bg=document.createElement("div");bg.className="modal-bg";bg.innerHTML=`<div class="modal" role="dialog" aria-modal="true">${html}</div>`;document.body.appendChild(bg);
+  const close=()=>bg.remove();bg.addEventListener("click",e=>{if(e.target===bg)close()});document.addEventListener("keydown",function k(e){if(e.key==="Escape"){close();document.removeEventListener("keydown",k)}});return{bg,close}}
+async function getSettings(){try{settings=await api("/api/settings")}catch(e){settings=settings||{emailReady:false}}return settings}
+async function openSend(r){
+  const s=await getSettings();
+  const subj="Customized GPT USA by Gershon Consulting for "+r.company;
+  const m=modal(`<h2>Send by email</h2><p class="hint" style="font-size:13px">The full 12-point report goes in the email body, with the HTML version attached.</p>
+   ${s.emailReady?"":`<p style="margin:12px 0 0"><span class="status no">Email not set up</span> <button class="linkbtn" id="toSettings">Open Settings</button></p>`}
+   <label for="mto">To</label><input id="mto" placeholder="name@company.com, other@company.com">
+   <label for="mcc">CC</label><input id="mcc" value="${esc(s.cc||"")}">
+   <label for="msub">Subject</label><input id="msub" value="${esc(subj)}">
+   <label class="check"><input type="checkbox" id="mintro" checked> <span>Start with the Customized GPT USA introduction for prospects (Ahead of your meeting with Olivier Attia…)</span></label>
+   <div class="err" id="merr"></div>
+   <div class="row"><button class="btn btn-ghost" id="mcopy">Copy instead</button><button class="btn btn-ghost" id="mcancel">Cancel</button><button class="btn btn-primary" id="msend" ${s.emailReady?"":"disabled"}>Send</button></div>`);
+  $("#mto").focus();$("#mcancel").onclick=m.close;
+  $("#mcopy").onclick=()=>{copyEmail(r);m.close()};
+  if($("#toSettings"))$("#toSettings").onclick=()=>{m.close();openSettings()};
+  $("#msend").onclick=async()=>{const b=$("#msend");b.disabled=true;b.textContent="Sending…";$("#merr").textContent="";
+    const toList=$("#mto").value;try{const intro=$("#mintro").checked;await api(`/api/reports/${r.slug}/email`,{method:"POST",body:JSON.stringify({to:$("#mto").value,cc:$("#mcc").value,subject:$("#msub").value,html:docBody(r,intro),docHtml:docHtml(r,false)})});m.close();toast("Email sent to "+toList)}
+    catch(e){$("#merr").textContent=e.message;b.disabled=false;b.textContent="Send"}};
+}
+async function openSettings(){
+  const s=await getSettings();
+  const m=modal(`<h2>Settings</h2><p style="margin:10px 0 0">Email: <span class="status ${s.emailReady?"ok":"no"}">${s.emailReady?"✓ Ready":"Not set up"}</span></p>
+   ${s.keyFromSecret?'<p class="hint">The Resend key is set on the server.</p>':`<label for="skey">Resend API key <span>${s.emailReady?"(saved — paste a new one to replace it)":""}</span></label><input id="skey" type="password" placeholder="re_…" autocomplete="off"><p class="hint">Same Resend account as events.gershon.ai. The key is stored on the server and never shown again.</p>`}
+   <label for="sname">Sender name</label><input id="sname" value="${esc(s.fromName||"ICP by Gershon.AI")}">
+   <label for="sfrom">Sender address</label><input id="sfrom" value="${esc(s.fromEmail||"icp@gershon.ai")}">
+   <label for="scc">Default CC</label><input id="scc" value="${esc(s.cc||"")}">
+   <div class="err" id="serr"></div>
+   <div class="row"><button class="btn btn-ghost" id="scancel">Close</button><button class="btn btn-primary" id="ssave">Save</button></div>`);
+  $("#scancel").onclick=m.close;
+  $("#ssave").onclick=async()=>{try{await api("/api/settings",{method:"POST",body:JSON.stringify({resendKey:$("#skey")?$("#skey").value:"",fromName:$("#sname").value,fromEmail:$("#sfrom").value,cc:$("#scc").value})});await getSettings();m.close();toast("Settings saved")}catch(e){$("#serr").textContent=e.message}};
+}
+
 start();
 
 </script>
