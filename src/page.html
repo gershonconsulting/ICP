@@ -120,6 +120,9 @@ section.s>h3 .n{width:34px;height:34px;border-radius:10px;background:var(--grad)
 .sn-t{min-width:0;flex:1}.sn-t b{display:block;font-size:14.5px}.sn-t small{color:var(--muted);font-size:12.5px}
 .sn-a{display:flex;gap:8px;flex-wrap:wrap}.sn-a .btn{padding:.5rem .85rem;font-size:.85rem;border-radius:10px}
 .body .sn-a a.btn-primary{color:#fff}.body .sn-a a.btn-ghost{color:var(--text)}
+.sn-raw{display:block;width:100%;font-size:10.5px;color:var(--muted);word-break:break-all;margin-top:6px;font-family:ui-monospace,Menlo,monospace}
+.sn-h{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:18px 0 8px;font-weight:700}
+.sn-note{border-left:3px solid #e0a100;background:rgba(224,161,0,.08);padding:10px 12px;border-radius:8px;font-size:13px;margin-top:12px}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--bg);color:#fff;padding:11px 18px;border-radius:12px;font-size:14px;display:none;box-shadow:var(--shadow);z-index:50}
 .gate{min-height:100vh;display:grid;place-items:center;padding:24px;background:radial-gradient(1200px 600px at 78% -10%,#1b2a63 0,transparent 55%),linear-gradient(180deg,#0b1020,#0e1734)}
 .gate .panel{width:100%;max-width:400px;box-shadow:0 30px 80px rgba(0,0,0,.4)}
@@ -210,6 +213,31 @@ function liUrl(k){
     +"),keywords:"+restli(snKeywords(k))+")";
   return "https://www.linkedin.com/sales/search/people?query="+encodeURIComponent(q)+"&viewAllFilters=true";
 }
+
+// --- Sales Navigator rule set (config/salesnav-rules.md): verified IDs only, never invented ---
+const SN_VERIFIED="Senior + CXO · North America · 2nd-degree connections";
+const PERSONAS=[
+ {label:"CEO / Founder",keywords:"CEO, Chief Executive Officer, Founder, Co-Founder, President"},
+ {label:"COO / Operations",keywords:"COO, Chief Operating Officer, VP Operations, Head of Operations"},
+ {label:"VP / Director (Business Development)",keywords:"VP Business Development, Director of Business Development, Head of Partnerships, VP Strategy"},
+ {label:"Procurement",keywords:"Chief Procurement Officer, VP Procurement, Head of Procurement, Purchasing Director, Sourcing Director"},
+ {label:"Technology",keywords:"CTO, Chief Technology Officer, CIO, VP Engineering, Head of R&D"},
+ {label:"CFO / Finance",keywords:"CFO, Chief Financial Officer, VP Finance, Finance Director"}];
+function icpIndustries(r){const t=String((r.sections||{})[3]||"").split("\n").filter(l=>/^\s*\|/.test(l));if(t.length<3)return[];
+  const cells=l=>l.split("|").slice(1,-1).map(c=>c.replace(/\*/g,"").trim());const h=cells(t[0]).map(x=>x.toLowerCase());const i=h.findIndex(x=>x.includes("industry"));if(i<0)return[];
+  return t.slice(2).map(l=>cells(l)[i]).filter(Boolean).slice(0,6)}
+function snMapping(r){const ind=icpIndustries(r);return[
+ ["Geography","USA","REGION","In link: North America (USA ID not verified yet)"],
+ ["Seniority","Senior, CXO","SENIORITY_LEVEL","In link"],
+ ["Warm connections","2nd degree","RELATIONSHIP","In link"],
+ ["Role / title","Per persona and segment","Keywords","In link (as keywords; TITLE IDs not verified)"],
+ ["Industry",ind.join(", ")||"See ICP table","INDUSTRY","Apply manually"],
+ ["Company size","Per ICP","COMPANY_HEADCOUNT","Apply manually"],
+ ["Department","Per persona","FUNCTION","Apply manually"],
+ ["Exclusions","Competitors, recruiters, consultants, students","EXCLUDED","Apply manually"]]}
+function snManualNote(r){const ind=icpIndustries(r);return "Apply manually in Sales Navigator after opening a link: Region = United States"+(ind.length?" · Industry = "+ind.join(", "):"")+" · Company headcount (per ICP) · exclude competitors, recruiters, consultants and students. These filters have no verified LinkedIn ID yet, so they are not put in the link."}
+function snRow(x,kind,i){const u=liUrl(x.keywords);return `<div class="sn"><div class="sn-t"><b>${esc(x.label)}</b><small>Keywords: ${esc(snKeywords(x.keywords))}</small></div><div class="sn-a"><a class="btn btn-primary" href="${u}" target="_blank" rel="noopener">Open in Sales Navigator ↗</a><a class="btn btn-ghost" href="${liFallback(x.keywords)}" target="_blank" rel="noopener">LinkedIn search ↗</a><button class="btn btn-ghost sn-copy" data-k="${kind}" data-i="${i}" title="Copy the Sales Navigator link">⧉</button></div><span class="sn-raw">${esc(u)}</span></div>`}
+function snMapTable(r){return '<div class="tbl"><table><thead><tr><th>ICP</th><th>Value</th><th>Sales Navigator filter</th><th>Status</th></tr></thead><tbody>'+snMapping(r).map(a=>"<tr>"+a.map(c=>"<td>"+esc(c)+"</td>").join("")+"</tr>").join("")+"</tbody></table></div>"}
 function liFallback(k){return "https://www.linkedin.com/search/results/people/?keywords="+encodeURIComponent(snKeywords(k))+"&origin=GLOBAL_SEARCH_HEADER"}
 const fmtDate=(d,o)=>new Date(d).toLocaleDateString("en-US",o||{day:"numeric",month:"long",year:"numeric"});
 async function api(path,opt={}){const r=await fetch(path,{...opt,headers:{"content-type":"application/json"},credentials:"same-origin"});let d={};try{d=await r.json()}catch(e){}if(!r.ok)throw Object.assign(new Error(d.error||("Error "+r.status)),{status:r.status});return d}
@@ -267,13 +295,13 @@ function render(r,isBusy){
   const toc=SECTIONS.map((t,i)=>`<li><a href="#s${i+1}" class="${isBusy&&!r.sections[i+1]&&i!==10?"busy":""}"><b>${String(i+1).padStart(2,"0")}</b>${esc(t)}</a></li>`).join("");
   const skel='<div class="skel" style="width:92%"></div><div class="skel" style="width:78%"></div><div class="skel" style="width:85%"></div>';
   const secs=SECTIONS.map((t,i)=>{const n=i+1;let b;
-    if(n===11){const L=r.searches||[];b=L.length?'<p>Sales Navigator people searches: Senior and CXO, North America, 2nd-degree connections, one per segment. Each opens the search directly in a new tab.</p><div class="links">'+L.map((x,i)=>`<div class="sn"><div class="sn-t"><b>${esc(x.label)}</b><small>Keywords: ${esc(snKeywords(x.keywords))}</small></div><div class="sn-a"><a class="btn btn-primary" href="${liUrl(x.keywords)}" target="_blank" rel="noopener">Open in Sales Navigator ↗</a><a class="btn btn-ghost" href="${liFallback(x.keywords)}" target="_blank" rel="noopener">LinkedIn search ↗</a><button class="btn btn-ghost sn-copy" data-i="${i}" title="Copy the Sales Navigator link">⧉</button></div></div>`).join("")+"</div>":(isBusy?skel:'<p class="hint">No searches.</p>')}
+    if(n===11){const L=r.searches||[];b='<p>All links use only verified LinkedIn filters ('+SN_VERIFIED+'). One search per persona and one per ICP segment, each opening directly in a new tab.</p><div class="sn-h">ICP → filter mapping</div>'+snMapTable(r)+'<div class="sn-h">Persona searches</div><div class="links">'+PERSONAS.map((x,i)=>snRow(x,"p",i)).join("")+'</div><div class="sn-h">ICP segment searches</div>'+(L.length?'<div class="links">'+L.map((x,i)=>snRow(x,"s",i)).join("")+"</div>":(isBusy?skel:'<p class="hint">No segment searches.</p>'))+'<div class="sn-note">'+esc(snManualNote(r))+'</div>'}
     else b=r.sections[n]?md(r.sections[n]):(isBusy?skel:'<p class="hint">Not generated — use Run again.</p>');
     const seg=(n===9&&!isBusy)?`<span class="seg" id="seg9"><button data-v="list" aria-pressed="true">List</button><button data-v="cal" aria-pressed="false">Calendar</button></span>`:"";
     return `<section class="s" id="s${n}"><h3><span class="n">${String(n).padStart(2,"0")}</span>${esc(t)}${seg}</h3><div class="body">${b}</div></section>`}).join("");
   $("#main").innerHTML=`<div class="rhead"><div class="eyebrow">USA Market Launch · 12-point analysis</div><h2>${esc(r.company)}</h2><div class="meta">${pills}</div>${isBusy?'<p class="pending" style="margin:14px 0 0">Reading the website and writing the analysis — about a minute.</p>':""}</div>
   <div class="report"><nav class="toc" aria-label="Sections"><ol>${toc}</ol></nav><div class="secs">${secs}</div></div>`;
-  document.querySelectorAll(".sn-copy").forEach(b=>b.onclick=async()=>{try{await navigator.clipboard.writeText(liUrl(r.searches[+b.dataset.i].keywords));toast("Sales Navigator link copied")}catch(e){toast("Copy blocked by the browser")}});
+  document.querySelectorAll(".sn-copy").forEach(b=>b.onclick=async()=>{try{await navigator.clipboard.writeText(liUrl((b.dataset.k==="p"?PERSONAS:r.searches)[+b.dataset.i].keywords));toast("Sales Navigator link copied")}catch(e){toast("Copy blocked by the browser")}});
   if(!isBusy){$("#copyEmail").onclick=()=>copyEmail(r);$("#rerun").onclick=()=>showNew({url:r.url,name:r.company});bindReportActions(r)}
 }
 function emailHtml(r){
@@ -360,7 +388,7 @@ function icsFor(list,company){
 function download(name,content,type){const b=content instanceof Blob?content:new Blob([content],{type});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500)}
 const fileBase=r=>(r.company||"report").replace(/[^\w]+/g,"-").replace(/^-|-$/g,"")+"-ICP-"+(r.createdAt||"").slice(0,10);
 
-function snHtml(r){return '<p style="margin:0 0 8px">Sales Navigator people searches: Senior and CXO, North America, 2nd-degree connections.</p>'+(r.searches||[]).map(x=>`<p style="margin:0 0 10px"><b>${esc(x.label)}</b> — keywords: ${esc(snKeywords(x.keywords))}<br><a href="${liUrl(x.keywords)}" target="_blank">Open in Sales Navigator</a> · <a href="${liFallback(x.keywords)}" target="_blank">Standard LinkedIn search</a><br><span style="font-size:10.5px;color:#5b6478;word-break:break-all">${esc(liUrl(x.keywords))}</span></p>`).join("")}
+function snHtml(r){const row=x=>`<p style="margin:0 0 10px"><b>${esc(x.label)}</b> — keywords: ${esc(snKeywords(x.keywords))}<br><a href="${liUrl(x.keywords)}" target="_blank">Open in Sales Navigator</a> · <a href="${liFallback(x.keywords)}" target="_blank">Standard LinkedIn search</a><br><span style="font-size:10.5px;color:#5b6478;word-break:break-all">${esc(liUrl(x.keywords))}</span></p>`;const td='style="border:1px solid #e6e9f2;padding:6px 8px;font-size:12.5px"';return '<p style="margin:0 0 8px">Verified filters in every link: '+SN_VERIFIED+'.</p><p style="margin:12px 0 6px;font-weight:700">ICP → filter mapping</p><table style="border-collapse:collapse;width:100%;margin-bottom:12px">'+snMapping(r).map(a=>"<tr>"+a.map(c=>`<td ${td}>${esc(c)}</td>`).join("")+"</tr>").join("")+'</table><p style="margin:12px 0 6px;font-weight:700">Persona searches</p>'+PERSONAS.map(row).join("")+'<p style="margin:12px 0 6px;font-weight:700">ICP segment searches</p>'+(r.searches||[]).map(row).join("")+'<p style="margin:10px 0;padding:8px 10px;background:#fff7e0;border-left:3px solid #e0a100;font-size:12.5px">'+esc(snManualNote(r))+'</p>'}
 // Standalone, printable report document (used for HTML download, PDF and the email attachment)
 function docBody(r,intro,pdf){
   const tbl='style="border-collapse:collapse;width:100%;font-size:13px;margin:8px 0 14px"';
