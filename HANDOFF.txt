@@ -1,4 +1,4 @@
-ICP.gershon.ai — HANDOFF (v1.0.2, 2026-10-06)
+ICP.gershon.ai — HANDOFF (v1.4.0 page, 2026-10-07)
 ==============================================
 
 LIVE: https://icp.gershon.ai  (also https://icp-gershon-ai.oattia.workers.dev)
@@ -14,20 +14,26 @@ WHAT IT IS
 HOW IT DEPLOYS (no tokens, no GitHub secrets)
 - Cloudflare Workers Builds is connected to this repo (Worker "icp-gershon-ai", account oattia@gmail.com, branch main,
   deploy command "npx wrangler deploy"). KV "icp-gershon-ai-store" (4bf369dab5d8439a959f5af7b7ed7d95) was auto-provisioned.
-- Cloudflare shows the GitHub connection as "disconnected" (needs a GitHub re-authorization by Olivier), so pushes do not
-  auto-trigger yet. Workaround in place: Deploy Hook "claude-deploy" (main) — POST to it after each push:
-  Cloudflare → icp-gershon-ai → Settings → Builds → Deploy Hooks.
+- Cloudflare shows the GitHub connection as "disconnected", so pushes do not auto-trigger. After each push, POST the
+  Deploy Hook "claude-deploy" (main): Cloudflare → icp-gershon-ai → Settings → Builds → Deploy Hooks.
 - GitHub Actions (.github/workflows/tests.yml) runs the unit tests on every push.
 
+SALES NAVIGATOR (section 11) — rules in config/salesnav-rules.md
+- Only verified LinkedIn IDs go in links: 120 Senior, 310 CXO, 102221843 North America, S 2nd-degree. Never invent IDs.
+- Section 11 shows: ICP → filter mapping table, 6 persona searches (CEO/Founder, COO, VP/Director BD, Procurement,
+  Technology, CFO), the AI's ICP segment searches, raw URL under each link, fallback LinkedIn search, and a
+  "apply manually" note (USA, industries from section 3, headcount, exclusions). Same content in PDF/HTML/email.
+- To add a verified ID: put it in config/salesnav-rules.md and in liUrl()/snMapping() in src/page.html.
+
 DONE ✅
-- ✅ v1.0.2 live on icp.gershon.ai; live self-test: site read + all 11 AI sections + LinkedIn searches, no errors
+- ✅ v1.4.0 (page): Sales Navigator section rebuilt to the rule set, live 2026-10-07
+- ✅ v1.3.0: Sales Navigator links fixed (Rest.li encoding), PDF/HTML/.ics downloads, email sending, settings, verified US events
 - ✅ Custom domain icp.gershon.ai attached by wrangler (routes custom_domain)
-- ✅ Prompt fixes: no instruction echo, events limited to the next 6 months
-- ✅ Prototype (claude.ai artifact): https://claude.ai/artifact/8Srmd5UsYJ8m9DBhHf3u8k
 
 OPEN ❌
+- ❌ Verified IDs still missing for USA, industry, company headcount, title, function — those filters are manual for now.
+- ❌ /api/health still reports 1.3.0 (VERSION constant in src/index.js not bumped; page is v1.4.0).
 - ❌ First visit to https://icp.gershon.ai asks for a team password — whoever opens it first chooses it (Olivier).
 - ❌ Some sites block automated reading (meteorbiotech.com → 403). App falls back to r.jina.ai, then asks to paste text in Notes.
-     Upgrade path: Cloudflare Browser Rendering binding.
 - ❌ Optional: re-authorize Cloudflare's GitHub app so pushes deploy without the hook.
 - ❌ Next idea: auto-run for Basil-coloured prospect calls on Olivier's calendar, draft the GPT USA email 48h before.
