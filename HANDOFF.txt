@@ -1,5 +1,25 @@
-ICP.gershon.ai — HANDOFF (v1.4.0 page, 2026-10-07)
+ICP.gershon.ai — HANDOFF (v1.5.0, updated 2026-10-23)
 ==============================================
+
+2026-10-23 nightly — v1.5.0 unified Gershon design (branch nightly/2026-10-23-icp-unified, PR open, NOT merged)
+-------------------------------------------------------------------------------------------------------
+READY TO TEST ✅
+- ✅ Landing page (/), sign-in screen, report dashboard and the side menu now use the unified Gershon design:
+  white 240px sidebar, red active pill for the open report, 12px white cards, text #1d1d1f, borders #e5e7eb,
+  brand red #CC3333 (dark #a8281f, tint #fdf2f2), red buttons, red focus rings. Blue/indigo/cyan removed (logo too).
+- ✅ Landing hero, "how it works" band, final call-to-action and footer switched from dark navy to white/red tint.
+- ✅ PDF / HTML download and the emailed report use the same red header and red section numbers.
+- ✅ Phone (390px): the report screen used to scroll sideways (431px wide, top-bar buttons overflowed). Fixed:
+  buttons wrap under the title, ☰ opens the menu, tapping outside closes it. No sideways scroll on any screen.
+- ✅ Version 1.5.0 (shown at the bottom of the side menu and in /api/health — also fixes the old 1.3.0 vs 1.4.0 mismatch).
+- ✅ Event colours in the calendar and green/orange status pills kept as they were (semantic colours).
+- Checked with Playwright at 1366px and 390px against sample data: no console errors, no sideways scroll; unit tests pass.
+- Preview (sample data, not live): Artifact "ICP Unified Design" — link in the PR.
+
+STILL OPEN ❌
+- ❌ Not deployed: after merging, POST the "claude-deploy" Deploy Hook (Cloudflare → icp-gershon-ai → Settings → Builds),
+  because the Cloudflare GitHub connection is still "disconnected".
+- ❌ Report emails still go out as "ICP by Gershon.AI" (they go to prospects, so not renamed to a "GC " sender).
 
 LIVE: https://icp.gershon.ai  (also https://icp-gershon-ai.oattia.workers.dev)
 Health: https://icp.gershon.ai/api/health   End-to-end check: https://icp.gershon.ai/api/selftest (max 1 run / 10 min)
@@ -32,7 +52,7 @@ DONE ✅
 
 OPEN ❌
 - ❌ Verified IDs still missing for USA, industry, company headcount, title, function — those filters are manual for now.
-- ❌ /api/health still reports 1.3.0 (VERSION constant in src/index.js not bumped; page is v1.4.0).
+- ✅ (fixed 2026-10-23) /api/health and the app now both report 1.5.0.
 - ❌ First visit to https://icp.gershon.ai asks for a team password — whoever opens it first chooses it (Olivier).
 - ❌ Some sites block automated reading (meteorbiotech.com → 403). App falls back to r.jina.ai, then asks to paste text in Notes.
 - ❌ Optional: re-authorize Cloudflare's GitHub app so pushes deploy without the hook.
