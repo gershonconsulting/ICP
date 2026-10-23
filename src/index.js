@@ -4,7 +4,7 @@ import PAGE from "./page.html";
 import HOME from "./home.html";
 import SEED from "./seed.json";
 
-export const VERSION = "1.3.0";
+export const VERSION = "1.5.0";
 const MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
 
 export const SECTIONS = ["Pitches creation","Problem identification","Ideal customer profiles","Market opportunity","Market entry justification","At a glance","Competition","Balanced scorecard","Tradeshow and conference opportunities","LinkedIn Sales Navigator","LinkedIn search links","Outreach email"];
