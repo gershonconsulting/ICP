@@ -197,48 +197,62 @@ function md(src){
     const para=[];while(i<lines.length&&lines[i].trim()&&!/^\s*(\||[-*]\s|#{1,4}\s)/.test(lines[i])){para.push(lines[i]);i++}
     out+="<p>"+para.map(inline).join("<br>")+"</p>";
   }return out}
-// Sales Navigator people search, built exactly like the USA Market Launch GPT (Part 11):
-// Senior + CXO, North America, 2nd-degree connections, plus the segment keywords.
+// Sales Navigator people search. Structure and IDs verified live in Sales Navigator on 2026-10-28
+// (every chip rendered: Current job title, Owner / Partner, CXO, Vice President, Director, United States, 2nd degree).
+// Titles go in the CURRENT_TITLE filter (free text, no ID needed); industry terms go in keywords, joined with OR.
 // The query is Rest.li: values are percent-encoded once inside the query, then the whole query is URL-encoded.
-function snKeywords(k){
-  const parts=String(k||"").split(/\s*[,;|]\s*/).map(x=>x.trim()).filter(Boolean);
-  return parts.length>1?parts.map(x=>/\s/.test(x)?`"${x}"`:x).join(" OR "):(parts[0]||"");
-}
+const SN_SEN=[[320,"Owner / Partner"],[310,"CXO"],[300,"Vice President"],[220,"Director"]];
+const SN_VERIFIED="United States · Owner/Partner, CXO, VP, Director · current job title";
 function restli(v){return encodeURIComponent(v).replace(/[()'!*]/g,c=>"%"+c.charCodeAt(0).toString(16).toUpperCase())}
-function liUrl(k){
-  const q="(recentSearchParam:(doLogHistory:true),filters:List("
-    +"(type:SENIORITY_LEVEL,values:List((id:120,text:Senior,selectionType:INCLUDED),(id:310,text:CXO,selectionType:INCLUDED))),"
-    +"(type:REGION,values:List((id:102221843,text:North%20America,selectionType:INCLUDED))),"
-    +"(type:RELATIONSHIP,values:List((id:S,text:2nd%20degree%20connections,selectionType:INCLUDED)))"
-    +"),keywords:"+restli(snKeywords(k))+")";
+const SN_STOP=new Set("a an and the of for in on at to with or by & head director directors vp vice president chief officer manager managers lead leader ceo coo cfo cto cio cso cmo founder founders co-founder owner partner senior principal svp evp executive".split(" "));
+function snTerms(k){
+  let parts=String(k||"").split(/\s*[,;|]\s*/).map(x=>x.replace(/["*]/g,"").trim()).filter(Boolean);
+  // Older reports stored one long phrase ("spatial biology core facility director"): LinkedIn reads that as AND of every word.
+  if(parts.length===1&&parts[0].split(/\s+/).length>3)parts=parts[0].split(/\s+/).filter(w=>!SN_STOP.has(w.toLowerCase()));
+  return [...new Set(parts.map(x=>x.toLowerCase()))].slice(0,6);
+}
+const snOr=list=>list.map(x=>/\s/.test(x)?`"${x}"`:x).join(" OR ");
+function snUrl(x,warm){
+  const v=(id,t)=>`(${id!=null?"id:"+id+",":""}text:${restli(t)},selectionType:INCLUDED)`;
+  const f=[`(type:SENIORITY_LEVEL,values:List(${SN_SEN.map(a=>v(a[0],a[1])).join(",")}))`,`(type:REGION,values:List(${v(103644278,"United States")}))`];
+  if((x.titles||[]).length)f.push(`(type:CURRENT_TITLE,values:List(${x.titles.slice(0,8).map(t=>v(null,t)).join(",")}))`);
+  if(warm)f.push(`(type:RELATIONSHIP,values:List(${v("S","2nd degree connections")}))`);
+  const kw=snOr(x.terms||[]);
+  const q="(recentSearchParam:(doLogHistory:true),filters:List("+f.join(",")+")"+(kw?",keywords:"+restli(kw):"")+")";
   return "https://www.linkedin.com/sales/search/people?query="+encodeURIComponent(q)+"&viewAllFilters=true";
 }
-
-// --- Sales Navigator rule set (config/salesnav-rules.md): verified IDs only, never invented ---
-const SN_VERIFIED="Senior + CXO · North America · 2nd-degree connections";
 const PERSONAS=[
- {label:"CEO / Founder",keywords:"CEO, Chief Executive Officer, Founder, Co-Founder, President"},
- {label:"COO / Operations",keywords:"COO, Chief Operating Officer, VP Operations, Head of Operations"},
- {label:"VP / Director (Business Development)",keywords:"VP Business Development, Director of Business Development, Head of Partnerships, VP Strategy"},
- {label:"Procurement",keywords:"Chief Procurement Officer, VP Procurement, Head of Procurement, Purchasing Director, Sourcing Director"},
- {label:"Technology",keywords:"CTO, Chief Technology Officer, CIO, VP Engineering, Head of R&D"},
- {label:"CFO / Finance",keywords:"CFO, Chief Financial Officer, VP Finance, Finance Director"}];
+ {label:"CEO / Founder",titles:["CEO","Chief Executive Officer","Founder","President","Managing Director"]},
+ {label:"COO / Operations",titles:["COO","Chief Operating Officer","VP Operations","Head of Operations","Director of Operations"]},
+ {label:"VP / Director (Business Development)",titles:["VP Business Development","Director of Business Development","Head of Partnerships","Chief Commercial Officer","VP Sales"]},
+ {label:"Procurement",titles:["Chief Procurement Officer","VP Procurement","Head of Procurement","Purchasing Director","Sourcing Director"]},
+ {label:"Technology",titles:["CTO","Chief Technology Officer","CIO","VP Engineering","Head of R&D"]},
+ {label:"CFO / Finance",titles:["CFO","Chief Financial Officer","VP Finance","Finance Director"]}];
+// Titles per segment come from section 10 ("### Segment" then "Titles: a, b, c").
+function snSection10(r){const out=[];let cur=null;for(const l of String((r.sections||{})[10]||"").split("\n")){const h=l.match(/^\s*#{2,4}\s*(.+)/);if(h){cur={label:h[1].replace(/\*/g,"").trim(),titles:[]};out.push(cur);continue}
+  const t=l.match(/^\s*[-*]?\s*\**Titles?\**\s*:\**\s*(.+)/i);if(t&&cur)cur.titles=t[1].replace(/\*/g,"").split(/\s*[,;]\s*/).map(x=>x.trim()).filter(Boolean)}return out}
+// Persona searches: the lead term of each segment, max 4 (tested: 8 OR terms returned 59K loose matches, 3-4 lead terms ~1K on-target).
+function snIndustryTerms(r){const all=[];for(const s of r.searches||[]){const t=snTerms(s.keywords)[0];if(t)all.push(t)}return [...new Set(all)].slice(0,4)}
+function snSegments(r){const s10=snSection10(r),norm=x=>String(x).toLowerCase().replace(/[^a-z0-9]/g,"");
+  return (r.searches||[]).map((s,i)=>{const m=s10.find(x=>norm(x.label)===norm(s.label))||s10[i]||{titles:[]};return {label:s.label,titles:m.titles.slice(0,6),terms:snTerms(s.keywords)}})}
+function snPersonas(r){const terms=snIndustryTerms(r);return PERSONAS.map(p=>({label:p.label,titles:p.titles,terms}))}
 function icpIndustries(r){const t=String((r.sections||{})[3]||"").split("\n").filter(l=>/^\s*\|/.test(l));if(t.length<3)return[];
   const cells=l=>l.split("|").slice(1,-1).map(c=>c.replace(/\*/g,"").trim());const h=cells(t[0]).map(x=>x.toLowerCase());const i=h.findIndex(x=>x.includes("industry"));if(i<0)return[];
   return t.slice(2).map(l=>cells(l)[i]).filter(Boolean).slice(0,6)}
 function snMapping(r){const ind=icpIndustries(r);return[
- ["Geography","USA","REGION","In link: North America (USA ID not verified yet)"],
- ["Seniority","Senior, CXO","SENIORITY_LEVEL","In link"],
- ["Warm connections","2nd degree","RELATIONSHIP","In link"],
- ["Role / title","Per persona and segment","Keywords","In link (as keywords; TITLE IDs not verified)"],
- ["Industry",ind.join(", ")||"See ICP table","INDUSTRY","Apply manually"],
+ ["Geography","USA","REGION","In link: United States"],
+ ["Seniority","Owner/Partner, CXO, VP, Director","SENIORITY_LEVEL","In link"],
+ ["Role / title","Per persona and segment","CURRENT_TITLE","In link"],
+ ["Industry",ind.join(", ")||"See ICP table","Keywords (OR)","In link as keywords (INDUSTRY IDs not verified)"],
+ ["Warm connections","2nd degree","RELATIONSHIP","Second button on each row"],
  ["Company size","Per ICP","COMPANY_HEADCOUNT","Apply manually"],
- ["Department","Per persona","FUNCTION","Apply manually"],
  ["Exclusions","Competitors, recruiters, consultants, students","EXCLUDED","Apply manually"]]}
-function snManualNote(r){const ind=icpIndustries(r);return "Apply manually in Sales Navigator after opening a link: Region = United States"+(ind.length?" · Industry = "+ind.join(", "):"")+" · Company headcount (per ICP) · exclude competitors, recruiters, consultants and students. These filters have no verified LinkedIn ID yet, so they are not put in the link."}
-function snRow(x,kind,i){const u=liUrl(x.keywords);return `<div class="sn"><div class="sn-t"><b>${esc(x.label)}</b><small>Keywords: ${esc(snKeywords(x.keywords))}</small></div><div class="sn-a"><a class="btn btn-primary" href="${u}" target="_blank" rel="noopener">Open in Sales Navigator ↗</a><a class="btn btn-ghost" href="${liFallback(x.keywords)}" target="_blank" rel="noopener">LinkedIn search ↗</a><button class="btn btn-ghost sn-copy" data-k="${kind}" data-i="${i}" title="Copy the Sales Navigator link">⧉</button></div><span class="sn-raw">${esc(u)}</span></div>`}
+function snManualNote(r){return "Optional, apply in Sales Navigator after opening a link: Company headcount (per ICP) and exclusions (competitors, recruiters, consultants, students). Everything else is already in the link."}
+const snDesc=x=>(x.titles.length?"Titles: "+x.titles.join(", "):"")+(x.terms.length?(x.titles.length?" · ":"")+"Keywords: "+snOr(x.terms):"");
+function snRow(x,kind,i){const u=snUrl(x);return `<div class="sn"><div class="sn-t"><b>${esc(x.label)}</b><small>${esc(snDesc(x))}</small></div><div class="sn-a"><a class="btn btn-primary" href="${u}" target="_blank" rel="noopener">Open in Sales Navigator ↗</a><a class="btn btn-ghost" href="${snUrl(x,true)}" target="_blank" rel="noopener" title="Same search, 2nd-degree connections only">2nd° only ↗</a><button class="btn btn-ghost sn-copy" data-k="${kind}" data-i="${i}" title="Copy the Sales Navigator link">⧉</button></div><span class="sn-raw">${esc(u)}</span></div>`}
 function snMapTable(r){return '<div class="tbl"><table><thead><tr><th>ICP</th><th>Value</th><th>Sales Navigator filter</th><th>Status</th></tr></thead><tbody>'+snMapping(r).map(a=>"<tr>"+a.map(c=>"<td>"+esc(c)+"</td>").join("")+"</tr>").join("")+"</tbody></table></div>"}
-function liFallback(k){return "https://www.linkedin.com/search/results/people/?keywords="+encodeURIComponent(snKeywords(k))+"&origin=GLOBAL_SEARCH_HEADER"}
+// Customized GPT USA introduction — word for word as Aina sends it (ImaageQ email, 2026-10-02).
+const GPT_INTRO=`<p>Hi [First Name],</p><p>Ahead of your meeting with Olivier Attia, we'd like to share a tool we've been developing internally to support companies exploring expansion into the US market.</p><p>The content below was generated using our proprietary GPT for US Market Expansion. We invite you to test it and explore some of the insights it can provide regarding your company and potential US market opportunities.</p><p>The direct link is:<br><a href="https://bit.ly/GPTUSA">https://bit.ly/GPTUSA</a></p><p>This GPT, called USA Market Launch, can only be used with GPT-4. You must have access to the GPTs section in the top left corner of chat.openai.com to use it.</p><p>We use ChatGPT extensively across our US market development campaigns and are now building dedicated GPTs for our clients and their specific growth initiatives.</p><p>The content below has been prepared specifically for your company. We would greatly appreciate your feedback, either by email or during your discussion with Olivier, as it will help us continue improving the tool.</p>`;
 const fmtDate=(d,o)=>new Date(d).toLocaleDateString("en-US",o||{day:"numeric",month:"long",year:"numeric"});
 async function api(path,opt={}){const r=await fetch(path,{...opt,headers:{"content-type":"application/json"},credentials:"same-origin"});let d={};try{d=await r.json()}catch(e){}if(!r.ok)throw Object.assign(new Error(d.error||("Error "+r.status)),{status:r.status});return d}
 function toast(t){const el=$("#toast");el.textContent=t;el.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(()=>el.style.display="none",4200)}
@@ -295,17 +309,17 @@ function render(r,isBusy){
   const toc=SECTIONS.map((t,i)=>`<li><a href="#s${i+1}" class="${isBusy&&!r.sections[i+1]&&i!==10?"busy":""}"><b>${String(i+1).padStart(2,"0")}</b>${esc(t)}</a></li>`).join("");
   const skel='<div class="skel" style="width:92%"></div><div class="skel" style="width:78%"></div><div class="skel" style="width:85%"></div>';
   const secs=SECTIONS.map((t,i)=>{const n=i+1;let b;
-    if(n===11){const L=r.searches||[];b='<p>All links use only verified LinkedIn filters ('+SN_VERIFIED+'). One search per persona and one per ICP segment, each opening directly in a new tab.</p><div class="sn-h">ICP → filter mapping</div>'+snMapTable(r)+'<div class="sn-h">Persona searches</div><div class="links">'+PERSONAS.map((x,i)=>snRow(x,"p",i)).join("")+'</div><div class="sn-h">ICP segment searches</div>'+(L.length?'<div class="links">'+L.map((x,i)=>snRow(x,"s",i)).join("")+"</div>":(isBusy?skel:'<p class="hint">No segment searches.</p>'))+'<div class="sn-note">'+esc(snManualNote(r))+'</div>'}
+    if(n===11){const P=snPersonas(r),S=snSegments(r);b='<p>Every link opens Sales Navigator with these filters already applied: '+SN_VERIFIED+'. One search per persona and one per ICP segment. Use “2nd° only” for warm introductions.</p><div class="sn-h">ICP → filter mapping</div>'+snMapTable(r)+'<div class="sn-h">Persona searches</div><div class="links">'+P.map((x,i)=>snRow(x,"p",i)).join("")+'</div><div class="sn-h">ICP segment searches</div>'+(S.length?'<div class="links">'+S.map((x,i)=>snRow(x,"s",i)).join("")+"</div>":(isBusy?skel:'<p class="hint">No segment searches.</p>'))+'<div class="sn-note">'+esc(snManualNote(r))+'</div>'}
     else b=r.sections[n]?md(r.sections[n]):(isBusy?skel:'<p class="hint">Not generated — use Run again.</p>');
     const seg=(n===9&&!isBusy)?`<span class="seg" id="seg9"><button data-v="list" aria-pressed="true">List</button><button data-v="cal" aria-pressed="false">Calendar</button></span>`:"";
     return `<section class="s" id="s${n}"><h3><span class="n">${String(n).padStart(2,"0")}</span>${esc(t)}${seg}</h3><div class="body">${b}</div></section>`}).join("");
   $("#main").innerHTML=`<div class="rhead"><div class="eyebrow">USA Market Launch · 12-point analysis</div><h2>${esc(r.company)}</h2><div class="meta">${pills}</div>${isBusy?'<p class="pending" style="margin:14px 0 0">Reading the website and writing the analysis — about a minute.</p>':""}</div>
   <div class="report"><nav class="toc" aria-label="Sections"><ol>${toc}</ol></nav><div class="secs">${secs}</div></div>`;
-  document.querySelectorAll(".sn-copy").forEach(b=>b.onclick=async()=>{try{await navigator.clipboard.writeText(liUrl((b.dataset.k==="p"?PERSONAS:r.searches)[+b.dataset.i].keywords));toast("Sales Navigator link copied")}catch(e){toast("Copy blocked by the browser")}});
+  document.querySelectorAll(".sn-copy").forEach(b=>b.onclick=async()=>{try{await navigator.clipboard.writeText(snUrl((b.dataset.k==="p"?snPersonas(r):snSegments(r))[+b.dataset.i]));toast("Sales Navigator link copied")}catch(e){toast("Copy blocked by the browser")}});
   if(!isBusy){$("#copyEmail").onclick=()=>copyEmail(r);$("#rerun").onclick=()=>showNew({url:r.url,name:r.company});bindReportActions(r)}
 }
 function emailHtml(r){
-  const intro=`<p>Hi [First Name],</p><p>Ahead of your meeting with Olivier Attia, we'd like to share a tool we've been developing internally to support companies exploring expansion into the US market.</p><p>The content below was generated using our proprietary GPT for US Market Expansion. We invite you to test it and explore some of the insights it can provide regarding your company and potential US market opportunities.</p><p>The direct link is: <a href="https://bit.ly/GPTUSA">https://bit.ly/GPTUSA</a></p><p>The content below has been prepared specifically for your company. We would greatly appreciate your feedback, either by email or during your discussion with Olivier, as it will help us continue improving the tool.</p>`;
+  const intro=GPT_INTRO;
   return intro+SECTIONS.map((t,i)=>{const n=i+1;const c=n===11?snHtml(r):md(r.sections[n]);return `<h3>${n}. ${esc(t)}</h3>${c}`}).join("");
 }
 async function copyEmail(r){
@@ -388,13 +402,13 @@ function icsFor(list,company){
 function download(name,content,type){const b=content instanceof Blob?content:new Blob([content],{type});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500)}
 const fileBase=r=>(r.company||"report").replace(/[^\w]+/g,"-").replace(/^-|-$/g,"")+"-ICP-"+(r.createdAt||"").slice(0,10);
 
-function snHtml(r){const row=x=>`<p style="margin:0 0 10px"><b>${esc(x.label)}</b> — keywords: ${esc(snKeywords(x.keywords))}<br><a href="${liUrl(x.keywords)}" target="_blank">Open in Sales Navigator</a> · <a href="${liFallback(x.keywords)}" target="_blank">Standard LinkedIn search</a><br><span style="font-size:10.5px;color:#5b6478;word-break:break-all">${esc(liUrl(x.keywords))}</span></p>`;const td='style="border:1px solid #e6e9f2;padding:6px 8px;font-size:12.5px"';return '<p style="margin:0 0 8px">Verified filters in every link: '+SN_VERIFIED+'.</p><p style="margin:12px 0 6px;font-weight:700">ICP → filter mapping</p><table style="border-collapse:collapse;width:100%;margin-bottom:12px">'+snMapping(r).map(a=>"<tr>"+a.map(c=>`<td ${td}>${esc(c)}</td>`).join("")+"</tr>").join("")+'</table><p style="margin:12px 0 6px;font-weight:700">Persona searches</p>'+PERSONAS.map(row).join("")+'<p style="margin:12px 0 6px;font-weight:700">ICP segment searches</p>'+(r.searches||[]).map(row).join("")+'<p style="margin:10px 0;padding:8px 10px;background:#fff7e0;border-left:3px solid #e0a100;font-size:12.5px">'+esc(snManualNote(r))+'</p>'}
+function snHtml(r){const row=x=>`<p style="margin:0 0 10px"><b>${esc(x.label)}</b> — ${esc(snDesc(x))}<br><a href="${snUrl(x)}" target="_blank">Open in Sales Navigator</a> · <a href="${snUrl(x,true)}" target="_blank">2nd-degree connections only</a><br><span style="font-size:10.5px;color:#5b6478;word-break:break-all">${esc(snUrl(x))}</span></p>`;const td='style="border:1px solid #e6e9f2;padding:6px 8px;font-size:12.5px"';return '<p style="margin:0 0 8px">Filters in every link: '+SN_VERIFIED+'.</p><p style="margin:12px 0 6px;font-weight:700">ICP → filter mapping</p><table style="border-collapse:collapse;width:100%;margin-bottom:12px">'+snMapping(r).map(a=>"<tr>"+a.map(c=>`<td ${td}>${esc(c)}</td>`).join("")+"</tr>").join("")+'</table><p style="margin:12px 0 6px;font-weight:700">Persona searches</p>'+snPersonas(r).map(row).join("")+'<p style="margin:12px 0 6px;font-weight:700">ICP segment searches</p>'+snSegments(r).map(row).join("")+'<p style="margin:10px 0;padding:8px 10px;background:#fff7e0;border-left:3px solid #e0a100;font-size:12.5px">'+esc(snManualNote(r))+'</p>'}
 // Standalone, printable report document (used for HTML download, PDF and the email attachment)
 function docBody(r,intro,pdf){
   const tbl='style="border-collapse:collapse;width:100%;font-size:13px;margin:8px 0 14px"';
   const fix=h=>h.replace(/<div class="tbl"><table>/g,`<table ${tbl}>`).replace(/<\/table><\/div>/g,"</table>").replace(/<th>/g,'<th style="text-align:left;background:#f5f7fc;border:1px solid #e6e9f2;padding:7px 9px;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;color:#5b6478">').replace(/<td>/g,'<td style="border:1px solid #e6e9f2;padding:7px 9px;vertical-align:top">');
   const head=`<div style="border-radius:14px;padding:22px 24px;background:#0b1020;background-image:linear-gradient(120deg,#0b1020,#16245a);color:#fff;margin-bottom:18px"><div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#9fb3ff;font-weight:700">USA Market Launch · 12-point analysis</div><div style="font-size:26px;font-weight:800;letter-spacing:-.02em;margin-top:4px">${esc(r.company)}</div><div style="font-size:13px;color:#c3ccea;margin-top:6px">${esc(r.url)} · ${fmtDate(r.createdAt)}${r.window?" · Events "+esc(r.window):""}</div></div>`;
-  const introHtml=intro?`<div style="font-size:14px;line-height:1.6;margin-bottom:18px"><p>Hi [First Name],</p><p>Ahead of your meeting with Olivier Attia, we'd like to share a tool we've been developing internally to support companies exploring expansion into the US market.</p><p>The content below was generated using our proprietary GPT for US Market Expansion. We invite you to test it and explore some of the insights it can provide regarding your company and potential US market opportunities.</p><p>The direct link is: <a href="https://bit.ly/GPTUSA">https://bit.ly/GPTUSA</a></p><p>The content below has been prepared specifically for your company. We would greatly appreciate your feedback, either by email or during your discussion with Olivier, as it will help us continue improving the tool.</p></div>`:"";
+  const introHtml=intro?`<div style="font-size:14px;line-height:1.6;margin-bottom:18px">${GPT_INTRO}</div>`:"";
   const secs=SECTIONS.map((t,i)=>{const n=i+1;let c=n===11?snHtml(r):fix(md(r.sections[n]));
     return `<div data-sec style="page-break-inside:avoid;break-inside:avoid;border:1px solid #e6e9f2;border-radius:12px;padding:16px 18px;margin:0 0 12px"><div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><span style="display:inline-block;min-width:28px;height:28px;line-height:28px;text-align:center;border-radius:8px;background:#3b5bfd;color:#fff;font-weight:800;font-size:12px">${String(n).padStart(2,"0")}</span><b style="font-size:16px">${esc(t)}</b></div><div style="font-size:13.5px;line-height:1.6;color:#2a3247">${c}</div></div>`}).join("");
   return `<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,Helvetica,Arial,sans-serif;color:#1a2133;${pdf?"":"max-width:820px;margin:0 auto"}">${introHtml}${head}${secs}<div style="font-size:11.5px;color:#5b6478;margin-top:16px;text-align:center">Prepared by Gershon Consulting · icp.gershon.ai</div></div>`;

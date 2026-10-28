@@ -13,8 +13,20 @@ Reuse verified LinkedIn filter IDs. Never invent them.
 | SENIORITY_LEVEL | 310 | CXO |
 | REGION | 102221843 | North America |
 | RELATIONSHIP | S | 2nd degree connections |
+| SENIORITY_LEVEL | 320 | Owner / Partner (verified 2026-10-28) |
+| SENIORITY_LEVEL | 300 | Vice President (verified 2026-10-28) |
+| SENIORITY_LEVEL | 220 | Director (verified 2026-10-28) |
+| REGION | 103644278 | United States (verified 2026-10-28) |
+| CURRENT_TITLE | (no id) | free text, e.g. `(text:Director%20of%20Genomics,selectionType:INCLUDED)` (verified 2026-10-28) |
 
-No verified IDs yet for: USA, industries, titles, company headcount, function, company type, activity filters.
+Verified = opened in Sales Navigator and the chip rendered with the right label.
+No verified IDs yet for: industries, company headcount, function, company type, activity filters.
+
+## Lessons from the 2026-10-28 live test
+- Long keyword phrases are read as AND of every word: "spatial biology core facility director" + Senior/CXO + 2nd degree = 3 results. Put titles in CURRENT_TITLE and industry terms in keywords joined with OR.
+- "Senior" (120) is an individual-contributor level; buyers are Owner/Partner, CXO, VP, Director.
+- 8 OR keywords on a persona search = 59K loose matches; 3-4 lead industry terms = ~1K on-target.
+- 2nd degree is offered as a second link per row, not forced: it cut good segments to near zero.
 To add one: take a working Sales Navigator URL that contains the filter, record its id/text here with the date.
 
 ## Base structure (must be ONE line in any generated link)

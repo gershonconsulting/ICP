@@ -4,7 +4,7 @@ import PAGE from "./page.html";
 import HOME from "./home.html";
 import SEED from "./seed.json";
 
-export const VERSION = "1.3.0";
+export const VERSION = "1.5.0";
 const MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
 
 export const SECTIONS = ["Pitches creation","Problem identification","Ideal customer profiles","Market opportunity","Market entry justification","At a glance","Competition","Balanced scorecard","Tradeshow and conference opportunities","LinkedIn Sales Navigator","LinkedIn search links","Outreach email"];
@@ -19,8 +19,8 @@ const SPEC = {
 7:"A markdown table 'Category | Examples | Differentiation to test' with 3-4 categories of US competitors or substitutes, naming real companies. Then one paragraph on the key commercial distinction, to be tested with customers rather than assumed.",
 8:"Illustrative first-year targets as a markdown table 'Perspective | Objective | KPI and target' covering Financial, Customer, Internal processes, Learning and growth. Then name the first commercial initiative.",
 9:"One short paragraph on which kinds of US tradeshows and conferences matter most for this company and why (the dated event list is produced separately).",
-10:"LinkedIn Sales Navigator targeting split into 4-5 industry-specific campaigns. For each: a ### heading with the segment, then a 'Titles:' line and an 'Engagement signals:' line. End with one prioritization sentence.",
-12:"A short cold outreach email (under 140 words) written AS the company to a US prospect, with [First Name] and [Company Name] placeholders, a specific hook, and a 20-minute meeting ask. Plain paragraphs."
+10:"LinkedIn Sales Navigator targeting split into 4-5 industry-specific campaigns. For each: a ### heading with the segment, then a 'Titles:' line listing 3-5 short real LinkedIn job titles separated by commas (e.g. Director of Genomics, Head of Spatial Biology) and an 'Engagement signals:' line. End with one prioritization sentence.",
+12:"The outreach email the company sends to a US prospect, in the exact style of the USA Market Launch GPT: short, warm, executive, one idea per paragraph, no hype words, no bullet points, under 120 words. Follow this structure exactly, each part its own paragraph:\nHi [First Name],\nI'm reaching out from <Company>, a <HQ city or country>-based <what the company is, in plain words> <one credibility anchor from the website, e.g. years of experience, origin, flagship product>.\nWe believe <the company's conviction about its market, in one short sentence>.\nWe're bringing that to <the US / the initial ICP> <one concrete proof point from the website: live customers, deployments, a US site, a partner>, while <one line on what comes next>.\nGiven [Company Name]'s work in [specific project or sector], I thought there could be an interesting opportunity to explore how <our product> might <complement or support> your <relevant activity>.\nWould you be open to a 20-minute introductory conversation next week?\nBest regards,\n[Your Name]\n<Company>\n<company domain>\nOnly use facts from the website or notes; never invent customers or figures."
 };
 
 const json = (d, s = 200) => new Response(JSON.stringify(d), { status: s, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
@@ -89,7 +89,7 @@ export function windowBounds(now = new Date()) {
 export function buildPrompt(group, { url, name, notes, site, win, today }) {
   const want = group.map(n => `Section ${n} (${SECTIONS[n - 1]}): ${SPEC[n]}`).join("\n");
   const markers = group.map(n => `=== SECTION ${n} ===`).join(", ");
-  let extra = group.includes(10) ? `\n=== SEARCHES === 4-5 lines, one per Sales Navigator segment, each "Segment name | keywords", where keywords are 1-4 short job-title or role phrases from the ICP separated by commas (for example: Head of Translational Medicine, Biomarker Discovery).` : "";
+  let extra = group.includes(10) ? `\n=== SEARCHES === 4-5 lines, one per Sales Navigator segment, each "Segment name | keywords", using exactly the same segment names as the ### headings of section 10, where keywords are 2-4 short INDUSTRY or TOPIC terms (not job titles) that people in that segment put in their LinkedIn profile, separated by commas (for example: spatial biology, genomics, single cell).` : "";
   if (group.includes(9)) extra += `\n=== EVENTS === 5-7 lines, one per real US tradeshow or conference taking place within ${win}, each exactly "Event name | start YYYY-MM-DD | end YYYY-MM-DD | City, State | importance 1-5 | official website URL". US locations only.`;
   return `You are the "USA Market Launch" analyst of Gershon Consulting, a New York firm that helps non-US companies enter the US market through LinkedIn outbound and commercial representation. Today is ${today}. US campaign window for events: ${win}.
 
@@ -215,10 +215,10 @@ const SEED_EVENTS = [
 ];
 const SEED_9 = "For Meteor, the right rooms are where spatial-biology users and buyers meet: immuno-oncology and cancer research meetings (tumor microenvironment teams), genomics technology meetings (core directors and sequencing leaders) and lab instrumentation shows (core facility and automation buyers). USCAP 2027 is relevant for pathology but takes place in Vancouver, Canada, so it is outside this US list.";
 async function ensureSeed(env) {
-  if (await env.STORE.get("seeded:v2")) return;
+  if (await env.STORE.get("seeded:v3")) return;
   const seed = { ...SEED, windowStart: "2026-11-01", windowEnd: "2027-04-30", events: SEED_EVENTS, sections: { ...SEED.sections, 9: SEED_9 + "\n\n" + eventsTable(SEED_EVENTS) } };
   await env.STORE.put("report:" + SEED.slug, JSON.stringify(seed));
-  await env.STORE.put("seeded:v2", "1");
+  await env.STORE.put("seeded:v3", "1");
 }
 
 // ---- email (Resend) ----

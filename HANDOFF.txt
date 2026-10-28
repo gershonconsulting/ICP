@@ -1,4 +1,4 @@
-ICP.gershon.ai — HANDOFF (v1.4.0 page, 2026-10-07)
+ICP.gershon.ai — HANDOFF (v1.5.0, 2026-10-28)
 ==============================================
 
 LIVE: https://icp.gershon.ai  (also https://icp-gershon-ai.oattia.workers.dev)
@@ -26,13 +26,16 @@ SALES NAVIGATOR (section 11) — rules in config/salesnav-rules.md
 - To add a verified ID: put it in config/salesnav-rules.md and in liUrl()/snMapping() in src/page.html.
 
 DONE ✅
+- ✅ v1.5.0 (2026-10-28): Sales Navigator links rebuilt after a live test in Sales Navigator — titles in CURRENT_TITLE, industry
+  terms as OR keywords, United States, Owner/CXO/VP/Director, optional "2nd° only" link. Outreach email (section 12) now
+  follows the GPT USA structure (ImaageQ email). Prospect intro is Aina's full text. Reports saved before v1.5.0 keep their
+  old email text until "Run again"; their links are rebuilt automatically.
 - ✅ v1.4.0 (page): Sales Navigator section rebuilt to the rule set, live 2026-10-07
 - ✅ v1.3.0: Sales Navigator links fixed (Rest.li encoding), PDF/HTML/.ics downloads, email sending, settings, verified US events
 - ✅ Custom domain icp.gershon.ai attached by wrangler (routes custom_domain)
 
 OPEN ❌
-- ❌ Verified IDs still missing for USA, industry, company headcount, title, function — those filters are manual for now.
-- ❌ /api/health still reports 1.3.0 (VERSION constant in src/index.js not bumped; page is v1.4.0).
+- ❌ Verified IDs still missing for industry, company headcount, function (keywords stand in for industry).
 - ❌ First visit to https://icp.gershon.ai asks for a team password — whoever opens it first chooses it (Olivier).
 - ❌ Some sites block automated reading (meteorbiotech.com → 403). App falls back to r.jina.ai, then asks to paste text in Notes.
 - ❌ Optional: re-authorize Cloudflare's GitHub app so pushes deploy without the hook.

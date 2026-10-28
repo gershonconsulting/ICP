@@ -15,28 +15,28 @@
   "8": "| Perspective | Objective | KPI and target |\n|---|---|---|\n| Financial | Establish US instrument revenue | 5 US instruments sold or placed |\n| Customer | Build US proof | 3 US reference sites, 10 paid or funded pilots |\n| Internal processes | Make pilots repeatable | Sample-to-data turnaround under 30 days from the UCLA site |\n| Learning and growth | Grow the US evidence base | 5 US co-authored papers or posters |\n\n**First commercial initiative:** a structured pilot program out of the UCLA demo site for NCI cancer-center cores, with a pre-agreed path to an S10 grant application or capital purchase.",
   "9": "| Event | Dates and location | Importance |\n|---|---|---|\n| SITC 2026 Annual Meeting (immuno-oncology) | November 2026, confirm dates | 4/5 |\n| AGBT General Meeting (genomics technology) | February 2027, Florida, confirm dates | 5/5 |\n| SLAS2027 (lab automation and instruments) | Early 2027, confirm dates | 3/5 |\n| USCAP 2027 (pathology) | March 2027, confirm dates | 3/5 |\n| AACR Annual Meeting 2027 | April 2 to 7, 2027, Orlando, Florida | 5/5 |\n\nAACR 2027 is confirmed by the AACR; other dates should be checked against the events.gershon.ai report before committing spend. Importance scores reflect Meteor's commercial fit, not the quality of each event.",
   "10": "### Academic cores and cancer centers\nTitles: Core Facility Director, Director of Genomics, Director of Spatial Biology\nEngagement signals: New core launches, S10 grant awards, spatial omics job postings\n\n### Pharma translational oncology\nTitles: Head of Translational Medicine, Director of Biomarker Discovery, Head of Spatial Biology\nEngagement signals: Spatial biomarker publications, IO pipeline news\n\n### Neuroscience\nTitles: Principal Investigator, Director of Neurogenomics\nEngagement signals: Brain atlas and single-cell neuroscience papers\n\n### Molecular pathology\nTitles: Chair of Pathology, Director of Molecular Pathology\nEngagement signals: Digital pathology and spatial pathology programs\n\n### CROs and service labs\nTitles: CSO, VP Laboratory Operations\nEngagement signals: New spatial service offerings\n\nPrioritize people at organizations that already own a spatial profiling platform: they feel the follow-up gap first.",
-  "12": "Hi [First Name],\n\nI'm reaching out from Meteor Biotech, the team behind CosmoSort, the first spatial cell sorter.\n\nMany groups using spatial profiling tell us the map is no longer the bottleneck. Getting the exact cells out of the tissue for deep sequencing or proteomics is.\n\nCosmoSort retrieves cells or sub-cellular regions directly from tissue sections, label-free, at about one target per second, so you can run full-length omics on precisely the regions you selected. Our instrument is running at UCLA's California NanoSystems Institute, where we run pilot samples for US teams.\n\nGiven [Company Name]'s work in [tumor microenvironment / spatial biomarker research], would you be open to a 20-minute call next week to see whether a pilot on your samples makes sense?\n\nBest regards,\n[Your Name]\nMeteor Biotech\nmeteorbiotech.com"
+  "12": "Hi [First Name],\n\nI'm reaching out from Meteor Biotech, the team behind CosmoSort, the first spatial cell sorter.\n\nWe believe the spatial map should be the start of the analysis, not the end of it.\n\nWe're bringing that to US research teams with our instrument already running at UCLA's California NanoSystems Institute, where we run pilot samples, while opening new pilot sites with cancer centers and pharma.\n\nGiven [Company Name]'s work in [tumor microenvironment / spatial biomarker research], I thought there could be an interesting opportunity to explore how CosmoSort might complement your spatial profiling workflow.\n\nWould you be open to a 20-minute introductory conversation next week?\n\nBest regards,\n\n[Your Name]\nMeteor Biotech\nmeteorbiotech.com"
  },
  "searches": [
   {
    "label": "Academic cores and cancer centers",
-   "keywords": "spatial biology core facility director"
+   "keywords": "spatial biology, genomics, single cell, core facility"
   },
   {
    "label": "Pharma translational oncology",
-   "keywords": "translational oncology biomarker spatial"
+   "keywords": "translational oncology, biomarker, spatial biology"
   },
   {
    "label": "Neuroscience",
-   "keywords": "neurogenomics single cell spatial"
+   "keywords": "neuroscience, neurogenomics, single cell"
   },
   {
    "label": "Molecular pathology",
-   "keywords": "molecular pathology director spatial"
+   "keywords": "molecular pathology, digital pathology, spatial"
   },
   {
    "label": "CROs and service labs",
-   "keywords": "spatial omics services laboratory"
+   "keywords": "spatial omics, genomics services, CRO"
   }
  ]
 }
