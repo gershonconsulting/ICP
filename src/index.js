@@ -3,8 +3,9 @@
 import PAGE from "./page.html";
 import HOME from "./home.html";
 import SEED from "./seed.json";
+import { MATRIX_STATS_PATH, handleMatrixStats } from "./matrix-stats.js";
 
-export const VERSION = "1.5.0";
+export const VERSION = "1.6.0";
 const MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
 
 export const SECTIONS = ["Pitches creation","Problem identification","Ideal customer profiles","Market opportunity","Market entry justification","At a glance","Competition","Balanced scorecard","Tradeshow and conference opportunities","LinkedIn Sales Navigator","LinkedIn search links","Outreach email"];
@@ -250,6 +251,8 @@ export default {
   async fetch(req, env) {
     const u = new URL(req.url), p = u.pathname;
     if (p === "/api/health") return json({ ok: true, version: VERSION, model: MODEL });
+    // Read-only Client Platform Matrix feed (column "icp"); own secret check, before the team password gate.
+    if (p === MATRIX_STATS_PATH) return handleMatrixStats(req, env);
     if (p === "/api/selftest") {
       // Public end-to-end check (site read + Workers AI), max once per 10 minutes, nothing saved.
       const last = +(await env.STORE.get("selftest:last") || 0);

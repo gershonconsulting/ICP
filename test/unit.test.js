@@ -5,7 +5,8 @@ import { readFileSync } from "node:fs";
 const src = readFileSync(new URL("../src/index.js", import.meta.url), "utf8")
   .replace('import PAGE from "./page.html";', 'const PAGE = "";')
   .replace('import HOME from "./home.html";', 'const HOME = "";')
-  .replace('import SEED from "./seed.json";', 'const SEED = {};');
+  .replace('import SEED from "./seed.json";', 'const SEED = {};')
+  .replace('from "./matrix-stats.js";', 'from "' + new URL("../src/matrix-stats.js", import.meta.url) + '";');
 const mod = await import("data:text/javascript," + encodeURIComponent(src));
 
 test("slug", () => { assert.equal(mod.slug("https://www.meteorbiotech.com/about"), "meteorbiotech-com"); });
