@@ -1,4 +1,4 @@
-ICP.gershon.ai — HANDOFF (v1.5.0, 2026-10-28)
+ICP.gershon.ai — HANDOFF (v1.6.0, 2026-10-30)
 ==============================================
 
 LIVE: https://icp.gershon.ai  (also https://icp-gershon-ai.oattia.workers.dev)
@@ -35,6 +35,9 @@ DONE ✅
 - ✅ Custom domain icp.gershon.ai attached by wrangler (routes custom_domain)
 
 OPEN ❌
+- ❌ v1.6.0 (2026-10-30 nightly, branch nightly/2026-10-30-matrix-stats): POST /api/matrix-stats (src/matrix-stats.js) for the
+  weekly Client Platform Matrix, column "icp". Read-only (KV report:*), auth = SHA-256 of the existing matrix secret.
+  After merge: POST the Deploy Hook, then SQL block 9 in task repo supabase/sql/2026-10-27_matrix_live_endpoints.sql.
 - ❌ Verified IDs still missing for industry, company headcount, function (keywords stand in for industry).
 - ❌ First visit to https://icp.gershon.ai asks for a team password — whoever opens it first chooses it (Olivier).
 - ❌ Some sites block automated reading (meteorbiotech.com → 403). App falls back to r.jina.ai, then asks to paste text in Notes.
