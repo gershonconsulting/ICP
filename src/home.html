@@ -7,15 +7,16 @@
 <meta name="description" content="Enter a company website, get the Gershon Consulting 12-point US market launch analysis: pitches, ideal customer profiles, market, competition, US events, Sales Navigator targeting and an outreach email.">
 <meta property="og:title" content="ICP by Gershon.AI — US market launch analysis">
 <meta property="og:url" content="https://icp.gershon.ai">
-<link rel="icon" href="data:image/svg+xml,<svg viewBox='0 0 64 64' aria-hidden='true'><defs><linearGradient id='icpg' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%233b5bfd'/><stop offset='.5' stop-color='%236366f1'/><stop offset='1' stop-color='%2322d3ee'/></linearGradient></defs><rect x='2' y='2' width='60' height='60' rx='18' fill='url(%23icpg)'/><circle cx='32' cy='32' r='17' fill='none' stroke='%23fff' stroke-opacity='.55' stroke-width='3'/><circle cx='32' cy='32' r='9.5' fill='none' stroke='%23fff' stroke-opacity='.85' stroke-width='3'/><circle cx='32' cy='32' r='3.6' fill='%23fff'/><path d='M32 32 L49 15' stroke='%23fff' stroke-width='3.2' stroke-linecap='round'/><path d='M44 14 h6 v6' fill='none' stroke='%23fff' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg viewBox='0 0 64 64' aria-hidden='true'><defs><linearGradient id='icpg' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%23CC3333'/><stop offset='.5' stop-color='%23CC3333'/><stop offset='1' stop-color='%23a8281f'/></linearGradient></defs><rect x='2' y='2' width='60' height='60' rx='18' fill='url(%23icpg)'/><circle cx='32' cy='32' r='17' fill='none' stroke='%23fff' stroke-opacity='.55' stroke-width='3'/><circle cx='32' cy='32' r='9.5' fill='none' stroke='%23fff' stroke-opacity='.85' stroke-width='3'/><circle cx='32' cy='32' r='3.6' fill='%23fff'/><path d='M32 32 L49 15' stroke='%23fff' stroke-width='3.2' stroke-linecap='round'/><path d='M44 14 h6 v6' fill='none' stroke='%23fff' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/></svg>">
 <style>
 :root{
-  --bg:#0b1020; --bg2:#0e1530; --paper:#ffffff; --app:#f6f8fc;
-  --text:#1a2133; --muted:#5b6478; --line:#e6e9f2; --soft:#f5f7fc;
-  --brand:#3b5bfd; --brand2:#22d3ee; --brand-ink:#1e34c4; --brand-light:#eef2ff;
-  --grad:linear-gradient(120deg,#3b5bfd 0%,#6366f1 45%,#22d3ee 100%);
+  /* Unified Gershon design (v1.5.0): Linalysis layout in Gershon.ai red */
+  --bg:#1d1d1f; --bg2:#2a2a2d; --paper:#ffffff; --app:#f6f6f7;
+  --text:#1d1d1f; --muted:#6b7280; --line:#e5e7eb; --soft:#f9fafb;
+  --brand:#CC3333; --brand2:#CC3333; --brand-ink:#a8281f; --brand-light:#fdf2f2;
+  --grad:linear-gradient(135deg,#CC3333 0%,#a8281f 100%);
   --ok:#16a34a; --warn:#b76b00; --err:#cc1016;
-  --shadow:0 18px 50px rgba(18,28,64,.14); --radius:16px;
+  --shadow:0 12px 32px rgba(29,29,31,.10); --radius:12px;
   --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
 }
 *,*::before,*::after{box-sizing:border-box}
@@ -110,10 +111,52 @@ footer .brand{color:#fff} footer .brand small{color:#7482ab}
 footer a.link:hover{color:#fff}
 .foot-links{display:flex;gap:1.4rem;flex-wrap:wrap}
 .copy{width:100%;border-top:1px solid rgba(255,255,255,.08);padding-top:18px;color:#6d7aa4;font-size:.82rem}
+/* ===== Unified Gershon design v1.5.0 ===== */
+.btn-primary{background:var(--brand);color:#fff;box-shadow:0 1px 2px rgba(29,29,31,.08)}
+.btn-primary:hover{background:var(--brand-ink);transform:none;box-shadow:0 4px 12px rgba(204,51,51,.25)}
+.btn-ghost:hover{border-color:#d1d5db;background:var(--soft)}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+input:focus,textarea:focus{border-color:var(--brand)!important;box-shadow:0 0 0 3px rgba(204,51,51,.15)!important}
+.btn-lite{background:#fff;border-color:var(--line);color:var(--text)}
+.btn-lite:hover{background:var(--soft);border-color:#d1d5db}
+.nav-links a.link{color:#374151}
+.hero{background:radial-gradient(900px 480px at 85% -10%,#fdf2f2 0,transparent 60%),#fff;color:var(--text);border-bottom:1px solid var(--line)}
+.kicker{color:var(--brand-ink);background:var(--brand-light);border-color:#f5d0d0}
+.hero h1{color:var(--text)}
+.hero p.sub{color:#4b5563}
+.trust{color:var(--muted)}
+.rings span{border-color:rgba(204,51,51,.16)}
+.sweep{background:conic-gradient(from 0deg,rgba(204,51,51,.14),transparent 30%)}
+.mock{background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow)}
+.mock .bar{background:var(--soft);border-bottom:1px solid var(--line)}
+.mock .bar i{background:#d1d5db}
+.mock .bar .u{color:var(--muted)}
+.stage{background:#fff;border:1px solid var(--line);border-radius:12px}
+.stage h4{color:var(--brand)}
+.stage .big{color:var(--text)}
+.stage .lbl{color:var(--muted)}
+.stage ul{color:#374151}
+.arrow{color:#9ca3af}
+.stats{border-radius:12px}
+.card{border-radius:12px}
+.card:hover{border-color:#f5d0d0}
+.card .ic{background:var(--brand-light);border-color:#f5d0d0}
+.band{background:var(--soft)}
+.step{border-radius:12px}
+.final{background:var(--brand-light);color:var(--text);border-top:1px solid #f5d0d0}
+.final p{color:#4b5563}
+footer{background:#fff;color:var(--muted);border-top:1px solid var(--line)}
+footer .brand{color:var(--text)} footer .brand small{color:var(--muted)}
+footer a.link:hover{color:var(--brand-ink)}
+.copy{border-top:1px solid var(--line);color:var(--muted)}
+/* phone: no sideways scroll */
+html,body{max-width:100%;overflow-x:hidden}
+.hero{overflow:hidden}
+@media(max-width:720px){.nav{height:58px}.nav-links{gap:.6rem}.nav-links .btn{padding:.55rem .9rem;font-size:.88rem}.hero .wrap{padding:48px 16px 72px}.wrap{padding:0 16px}.rings{display:none}.cta-row .btn{flex:1 1 auto}}
 </style>
 </head>
 <body>
-<header><div class="wrap nav"><a class="brand" href="/"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="icpg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3b5bfd"/><stop offset=".5" stop-color="#6366f1"/><stop offset="1" stop-color="#22d3ee"/></linearGradient></defs><rect x="2" y="2" width="60" height="60" rx="18" fill="url(#icpg)"/><circle cx="32" cy="32" r="17" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="3"/><circle cx="32" cy="32" r="9.5" fill="none" stroke="#fff" stroke-opacity=".85" stroke-width="3"/><circle cx="32" cy="32" r="3.6" fill="#fff"/><path d="M32 32 L49 15" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/><path d="M44 14 h6 v6" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>ICP<small>by Gershon.AI</small></span></a>
+<header><div class="wrap nav"><a class="brand" href="/"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="icpg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#CC3333"/><stop offset=".5" stop-color="#CC3333"/><stop offset="1" stop-color="#a8281f"/></linearGradient></defs><rect x="2" y="2" width="60" height="60" rx="18" fill="url(#icpg)"/><circle cx="32" cy="32" r="17" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="3"/><circle cx="32" cy="32" r="9.5" fill="none" stroke="#fff" stroke-opacity=".85" stroke-width="3"/><circle cx="32" cy="32" r="3.6" fill="#fff"/><path d="M32 32 L49 15" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/><path d="M44 14 h6 v6" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>ICP<small>by Gershon.AI</small></span></a>
 <nav class="nav-links"><a class="link" href="#points">The 12 points</a><a class="link" href="#how">How it works</a><a class="link" href="/app">Sign in</a><a class="btn btn-primary" href="/app">Open the app</a></nav></div></header>
 <section class="hero"><div class="rings"><span></span><span></span><span></span><span></span><div class="sweep"></div></div><div class="wrap">
 <span class="kicker">◆ US market launch · ICP analysis</span>
@@ -134,6 +177,6 @@ footer a.link:hover{color:#fff}
 <div class="step"><div class="n">3</div><h3>Send and target</h3><p>Copy the Customized GPT USA email for the prospect, and open the ready-made Sales Navigator searches.</p></div>
 </div></div></section>
 <section class="final"><div class="wrap"><h2>Prepare your next prospect call.</h2><p>Every report is saved, so the whole team can reopen it before the meeting.</p><div class="cta-row"><a class="btn btn-primary" href="/app">Open ICP →</a></div></div></section>
-<footer><div class="wrap"><a class="brand" href="/"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="icpg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3b5bfd"/><stop offset=".5" stop-color="#6366f1"/><stop offset="1" stop-color="#22d3ee"/></linearGradient></defs><rect x="2" y="2" width="60" height="60" rx="18" fill="url(#icpg)"/><circle cx="32" cy="32" r="17" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="3"/><circle cx="32" cy="32" r="9.5" fill="none" stroke="#fff" stroke-opacity=".85" stroke-width="3"/><circle cx="32" cy="32" r="3.6" fill="#fff"/><path d="M32 32 L49 15" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/><path d="M44 14 h6 v6" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>ICP<small>by Gershon.AI</small></span></a><div class="foot-links"><a class="link" href="/app">App</a><a class="link" href="https://events.gershon.ai">Events</a><a class="link" href="https://gershonconsulting.com">Gershon Consulting</a></div><div class="copy">© 2026 Gershon Consulting LLC</div></div></footer>
+<footer><div class="wrap"><a class="brand" href="/"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="icpg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#CC3333"/><stop offset=".5" stop-color="#CC3333"/><stop offset="1" stop-color="#a8281f"/></linearGradient></defs><rect x="2" y="2" width="60" height="60" rx="18" fill="url(#icpg)"/><circle cx="32" cy="32" r="17" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="3"/><circle cx="32" cy="32" r="9.5" fill="none" stroke="#fff" stroke-opacity=".85" stroke-width="3"/><circle cx="32" cy="32" r="3.6" fill="#fff"/><path d="M32 32 L49 15" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/><path d="M44 14 h6 v6" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>ICP<small>by Gershon.AI</small></span></a><div class="foot-links"><a class="link" href="/app">App</a><a class="link" href="https://events.gershon.ai">Events</a><a class="link" href="https://gershonconsulting.com">Gershon Consulting</a></div><div class="copy">© 2026 Gershon Consulting LLC</div></div></footer>
 </body>
 </html>
