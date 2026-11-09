@@ -61,3 +61,22 @@ test("parseOutput picks up EVENTS block", () => {
   const p = mod.parseOutput("=== SECTION 9 ===\nPara\n=== EVENTS ===\nSLAS2027 | 2027-01-30 | 2027-02-03 | San Diego, CA | 3 | https://slas.org", [9]);
   assert.equal(p.events.length, 1); assert.equal(p.sections[9], "Para");
 });
+
+test("siteKey ignores www, subdomains, paths and protocol", () => {
+  assert.equal(mod.siteKey("https://www.meteorbiotech.com/about"), "meteorbiotech.com");
+  assert.equal(mod.siteKey("http://app.meteorbiotech.com"), "meteorbiotech.com");
+  assert.equal(mod.siteKey("https://shop.example.co.uk/x"), "example.co.uk");
+});
+test("nameKey ignores case, accents, punctuation and legal suffixes", () => {
+  assert.equal(mod.nameKey("Météor Biotech, Inc."), mod.nameKey("meteor biotech"));
+});
+test("dedupeReports keeps newest per company", () => {
+  const { kept, dupes } = mod.dedupeReports([
+    { slug: "meteorbiotech-com", company: "Meteor Biotech", url: "https://meteorbiotech.com/", createdAt: "2026-10-05T00:00:00Z" },
+    { slug: "app-meteorbiotech-com", company: "Meteor", url: "https://app.meteorbiotech.com/", createdAt: "2026-10-20T00:00:00Z" },
+    { slug: "meteor-bio", company: "Meteor Biotech Inc", url: "https://meteor.bio/", createdAt: "2026-10-01T00:00:00Z" },
+    { slug: "acme-com", company: "Acme", url: "https://acme.com/", createdAt: "2026-10-02T00:00:00Z" }
+  ]);
+  assert.deepEqual(kept.map(r => r.slug), ["app-meteorbiotech-com", "acme-com"]);
+  assert.equal(dupes.length, 2);
+});

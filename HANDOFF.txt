@@ -1,4 +1,4 @@
-ICP.gershon.ai — HANDOFF (v1.6.0, 2026-10-30)
+ICP.gershon.ai — HANDOFF (v1.7.0, 2026-11-09)
 ==============================================
 
 LIVE: https://icp.gershon.ai  (also https://icp-gershon-ai.oattia.workers.dev)
@@ -26,6 +26,9 @@ SALES NAVIGATOR (section 11) — rules in config/salesnav-rules.md
 - To add a verified ID: put it in config/salesnav-rules.md and in liUrl()/snMapping() in src/page.html.
 
 DONE ✅
+- ✅ v1.7.0 (2026-11-09): no duplicate reports — /api/reports keeps the newest report per company (same root domain
+  ignoring www/app/paths, or same company name ignoring case/accents/Inc/LLC); a new run deletes older copies of the same
+  company. Sidebar: Recent | A–Z toggle (remembered per browser), letter headers in A–Z, report count, search box.
 - ✅ v1.5.0 (2026-10-28): Sales Navigator links rebuilt after a live test in Sales Navigator — titles in CURRENT_TITLE, industry
   terms as OR keywords, United States, Owner/CXO/VP/Director, optional "2nd° only" link. Outreach email (section 12) now
   follows the GPT USA structure (ImaageQ email). Prospect intro is Aina's full text. Reports saved before v1.5.0 keep their

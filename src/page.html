@@ -48,6 +48,13 @@ body{background:var(--app);font-size:14.5px}
 .hist button[aria-current="true"] small{color:#dfe5ff}
 .hist small{color:var(--muted);font-size:12px;flex:none}
 .hist .hint{padding:8px 10px}
+.hist-head{display:flex;justify-content:space-between;align-items:center;gap:6px}
+.hist-head b{font-weight:600;color:var(--muted)}
+.sortsw{display:inline-flex;border:1px solid var(--line,#e3e6ef);border-radius:999px;overflow:hidden;text-transform:none;letter-spacing:0}
+.sortsw button{border:0;background:none;padding:3px 9px;font-size:11px;font-weight:600;color:var(--muted);cursor:pointer}
+.sortsw button[aria-pressed="true"]{background:var(--brand);color:#fff}
+.hist-filter{width:100%;box-sizing:border-box;margin:0 0 6px;padding:7px 10px;border:1px solid var(--line,#e3e6ef);border-radius:9px;font:inherit;font-size:13px}
+.hist .letter{font-size:11px;font-weight:700;color:var(--brand);padding:8px 10px 2px;list-style:none}
 .spacer{flex:1}
 .side-foot{border-top:1px solid var(--line);padding:12px 10px 4px;font-size:12px;color:var(--muted);display:flex;justify-content:space-between;gap:8px}
 .side-foot a:hover{color:var(--brand-ink)}
@@ -226,6 +233,8 @@ const MARK='<svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><defs><line
 const SECTIONS=["Pitches creation","Problem identification","Ideal customer profiles","Market opportunity","Market entry justification","At a glance","Competition","Balanced scorecard","Tradeshow and conference opportunities","LinkedIn Sales Navigator","LinkedIn search links","Outreach email"];
 const $=s=>document.querySelector(s);
 let current=null, reports=[], busy=false, timer;
+let histSort="recent";try{histSort=localStorage.getItem("icp:sort")==="az"?"az":"recent"}catch(e){}
+function setSort(v){histSort=v;try{localStorage.setItem("icp:sort",v)}catch(e){}paintHist()}
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 function inline(s){return esc(s).replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>").replace(/(^|[^*])\*(?!\s)(.+?)\*/g,"$1<em>$2</em>").replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>')}
 function md(src){
@@ -306,7 +315,8 @@ function shell(){
   <aside class="sidebar" id="side">
     <a class="brand" href="/">${MARK}<span>ICP<small>by Gershon.AI</small></span></a>
     <button class="btn btn-primary newbtn" id="newbtn">+ New analysis</button>
-    <div class="nav-label">Reports</div>
+    <div class="nav-label hist-head"><span>Reports <b id="histCount"></b></span><span class="sortsw" role="group" aria-label="Sort reports"><button id="sortRecent" type="button">Recent</button><button id="sortAz" type="button">A–Z</button></span></div>
+    <input class="hist-filter" id="histFilter" type="search" placeholder="Search reports…" aria-label="Search reports">
     <ul class="hist" id="hist"><li class="hint">Loading…</li></ul>
     <div class="spacer"></div>
     <div class="side-foot"><a href="/">← Home</a><button id="setBtn">⚙ Settings</button><span id="ver"></span></div>
@@ -316,6 +326,7 @@ function shell(){
     <main class="content" id="main"></main>
   </div></div>`;
   $("#newbtn").onclick=()=>{showNew();closeSide()};
+  $("#sortRecent").onclick=()=>setSort("recent");$("#sortAz").onclick=()=>setSort("az");$("#histFilter").oninput=()=>paintHist();
   $("#menu").onclick=()=>$("#side").classList.toggle("open");
   $("#setBtn").onclick=()=>{closeSide();openSettings()};
 }
@@ -373,8 +384,17 @@ async function copyEmail(r){
 }
 function paintHist(){
   const h=$("#hist");if(!h)return;
+  const az=histSort==="az";
+  [["#sortRecent",!az],["#sortAz",az]].forEach(([s,on])=>{const b=$(s);if(b)b.setAttribute("aria-pressed",String(on))});
+  const c=$("#histCount");if(c)c.textContent=reports.length?"("+reports.length+")":"";
   if(!reports.length){h.innerHTML='<li class="hint">No reports yet.</li>';return}
-  h.innerHTML=reports.map(r=>`<li><button data-id="${esc(r.slug)}" aria-current="${!!(current&&current.slug===r.slug)}"><span>${esc(r.company)}</span><small>${fmtDate(r.createdAt,{month:"short",day:"numeric"})}</small></button></li>`).join("");
+  const q=(($("#histFilter")||{}).value||"").trim().toLowerCase();
+  let list=reports.filter(r=>!q||(r.company+" "+r.url).toLowerCase().includes(q));
+  if(az)list=list.slice().sort((a,b)=>String(a.company||"").localeCompare(String(b.company||""),"en",{sensitivity:"base",numeric:true}));
+  if(!list.length){h.innerHTML='<li class="hint">No match.</li>';return}
+  let last="";
+  h.innerHTML=list.map(r=>{let pre="";if(az){const L=(String(r.company||"#").trim()[0]||"#").toUpperCase();const k=/[A-Z]/.test(L)?L:"#";if(k!==last){pre=`<li class="letter">${k}</li>`;last=k}}
+    return pre+`<li><button data-id="${esc(r.slug)}" aria-current="${!!(current&&current.slug===r.slug)}" title="${esc(r.url||"")}"><span>${esc(r.company)}</span><small>${fmtDate(r.createdAt,{month:"short",day:"numeric"})}</small></button></li>`}).join("");
   h.querySelectorAll("button").forEach(b=>b.onclick=()=>{openReport(b.dataset.id);closeSide()});
 }
 async function loadList(){try{reports=(await api("/api/reports")).reports}catch(e){reports=[]}paintHist()}

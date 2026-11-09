@@ -5,7 +5,7 @@ import HOME from "./home.html";
 import SEED from "./seed.json";
 import { MATRIX_STATS_PATH, handleMatrixStats } from "./matrix-stats.js";
 
-export const VERSION = "1.6.0";
+export const VERSION = "1.7.0";
 const MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
 
 export const SECTIONS = ["Pitches creation","Problem identification","Ideal customer profiles","Market opportunity","Market entry justification","At a glance","Competition","Balanced scorecard","Tradeshow and conference opportunities","LinkedIn Sales Navigator","LinkedIn search links","Outreach email"];
@@ -241,10 +241,38 @@ async function sendEmail(env, { to, cc, subject, html, filename, docHtml }) {
   if (!r.ok) throw Object.assign(new Error("Resend: " + (d.message || d.error || r.status)), { status: 502 });
   return d.id;
 }
+// Duplicate detection: same website (root domain, ignoring www/app/en… subdomains and paths) or same company name.
+const MULTI_TLD = /\.(co|com|org|net|ac|gov|edu)\.[a-z]{2}$/;
+export function siteKey(u) {
+  let h = String(u || "").toLowerCase().trim().replace(/^https?:\/\//, "").replace(/[/?#:].*$/, "").replace(/\.$/, "");
+  if (!h) return "";
+  const parts = h.split(".");
+  return parts.slice(MULTI_TLD.test(h) ? -3 : -2).join(".");
+}
+export function nameKey(n) {
+  return String(n || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/\b(inc|llc|ltd|limited|corp|corporation|co|company|gmbh|sas|sa|sarl|bv|ag|plc|pty|srl|spa)\b\.?/g, "")
+    .replace(/[^a-z0-9]/g, "");
+}
+// Keeps the newest report of each company; returns { kept, dupes } (dupes = older copies, newest first).
+export function dedupeReports(list) {
+  const sorted = list.filter(r => r && r.slug).slice().sort((a, b) => String(b.createdAt || "").localeCompare(String(a.createdAt || "")));
+  const seen = new Set(), kept = [], dupes = [];
+  for (const r of sorted) {
+    const keys = [siteKey(r.url) && "s:" + siteKey(r.url), nameKey(r.company) && "n:" + nameKey(r.company)].filter(Boolean);
+    if (keys.some(k => seen.has(k))) { dupes.push(r); keys.forEach(k => seen.add(k)); continue; }
+    keys.forEach(k => seen.add(k)); kept.push(r);
+  }
+  return { kept, dupes };
+}
+async function allReports(env) {
+  const out = []; let cursor;
+  do { const l = await env.STORE.list({ prefix: "report:", cursor }); out.push(...l.keys); cursor = l.list_complete ? null : l.cursor; } while (cursor);
+  return (await Promise.all(out.map(k => env.STORE.get(k.name, "json")))).filter(Boolean);
+}
 async function listReports(env) {
-  const l = await env.STORE.list({ prefix: "report:" });
-  const all = await Promise.all(l.keys.map(k => env.STORE.get(k.name, "json")));
-  return all.filter(Boolean).map(r => ({ slug: r.slug, company: r.company, url: r.url, createdAt: r.createdAt })).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  const { kept, dupes } = dedupeReports(await allReports(env));
+  return { reports: kept.map(r => ({ slug: r.slug, company: r.company, url: r.url, createdAt: r.createdAt })), hiddenDuplicates: dupes.length };
 }
 
 export default {
@@ -283,7 +311,7 @@ export default {
     if (state !== "ok") return json({ error: "Sign in first" }, 401);
 
     await ensureSeed(env);
-    if (p === "/api/reports" && req.method === "GET") return json({ reports: await listReports(env) });
+    if (p === "/api/reports" && req.method === "GET") return json(await listReports(env));
     if (p === "/api/settings" && req.method === "GET") { const c = await emailConfig(env); return json({ emailReady: !!c.key, keyFromSecret: !!env.RESEND_API_KEY, fromName: c.fromName, fromEmail: c.fromEmail, cc: c.cc }); }
     if (p === "/api/settings" && req.method === "POST") {
       const b = await req.json(); const cur = (await env.STORE.get("config:email", "json")) || {};
@@ -312,7 +340,13 @@ export default {
       const b = await req.json(); const url = normalizeUrl(b.url);
       if (!url) return json({ error: "Enter a valid website" }, 400);
       const r = await analyze(env, { url, name: String(b.name || "").slice(0, 120), notes: String(b.notes || "").slice(0, 8000) });
-      if (Object.keys(r.sections).length) await env.STORE.put("report:" + r.slug, JSON.stringify(r));
+      if (Object.keys(r.sections).length) {
+        await env.STORE.put("report:" + r.slug, JSON.stringify(r));
+        // A new run replaces any older report of the same company saved under another address.
+        const sk = siteKey(r.url), nk = nameKey(r.company);
+        const older = (await allReports(env)).filter(o => o.slug !== r.slug && ((sk && siteKey(o.url) === sk) || (nk && nameKey(o.company) === nk)));
+        await Promise.all(older.map(o => env.STORE.delete("report:" + o.slug)));
+      }
       return json(r);
     }
     return json({ error: "Not found" }, 404);
