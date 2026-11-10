@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ICP by Gershon.AI — App</title>
-<link rel="icon" href="data:image/svg+xml,<svg viewBox='0 0 64 64' aria-hidden='true'><defs><linearGradient id='icpg' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%23CC3333'/><stop offset='.5' stop-color='%23CC3333'/><stop offset='1' stop-color='%23a8281f'/></linearGradient></defs><rect x='2' y='2' width='60' height='60' rx='18' fill='url(%23icpg)'/><circle cx='32' cy='32' r='17' fill='none' stroke='%23fff' stroke-opacity='.55' stroke-width='3'/><circle cx='32' cy='32' r='9.5' fill='none' stroke='%23fff' stroke-opacity='.85' stroke-width='3'/><circle cx='32' cy='32' r='3.6' fill='%23fff'/><path d='M32 32 L49 15' stroke='%23fff' stroke-width='3.2' stroke-linecap='round'/><path d='M44 14 h6 v6' fill='none' stroke='%23fff' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg viewBox='0 0 64 64' aria-hidden='true'><defs><linearGradient id='icpg' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%23FE1B04'/><stop offset='.5' stop-color='%23FE1B04'/><stop offset='1' stop-color='%23d11200'/></linearGradient></defs><rect x='2' y='2' width='60' height='60' rx='18' fill='url(%23icpg)'/><circle cx='32' cy='32' r='17' fill='none' stroke='%23fff' stroke-opacity='.55' stroke-width='3'/><circle cx='32' cy='32' r='9.5' fill='none' stroke='%23fff' stroke-opacity='.85' stroke-width='3'/><circle cx='32' cy='32' r='3.6' fill='%23fff'/><path d='M32 32 L49 15' stroke='%23fff' stroke-width='3.2' stroke-linecap='round'/><path d='M44 14 h6 v6' fill='none' stroke='%23fff' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/></svg>">
 <style>
 :root{
   /* Unified Gershon design (v1.5.0): Linalysis layout in Gershon.ai red */
   --bg:#1d1d1f; --bg2:#2a2a2d; --paper:#ffffff; --app:#f6f6f7;
   --text:#1d1d1f; --muted:#6b7280; --line:#e5e7eb; --soft:#f9fafb;
-  --brand:#CC3333; --brand2:#CC3333; --brand-ink:#a8281f; --brand-light:#fdf2f2;
-  --grad:linear-gradient(135deg,#CC3333 0%,#a8281f 100%);
+  --brand:#FE1B04; --brand2:#FE1B04; --brand-ink:#d11200; --brand-light:#fff5f5;
+  --grad:linear-gradient(135deg,#FE1B04 0%,#d11200 100%);
   --ok:#16a34a; --warn:#b76b00; --err:#cc1016;
   --shadow:0 12px 32px rgba(29,29,31,.10); --radius:12px;
   --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
@@ -182,10 +182,10 @@ section.s>h3 .seg{font-size:13px}
 .side-foot button:hover{color:var(--brand-ink)}
 /* ===== Unified Gershon design v1.5.0 ===== */
 .btn-primary{background:var(--brand);color:#fff;box-shadow:0 1px 2px rgba(29,29,31,.08)}
-.btn-primary:hover{background:var(--brand-ink);transform:none;box-shadow:0 4px 12px rgba(204,51,51,.25)}
+.btn-primary:hover{background:var(--brand-ink);transform:none;box-shadow:0 4px 12px rgba(254,27,4,.25)}
 .btn-ghost:hover{border-color:#d1d5db;background:var(--soft)}
 :focus-visible{outline:2px solid var(--brand);outline-offset:2px}
-input:focus,textarea:focus{border-color:var(--brand)!important;box-shadow:0 0 0 3px rgba(204,51,51,.15)!important}
+input:focus,textarea:focus{border-color:var(--brand)!important;box-shadow:0 0 0 3px rgba(254,27,4,.15)!important}
 .hist button{border-radius:999px;padding:8px 12px}
 .hist button:hover{background:var(--brand-light);color:var(--brand-ink)}
 .hist button[aria-current="true"]{background:var(--brand);color:#fff}
@@ -208,6 +208,33 @@ section.s>h3 .n{box-shadow:none;background:var(--brand)}
 .seg button[aria-pressed="true"]{background:var(--brand);color:#fff;box-shadow:none}
 .skel{background:linear-gradient(90deg,#f3f4f6,#fafafa,#f3f4f6);background-size:200% 100%}
 .cal-grid .d{color:#6b7280}
+/* v1.8.0: review sections before the PDF (edit, regenerate, approve) */
+section.s>h3{flex-wrap:wrap}
+.rv{display:inline-flex;align-items:center;gap:6px;margin-left:auto;flex-wrap:wrap;font-size:13px;font-weight:600}
+.seg+.rv{margin-left:6px}
+.rv .btn{padding:.4rem .7rem;font-size:.82rem;border-radius:9px}
+.rv .btn-ok{background:#fff;border-color:#c7ebd4;color:#126b35}
+.rv .btn-ok:hover{background:#e6f6ec}
+.st{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:999px;background:var(--soft);border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.st.ok{background:#e6f6ec;border-color:#c7ebd4;color:#126b35}
+.st.ed{background:#fff4e5;border-color:#ffe0b3;color:var(--warn)}
+.review-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--soft);font-size:13.5px}
+.review-bar .bar{flex:1 1 140px;height:6px;border-radius:999px;background:#e5e7eb;overflow:hidden;min-width:100px}
+.review-bar .bar i{display:block;height:100%;background:var(--brand);border-radius:999px}
+.review-bar.done .bar i{background:var(--ok)}
+.ed{display:grid;gap:10px;max-width:none}
+.ed .seg{margin-left:0;justify-self:start}
+.ed textarea{min-height:260px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;line-height:1.55}
+.ed .pv{border:1px dashed var(--line);border-radius:10px;padding:12px 14px;min-height:120px}
+.ed-ai{display:flex;gap:8px;flex-wrap:wrap}
+.ed-ai input{flex:1 1 220px;width:auto}
+.ed-ai .btn,.ed-row .btn{padding:.6rem 1rem;font-size:.88rem;border-radius:10px}
+.ed-row{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;align-items:center}
+.ed-row .hint{margin:0 auto 0 0}
+.ed.working{opacity:.65;pointer-events:none}
+.gate-list{margin:12px 0 0;padding-left:18px;font-size:13.5px;color:#3a4258}
+.gate-list li{margin:2px 0}
+@media(max-width:860px){.rv{margin-left:0;width:100%}.seg+.rv{margin-left:0}}
 /* phone: no sideways scroll, compact top bar, menu button */
 html,body{max-width:100%;overflow-x:hidden}
 @media(max-width:860px){
@@ -229,7 +256,7 @@ html,body{max-width:100%;overflow-x:hidden}
 <div id="root"></div>
 <div class="toast" id="toast" role="status"></div>
 <script>
-const MARK='<svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="icpg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#CC3333"/><stop offset=".5" stop-color="#CC3333"/><stop offset="1" stop-color="#a8281f"/></linearGradient></defs><rect x="2" y="2" width="60" height="60" rx="18" fill="url(#icpg)"/><circle cx="32" cy="32" r="17" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="3"/><circle cx="32" cy="32" r="9.5" fill="none" stroke="#fff" stroke-opacity=".85" stroke-width="3"/><circle cx="32" cy="32" r="3.6" fill="#fff"/><path d="M32 32 L49 15" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/><path d="M44 14 h6 v6" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const MARK='<svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="icpg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FE1B04"/><stop offset=".5" stop-color="#FE1B04"/><stop offset="1" stop-color="#d11200"/></linearGradient></defs><rect x="2" y="2" width="60" height="60" rx="18" fill="url(#icpg)"/><circle cx="32" cy="32" r="17" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="3"/><circle cx="32" cy="32" r="9.5" fill="none" stroke="#fff" stroke-opacity=".85" stroke-width="3"/><circle cx="32" cy="32" r="3.6" fill="#fff"/><path d="M32 32 L49 15" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/><path d="M44 14 h6 v6" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const SECTIONS=["Pitches creation","Problem identification","Ideal customer profiles","Market opportunity","Market entry justification","At a glance","Competition","Balanced scorecard","Tradeshow and conference opportunities","LinkedIn Sales Navigator","LinkedIn search links","Outreach email"];
 const $=s=>document.querySelector(s);
 let current=null, reports=[], busy=false, timer;
@@ -325,7 +352,7 @@ function shell(){
     <div class="topbar"><div style="display:flex;align-items:center;gap:10px;min-width:0"><button class="btn btn-ghost menu-btn" id="menu" aria-label="Menu">☰</button><h1 id="title">New analysis</h1></div><div class="top-actions" id="actions"></div></div>
     <main class="content" id="main"></main>
   </div></div>`;
-  $("#newbtn").onclick=()=>{showNew();closeSide()};
+  $("#newbtn").onclick=()=>{if(anyDirty()&&!confirmDiscard())return;showNew();closeSide()};
   $("#sortRecent").onclick=()=>setSort("recent");$("#sortAz").onclick=()=>setSort("az");$("#histFilter").oninput=()=>paintHist();
   $("#menu").onclick=()=>$("#side").classList.toggle("open");
   $("#setBtn").onclick=()=>{closeSide();openSettings()};
@@ -334,6 +361,7 @@ const closeSide=()=>$("#side").classList.remove("open");
 function setTop(title,actions){$("#title").textContent=title;$("#actions").innerHTML=actions||""}
 
 function showNew(prefill={}){
+  for(const k of Object.keys(editing))delete editing[k];
   current=null;paintHist();setTop("New analysis");
   $("#main").innerHTML=`<div class="newgrid">
    <div class="panel">
@@ -353,7 +381,17 @@ function showNew(prefill={}){
   $("#go").onclick=run;$("#url").addEventListener("keydown",e=>{if(e.key==="Enter")run()});$("#url").focus();
 }
 
+const SKEL='<div class="skel" style="width:92%"></div><div class="skel" style="width:78%"></div><div class="skel" style="width:85%"></div>';
+function secHtml(r,n,isBusy){const t=SECTIONS[n-1];let b;
+  if(n===11){const P=snPersonas(r),S=snSegments(r);b='<p>Every link opens Sales Navigator with these filters already applied: '+SN_VERIFIED+'. One search per persona and one per ICP segment. Use “2nd° only” for warm introductions.</p><div class="sn-h">ICP → filter mapping</div>'+snMapTable(r)+'<div class="sn-h">Persona searches</div><div class="links">'+P.map((x,i)=>snRow(x,"p",i)).join("")+'</div><div class="sn-h">ICP segment searches</div>'+(S.length?'<div class="links">'+S.map((x,i)=>snRow(x,"s",i)).join("")+"</div>":(isBusy?SKEL:'<p class="hint">No segment searches.</p>'))+'<div class="sn-note">'+esc(snManualNote(r))+'</div>'}
+  else b=r.sections[n]?md(r.sections[n]):(isBusy?SKEL:'<p class="hint">Not generated — use Run again.</p>');
+  const seg=(n===9&&!isBusy)?`<span class="seg" id="seg9"><button data-v="list" aria-pressed="${view9!=="cal"}">List</button><button data-v="cal" aria-pressed="${view9==="cal"}">Calendar</button></span>`:"";
+  return `<section class="s" id="s${n}"><h3><span class="n">${String(n).padStart(2,"0")}</span>${esc(t)}${seg}${isBusy||!r.slug?"":secControls(r,n)}</h3><div class="body">${b}</div></section>`}
+function rbarHtml(r,isBusy){if(isBusy||!r.slug)return "";const c=reviewCount(r),all=c.done===c.total;
+  return `<div class="review-bar${all?" done":""}" id="reviewBar"><span>${all?"✓ All sections approved — ready for the PDF":"Review before the PDF: <b>"+c.done+" of "+c.total+"</b> sections approved"}</span><span class="bar"><i style="width:${Math.round(100*c.done/c.total)}%"></i></span>${all?"":'<button class="btn btn-ghost" id="nextReview" style="padding:.4rem .8rem;font-size:.82rem;border-radius:9px">Next to review →</button>'}</div>`}
+function bindSnCopy(){document.querySelectorAll(".sn-copy").forEach(b=>b.onclick=async()=>{try{await navigator.clipboard.writeText(snUrl((b.dataset.k==="p"?snPersonas(current):snSegments(current))[+b.dataset.i]));toast("Sales Navigator link copied")}catch(e){toast("Copy blocked by the browser")}})}
 function render(r,isBusy){
+  for(const k of Object.keys(editing))delete editing[k];
   current=r;paintHist();
   setTop(r.company,isBusy?"":`<button class="btn btn-ghost icon-btn" id="rerun" title="Run again">↻</button><button class="btn btn-ghost" id="copyEmail" title="Copy the prospect email">⧉ <span class="lbl">Copy</span></button><div class="menu" id="dlMenu"><button class="btn btn-ghost" id="dlBtn" aria-haspopup="true">⬇ <span class="lbl">Download</span></button><div class="menu-pop" id="dlPop"><button data-k="pdf">📄<span>PDF<small>Formatted report, A4</small></span></button><button data-k="html">🌐<span>HTML<small>Opens in any browser</small></span></button><button data-k="ics">📅<span>Events calendar (.ics)<small>Outlook, Google, Apple</small></span></button></div></div><button class="btn btn-primary" id="sendBtn">✉ <span class="lbl">Send by email</span></button>`);
   const src=r.source;
@@ -362,16 +400,12 @@ function render(r,isBusy){
     r.window?`<span class="pill">🎪 Events ${esc(r.window)}</span>`:"",
     src?(src.siteRead?`<span class="pill ok">✓ Website read (${(src.pages||[]).length} pages)</span>`:`<span class="pill warn">Website not readable — based on notes and general knowledge</span>`):""].join("");
   const toc=SECTIONS.map((t,i)=>`<li><a href="#s${i+1}" class="${isBusy&&!r.sections[i+1]&&i!==10?"busy":""}"><b>${String(i+1).padStart(2,"0")}</b>${esc(t)}</a></li>`).join("");
-  const skel='<div class="skel" style="width:92%"></div><div class="skel" style="width:78%"></div><div class="skel" style="width:85%"></div>';
-  const secs=SECTIONS.map((t,i)=>{const n=i+1;let b;
-    if(n===11){const P=snPersonas(r),S=snSegments(r);b='<p>Every link opens Sales Navigator with these filters already applied: '+SN_VERIFIED+'. One search per persona and one per ICP segment. Use “2nd° only” for warm introductions.</p><div class="sn-h">ICP → filter mapping</div>'+snMapTable(r)+'<div class="sn-h">Persona searches</div><div class="links">'+P.map((x,i)=>snRow(x,"p",i)).join("")+'</div><div class="sn-h">ICP segment searches</div>'+(S.length?'<div class="links">'+S.map((x,i)=>snRow(x,"s",i)).join("")+"</div>":(isBusy?skel:'<p class="hint">No segment searches.</p>'))+'<div class="sn-note">'+esc(snManualNote(r))+'</div>'}
-    else b=r.sections[n]?md(r.sections[n]):(isBusy?skel:'<p class="hint">Not generated — use Run again.</p>');
-    const seg=(n===9&&!isBusy)?`<span class="seg" id="seg9"><button data-v="list" aria-pressed="true">List</button><button data-v="cal" aria-pressed="false">Calendar</button></span>`:"";
-    return `<section class="s" id="s${n}"><h3><span class="n">${String(n).padStart(2,"0")}</span>${esc(t)}${seg}</h3><div class="body">${b}</div></section>`}).join("");
-  $("#main").innerHTML=`<div class="rhead"><div class="eyebrow">USA Market Launch · 12-point analysis</div><h2>${esc(r.company)}</h2><div class="meta">${pills}</div>${isBusy?'<p class="pending" style="margin:14px 0 0">Reading the website and writing the analysis — about a minute.</p>':""}</div>
+  const secs=SECTIONS.map((t,i)=>secHtml(r,i+1,isBusy)).join("");
+  const rbar=rbarHtml(r,isBusy);
+  $("#main").innerHTML=`<div class="rhead"><div class="eyebrow">USA Market Launch · 12-point analysis</div><h2>${esc(r.company)}</h2><div class="meta">${pills}</div>${rbar}${isBusy?'<p class="pending" style="margin:14px 0 0">Reading the website and writing the analysis — about a minute.</p>':""}</div>
   <div class="report"><nav class="toc" aria-label="Sections"><ol>${toc}</ol></nav><div class="secs">${secs}</div></div>`;
-  document.querySelectorAll(".sn-copy").forEach(b=>b.onclick=async()=>{try{await navigator.clipboard.writeText(snUrl((b.dataset.k==="p"?snPersonas(r):snSegments(r))[+b.dataset.i]));toast("Sales Navigator link copied")}catch(e){toast("Copy blocked by the browser")}});
-  if(!isBusy){$("#copyEmail").onclick=()=>copyEmail(r);$("#rerun").onclick=()=>showNew({url:r.url,name:r.company});bindReportActions(r)}
+  bindSnCopy();
+  if(!isBusy){$("#copyEmail").onclick=()=>copyEmail(current);$("#rerun").onclick=()=>showNew({url:r.url,name:r.company});bindReportActions(r);bindReview(r)}
 }
 function emailHtml(r){
   const intro=GPT_INTRO;
@@ -398,7 +432,8 @@ function paintHist(){
   h.querySelectorAll("button").forEach(b=>b.onclick=()=>{openReport(b.dataset.id);closeSide()});
 }
 async function loadList(){try{reports=(await api("/api/reports")).reports}catch(e){reports=[]}paintHist()}
-async function openReport(id){try{render(await api("/api/reports/"+id),false);history.replaceState(null,"","/app#"+id)}catch(e){toast(e.message)}}
+function anyDirty(){return Object.keys(editing).some(n=>isDirty(+n))}
+async function openReport(id){if(anyDirty()&&!confirmDiscard())return;try{render(await api("/api/reports/"+id),false);history.replaceState(null,"","/app#"+id)}catch(e){toast(e.message)}}
 async function run(){
   if(busy)return;$("#err").textContent="";
   let url=$("#url").value.trim();if(!url){$("#err").textContent="Enter the company website first.";$("#url").focus();return}
@@ -430,7 +465,7 @@ async function start(){
   if(want&&reports.some(r=>r.slug===want))openReport(want);else if(reports.length)openReport(reports[0].slug);else showNew();
 }
 // ===== v1.2: downloads, email, settings, events calendar =====
-const PALETTE=["#CC3333","#0ea5b7","#7c3aed","#e8590c","#16a34a","#db2777","#ca8a04","#475569"];
+const PALETTE=["#FE1B04","#0ea5b7","#7c3aed","#e8590c","#16a34a","#db2777","#ca8a04","#475569"];
 let settings=null, view9="list";
 const ymd=s=>{const[a,b,c]=s.split("-").map(Number);return new Date(Date.UTC(a,b-1,c))};
 const MON=["January","February","March","April","May","June","July","August","September","October","November","December"];
@@ -471,13 +506,13 @@ function snHtml(r){const row=x=>`<p style="margin:0 0 10px"><b>${esc(x.label)}</
 function docBody(r,intro,pdf){
   const tbl='style="border-collapse:collapse;width:100%;font-size:13px;margin:8px 0 14px"';
   const fix=h=>h.replace(/<div class="tbl"><table>/g,`<table ${tbl}>`).replace(/<\/table><\/div>/g,"</table>").replace(/<th>/g,'<th style="text-align:left;background:#f9fafb;border:1px solid #e5e7eb;padding:7px 9px;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;color:#6b7280">').replace(/<td>/g,'<td style="border:1px solid #e5e7eb;padding:7px 9px;vertical-align:top">');
-  const head=`<div style="border-radius:14px;padding:22px 24px;background:#CC3333;background-image:linear-gradient(135deg,#CC3333,#a8281f);color:#fff;margin-bottom:18px"><div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#fdf2f2;font-weight:700">USA Market Launch · 12-point analysis</div><div style="font-size:26px;font-weight:800;letter-spacing:-.02em;margin-top:4px">${esc(r.company)}</div><div style="font-size:13px;color:#fde8e8;margin-top:6px">${esc(r.url)} · ${fmtDate(r.createdAt)}${r.window?" · Events "+esc(r.window):""}</div></div>`;
+  const head=`<div style="border-radius:14px;padding:22px 24px;background:#FE1B04;background-image:linear-gradient(135deg,#FE1B04,#d11200);color:#fff;margin-bottom:18px"><div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#fff5f5;font-weight:700">USA Market Launch · 12-point analysis</div><div style="font-size:26px;font-weight:800;letter-spacing:-.02em;margin-top:4px">${esc(r.company)}</div><div style="font-size:13px;color:#fde8e8;margin-top:6px">${esc(r.url)} · ${fmtDate(r.createdAt)}${r.window?" · Events "+esc(r.window):""}</div></div>`;
   const introHtml=intro?`<div style="font-size:14px;line-height:1.6;margin-bottom:18px">${GPT_INTRO}</div>`:"";
   const secs=SECTIONS.map((t,i)=>{const n=i+1;let c=n===11?snHtml(r):fix(md(r.sections[n]));
-    return `<div data-sec style="page-break-inside:avoid;break-inside:avoid;border:1px solid #e5e7eb;border-radius:12px;padding:16px 18px;margin:0 0 12px"><div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><span style="display:inline-block;min-width:28px;height:28px;line-height:28px;text-align:center;border-radius:8px;background:#CC3333;color:#fff;font-weight:800;font-size:12px">${String(n).padStart(2,"0")}</span><b style="font-size:16px">${esc(t)}</b></div><div style="font-size:13.5px;line-height:1.6;color:#2a3247">${c}</div></div>`}).join("");
+    return `<div data-sec style="page-break-inside:avoid;break-inside:avoid;border:1px solid #e5e7eb;border-radius:12px;padding:16px 18px;margin:0 0 12px"><div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><span style="display:inline-block;min-width:28px;height:28px;line-height:28px;text-align:center;border-radius:8px;background:#FE1B04;color:#fff;font-weight:800;font-size:12px">${String(n).padStart(2,"0")}</span><b style="font-size:16px">${esc(t)}</b></div><div style="font-size:13.5px;line-height:1.6;color:#2a3247">${c}</div></div>`}).join("");
   return `<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,Helvetica,Arial,sans-serif;color:#1d1d1f;${pdf?"":"max-width:820px;margin:0 auto"}">${introHtml}${head}${secs}<div style="font-size:11.5px;color:#6b7280;margin-top:16px;text-align:center">Prepared by Gershon Consulting · icp.gershon.ai</div></div>`;
 }
-function docHtml(r,intro){return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${esc(r.company)} — US market launch analysis</title><style>body{margin:0;padding:28px 18px;background:#fff}a{color:#a8281f}@media print{body{padding:0}}</style></head><body>${docBody(r,intro)}</body></html>`}
+function docHtml(r,intro){return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${esc(r.company)} — US market launch analysis</title><style>body{margin:0;padding:28px 18px;background:#fff}a{color:#d11200}@media print{body{padding:0}}</style></head><body>${docBody(r,intro)}</body></html>`}
 let pdfLib;
 function loadPdfLib(){return pdfLib||(pdfLib=new Promise((ok,ko)=>{const s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";s.onload=()=>ok(window.html2pdf);s.onerror=()=>{pdfLib=null;ko(new Error("Could not load the PDF tool"))};document.head.appendChild(s)}))}
 async function downloadPdf(r){
@@ -490,19 +525,19 @@ function bindReportActions(r){
   const dm=$("#dlMenu"),pop=$("#dlPop");
   if(dm){$("#dlBtn").onclick=e=>{e.stopPropagation();pop.classList.toggle("open")};document.addEventListener("click",()=>pop.classList.remove("open"),{once:true});
     pop.querySelectorAll("button").forEach(b=>b.onclick=()=>{pop.classList.remove("open");const k=b.dataset.k;
-      if(k==="pdf")downloadPdf(r);
-      if(k==="html"){download(fileBase(r)+".html",docHtml(r,false),"text/html");toast("HTML downloaded")}
-      if(k==="ics"){if(!(r.events||[]).length)return toast("No dated events in this report yet");download(fileBase(r)+"-events.ics",icsFor(r.events,r.company),"text/calendar");toast("Calendar file downloaded")}})}
-  if($("#sendBtn"))$("#sendBtn").onclick=()=>openSend(r);
+      if(k==="pdf")reviewGate(current,"PDF",()=>downloadPdf(current));
+      if(k==="html")reviewGate(current,"HTML file",()=>{download(fileBase(current)+".html",docHtml(current,false),"text/html");toast("HTML downloaded")});
+      if(k==="ics"){if(!(current.events||[]).length)return toast("No dated events in this report yet");download(fileBase(current)+"-events.ics",icsFor(current.events,current.company),"text/calendar");toast("Calendar file downloaded")}})}
+  if($("#sendBtn"))$("#sendBtn").onclick=()=>reviewGate(current,"email",()=>openSend(current));
   bindCal(r);
 }
 function bindCal(r){
   const seg=$("#seg9");if(!seg)return;
-  seg.querySelectorAll("button").forEach(b=>b.onclick=()=>{view9=b.dataset.v;paint9(r)});
+  seg.querySelectorAll("button").forEach(b=>b.onclick=()=>{view9=b.dataset.v;paint9(current)});
   paint9(r);
 }
 function paint9(r){
-  const box=$("#s9 .body");if(!box)return;
+  const box=$("#s9 .body");if(!box||editing[9])return;
   $("#seg9").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.v===view9)));
   box.innerHTML=view9==="cal"?calendarHtml(r):md(r.sections[9]);
   box.querySelectorAll("a.ics").forEach(a=>a.onclick=()=>{const e=r.events[+a.dataset.i];download((e.name.replace(/[^\w]+/g,"-"))+".ics",icsFor([e],r.company),"text/calendar")});
@@ -541,6 +576,98 @@ async function openSettings(){
   $("#scancel").onclick=m.close;
   $("#ssave").onclick=async()=>{try{await api("/api/settings",{method:"POST",body:JSON.stringify({resendKey:$("#skey")?$("#skey").value:"",fromName:$("#sname").value,fromEmail:$("#sfrom").value,cc:$("#scc").value})});await getSettings();m.close();toast("Settings saved")}catch(e){$("#serr").textContent=e.message}};
 }
+
+// ===== v1.8.0: review each AI section (edit, regenerate, approve) before the PDF =====
+// Section 11 is built from sections 3 and 10, so it has no editor of its own.
+const EDITABLE=[1,2,3,4,5,6,7,8,9,10,12];
+const editing={};
+function reviewCount(r){const rv=(r&&r.review)||{};return{done:EDITABLE.filter(n=>rv[n]&&rv[n].approved).length,total:EDITABLE.length}}
+function stateChip(r,n){const v=((r.review||{})[n])||{};
+  if(v.approved)return `<span class="st ok" title="Approved ${esc(fmtDate(v.at))}">✓ ${v.edited?"Edited · approved":"Approved"}</span>`;
+  return v.edited?'<span class="st ed">Edited · not approved</span>':'<span class="st">AI draft</span>'}
+function secControls(r,n){
+  if(n===11)return '<span class="rv"><span class="st" title="Rebuilt automatically from sections 3 and 10">Built from 03 + 10</span></span>';
+  if(!EDITABLE.includes(n))return "";
+  const ok=((r.review||{})[n]||{}).approved;
+  return `<span class="rv" data-n="${n}">${stateChip(r,n)}<button class="btn btn-ghost" data-act="edit" title="Edit this section">✎ Edit</button><button class="btn btn-ghost" data-act="regen" title="Write this section again with the AI">↻ Regenerate</button>${ok?"":'<button class="btn btn-ok" data-act="approve" title="Approve as it is">✓ Approve</button>'}</span>`}
+function bindReview(r){
+  document.querySelectorAll(".rv[data-n]").forEach(box=>{const n=+box.dataset.n;
+    box.querySelectorAll("button").forEach(b=>b.onclick=()=>{const a=b.dataset.act;
+      if(a==="edit")openEditor(n,false);
+      if(a==="regen")openEditor(n,true);
+      if(a==="approve")saveSection(n,{approve:true})})});
+  if($("#nextReview"))$("#nextReview").onclick=()=>{const n=firstUnapproved(current);if(n)$("#s"+n).scrollIntoView({behavior:"smooth",block:"start"})};
+}
+function firstUnapproved(r){return EDITABLE.find(n=>!(((r.review||{})[n])||{}).approved)}
+function isDirty(n){const e=editing[n];return !!e&&(e.text!==String(current.sections[n]||"")||!!e.extra)}
+function openEditor(n,regen){
+  const r=current;if(!r||editing[n])return regen&&editing[n]?regenSection(n):void 0;
+  editing[n]={text:String(r.sections[n]||""),extra:null,view:"write"};
+  if(n===9)view9="list";
+  const sec=$("#s"+n),box=sec.querySelector(".body");
+  const seg9=$("#seg9");if(n===9&&seg9)seg9.style.display="none";
+  sec.querySelector(".rv").style.display="none";
+  box.innerHTML=`<div class="ed" id="ed${n}">
+    <span class="seg"><button data-v="write" aria-pressed="true">Write</button><button data-v="preview" aria-pressed="false">Preview</button></span>
+    <textarea aria-label="Section ${n} text" spellcheck="true"></textarea>
+    <div class="pv body" hidden></div>
+    <div class="ed-ai"><input placeholder="Optional instruction for the AI — e.g. shorter, focus on hospitals, more formal" aria-label="Instruction for the AI" maxlength="600"><button class="btn btn-ghost" data-act="regen">↻ Regenerate with AI</button></div>
+    <div class="ed-row"><span class="hint">${n===9?"The events table under the paragraph is part of the text. ":""}Markdown: **bold**, “- ” bullets, “| a | b |” tables.</span><button class="btn btn-ghost" data-act="cancel">Cancel</button><button class="btn btn-primary" data-act="save">✓ Save &amp; approve</button></div>
+  </div>`;
+  const ed=$("#ed"+n),ta=ed.querySelector("textarea");
+  ta.value=editing[n].text;ta.style.height=Math.min(640,Math.max(260,ta.scrollHeight+12))+"px";
+  ta.oninput=()=>{editing[n].text=ta.value};
+  ed.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>{const pv=b.dataset.v==="preview";editing[n].view=b.dataset.v;
+    ed.querySelectorAll(".seg button").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
+    ta.hidden=pv;const p=ed.querySelector(".pv");p.hidden=!pv;if(pv)p.innerHTML=md(ta.value)||'<p class="hint">Empty</p>'});
+  ed.querySelector('[data-act="regen"]').onclick=()=>regenSection(n);
+  ed.querySelector('[data-act="cancel"]').onclick=()=>{if(isDirty(n)&&!confirmDiscard())return;closeEditor(n)};
+  ed.querySelector('[data-act="save"]').onclick=()=>{const t=ta.value.trim();if(!t)return toast("The section cannot be empty");const body={text:t,approve:true};if(editing[n].extra)Object.assign(body,editing[n].extra);saveSection(n,body)};
+  ed.querySelector(".ed-ai input").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();regenSection(n)}});
+  sec.scrollIntoView({behavior:"smooth",block:"start"});
+  if(regen)regenSection(n);else ta.focus();
+}
+function confirmDiscard(){return window.confirm("Discard your changes to this section?")}
+function closeEditor(n){delete editing[n];refreshSection(n)}
+// Re-draws one section (and what depends on it) without closing other open editors.
+function refreshSection(n){
+  const swap=k=>{const el=$("#s"+k);if(!el||editing[k])return;el.outerHTML=secHtml(current,k,false)};
+  swap(n);if(n===3||n===10)swap(11);
+  const rb=$("#reviewBar");if(rb)rb.outerHTML=rbarHtml(current,false);
+  bindReview(current);bindSnCopy();if(n===9)bindCal(current);
+}
+async function regenSection(n){
+  const ed=$("#ed"+n);if(!ed)return;const ta=ed.querySelector("textarea"),ins=ed.querySelector(".ed-ai input"),btn=ed.querySelector('[data-act="regen"]');
+  const old=btn.textContent;ed.classList.add("working");btn.textContent="Writing a new version…";
+  try{const d=await api(`/api/reports/${current.slug}/sections/${n}/regenerate`,{method:"POST",body:JSON.stringify({instruction:ins.value.trim()})});
+    if(!$("#ed"+n))return;
+    ta.value=d.text;editing[n].text=d.text;editing[n].extra=(d.searches||d.events)?{searches:d.searches,events:d.events}:null;
+    const pv=ed.querySelector(".pv");if(!pv.hidden)pv.innerHTML=md(d.text);
+    toast("New version ready — check it, then Save & approve")}
+  catch(e){if(e.status===401)return gate("no");toast("Regenerate failed: "+e.message)}
+  finally{const e2=$("#ed"+n);if(e2){e2.classList.remove("working");btn.textContent=old}}
+}
+async function saveSection(n,body){
+  const ed=$("#ed"+n);if(ed)ed.classList.add("working");
+  try{const d=await api(`/api/reports/${current.slug}/sections/${n}`,{method:"PUT",body:JSON.stringify(body)});
+    current=d.report;delete editing[n];refreshSection(n);
+    toast(d.review.done===d.review.total?"All sections approved — ready for the PDF":"Section approved ("+d.review.done+" of "+d.review.total+")")}
+  catch(e){if(ed)ed.classList.remove("working");if(e.status===401)return gate("no");toast("Save failed: "+e.message)}
+}
+// Before a PDF, HTML file or email: make sure open edits are saved and say which sections are not approved yet.
+function reviewGate(r,label,go){
+  const open=Object.keys(editing).map(Number).filter(n=>isDirty(n));
+  if(open.length){toast("Save or cancel your edit of section "+String(open[0]).padStart(2,"0")+" first");$("#s"+open[0]).scrollIntoView({behavior:"smooth",block:"start"});return}
+  const left=EDITABLE.filter(n=>!(((r.review||{})[n])||{}).approved);
+  if(!left.length)return go();
+  const m=modal(`<h2>${left.length} section${left.length>1?"s":""} not approved yet</h2>
+    <p class="hint" style="font-size:13.5px">The ${esc(label)} uses the text as it is now. You can review these sections first, or continue with the AI draft.</p>
+    <ul class="gate-list">${left.map(n=>`<li><b>${String(n).padStart(2,"0")}</b> ${esc(SECTIONS[n-1])}</li>`).join("")}</ul>
+    <div class="row"><button class="btn btn-ghost" id="gAnyway">Create ${esc(label)} anyway</button><button class="btn btn-primary" id="gReview">Review first</button></div>`);
+  $("#gReview").onclick=()=>{m.close();$("#s"+left[0]).scrollIntoView({behavior:"smooth",block:"start"})};
+  $("#gAnyway").onclick=()=>{m.close();go()};
+}
+window.addEventListener("beforeunload",e=>{if(anyDirty()){e.preventDefault();e.returnValue=""}});
 
 start();
 
