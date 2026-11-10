@@ -117,3 +117,7 @@ test("regenerate reports an empty AI answer as an error", async () => {
   try { const res = await call(e, "/api/reports/acme-com/sections/2/regenerate", "POST", {}); assert.equal(res.status, 502); }
   finally { globalThis.fetch = realFetch; }
 });
+test("section 14 save keeps only genuine linkedin.com/groups links", () => {
+  const r = mod.applySectionEdit(base(), 14, { text: "| G |", groups: [{ name: "A", keywords: "a", url: "https://www.linkedin.com/groups/123/", title: "Real A" }, { name: "B", keywords: "b", url: "https://evil.example/groups/1" }] });
+  assert.deepEqual(r.groups, [{ name: "A", keywords: "a", url: "https://www.linkedin.com/groups/123/", title: "Real A" }, { name: "B", keywords: "b" }]);
+});

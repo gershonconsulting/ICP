@@ -5,7 +5,7 @@ import HOME from "./home.html";
 import SEED from "./seed.json";
 import { MATRIX_STATS_PATH, handleMatrixStats } from "./matrix-stats.js";
 
-export const VERSION = "1.9.1";
+export const VERSION = "1.9.2";
 const MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
 
 // v1.9.0: section KEYS are stable storage ids (old reports keep working); ORDER is what is shown, numbered 01-12.
@@ -24,7 +24,7 @@ const SPEC = {
 13:"US market sizing in three layers. First a markdown table 'Layer | What it covers for this company | Illustrative US estimate | How it is calculated' with exactly three rows: TAM (Total Addressable Market: total US demand for this type of solution if the company had 100% market share), SAM (Serviceable Available Market: the part of the TAM that fits the company's actual product type, price point and the US segments/geography it can serve), SOM (Serviceable Obtainable Market: the realistic share it can capture in 3 years with its current budget, team and competition). Express each estimate as a range in US dollars per year, built bottom-up (number of US accounts x annual contract value or unit price) and say which figures are assumptions. SOM is typically 1-5% of SAM for a new entrant; justify the percentage. Then 2-3 bullets: the key assumptions to validate with customers, and where real figures can be found (industry reports, US Census/NAICS counts, analyst firms). State clearly that these are modeling estimates, not established market-size figures.",
 5:"Why the US now: the company's relevant commercial assets, any existing US footprint, and the recommended initial commercial strategy. End with what should be proven before expanding to other segments.",
 6:"A markdown table 'Indicator | Company' with 5-6 positioning facts taken from the website text (founding year, HQ, US presence, flagship product, funding, customers). Add one line noting these are company-provided facts, not audited figures.",
-7:"A markdown table 'Category | Examples | Differentiation to test' with 3-4 categories of US competitors or substitutes, naming real companies. Then one paragraph on the key commercial distinction, to be tested with customers rather than assumed.",
+7:"The actual US competitors, by name. A markdown table 'Competitor | Website | HQ | What they sell | How they compete with this company' with 6-8 rows, one real named company per row (direct competitors first, then the main substitutes), each active in the US. The Competitor column holds only a company name (never a category or a description such as 'Large CDN providers'); Website is the company's real domain. Only list companies you are confident exist. Then one paragraph on the key commercial distinction, to be tested with customers rather than assumed.",
 10:"LinkedIn Sales Navigator targeting split into 4-5 industry-specific campaigns. For each: a ### heading with the segment, then a 'Titles:' line listing 3-5 short real LinkedIn job titles separated by commas (e.g. Director of Genomics, Head of Spatial Biology) and an 'Engagement signals:' line. End with one prioritization sentence.",
 14:"The LinkedIn groups where this company's US buyers and influencers gather, to join and engage in (comment, share expertise, never pitch). A markdown table 'Group | Who is in it | How to use it' with 6-8 rows. Name a real, well-known LinkedIn group only when you are confident it exists (typically the group of a US professional association or an established community); otherwise name the topic of the group to look for, in the form 'Groups about <topic>'. Then 2-3 bullets of group etiquette and a cadence (e.g. 2 useful comments a week per group). Add one line: membership sizes and activity must be checked on LinkedIn before joining.",
 15:"Three sample outreach emails that THIS company (the one analysed, not Gershon Consulting) sends to a US prospect, each with a different approach. The sender is this company: write 'I\'m reaching out from <this company>', never mention Gershon Consulting. For each email: a ### heading 'Email 1 — Executive introduction', 'Email 2 — Problem-led' and 'Email 3 — Proof and peer-led', then a line '**Subject:** <subject line, under 8 words>', then the email. All three: short, warm, executive, one idea per paragraph, no hype words, no bullet points, under 120 words, signed [Your Name] / <Company>, never invent customers or figures (only facts from the website or notes).\nEmail 1 follows this structure exactly, each part its own paragraph:\n" + EMAIL_A + "\nEmail 2 opens with the specific problem the prospect's role faces (from the ICP), adds one insight on why current approaches fall short, says in one line how the company solves it, and ends with a low-friction question (e.g. 'Is this a priority for your team this year?').\nEmail 3 opens with one concrete proof point from the website (a customer type, a result, a deployment, a partner, a publication), connects it to the prospect's situation, and ends with a clear 20-minute call request."
@@ -155,8 +155,63 @@ export async function analyze(env, { url, name, notes }) {
       const missing = g.filter(n => !p.sections[n]); if (missing.length) report.errors.push("Sections " + missing.join(", ") + " came back empty");
     } catch (e) { report.errors.push("Sections " + g.join(", ") + ": " + (e.message || e)); }
   }));
+  if (report.groups.length) report.groups = await resolveGroups(report.groups);
   if (!report.company) report.company = url.replace(/^https?:\/\/(www\.)?/, "").replace(/\/.*$/, "");
   return report;
+}
+
+// ---- LinkedIn groups: find each group's real page (linkedin.com/groups/<id>) through public web search (v1.9.2) ----
+const GROUP_RE = /https?:\/\/(?:[a-z]{2,3}\.)?linkedin\.com\/groups\/(\d{3,12})/i;
+const unent = t => String(t || "").replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/&#39;|&#x27;/g, "'").replace(/&quot;/g, '"').replace(/&lt;/g, "<").replace(/&gt;/g, ">").trim();
+export const cleanGroupTitle = t => unent(t).replace(/\s*[|\-–—]\s*(groups?\s*[|\-–—]\s*)?linkedin\s*$/i, "").replace(/\s*[|\-–—]\s*groups?\s*$/i, "").trim();
+// Bing RSS: <item><title>…</title><link>…</link>
+export function parseBingRss(xml) {
+  const out = [];
+  for (const m of String(xml).matchAll(/<item>[\s\S]*?<title>([\s\S]*?)<\/title>[\s\S]*?<link>([\s\S]*?)<\/link>/gi)) {
+    const g = unent(m[2]).match(GROUP_RE); if (g) out.push({ id: g[1], title: cleanGroupTitle(m[1]) });
+  }
+  return out;
+}
+// DuckDuckGo HTML: <a class="result__a" href="//duckduckgo.com/l/?uddg=<encoded url>">Title</a>
+export function parseDdgHtml(html) {
+  const out = [];
+  for (const m of String(html).matchAll(/<a[^>]+class="result__a"[^>]+href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/gi)) {
+    let u = unent(m[1]); const q = u.match(/[?&]uddg=([^&]+)/); if (q) { try { u = decodeURIComponent(q[1]); } catch {} }
+    const g = u.match(GROUP_RE); if (g) out.push({ id: g[1], title: cleanGroupTitle(m[2]) });
+  }
+  return out;
+}
+async function searchGroups(q) {
+  const tries = [
+    ["https://www.bing.com/search?format=rss&count=10&q=" + encodeURIComponent(q), parseBingRss],
+    ["https://html.duckduckgo.com/html/?q=" + encodeURIComponent(q), parseDdgHtml]
+  ];
+  for (const [url, parse] of tries) {
+    try {
+      const r = await fetch(url, { headers: { "user-agent": UA, "accept-language": "en-US,en;q=0.9" } });
+      if (!r.ok) continue; const found = parse(await r.text()); if (found.length) return found;
+    } catch {}
+  }
+  return [];
+}
+// Adds url (direct group page) and title (the group's real name) to each group when search finds one; never invents a link.
+export async function resolveGroups(groups, search = searchGroups) {
+  const list = groups || [];
+  // Per group: the group's own name first (quoted), then its keywords.
+  const found = await Promise.all(list.map(async g => {
+    const topic = String(g.name || "").replace(/^groups about\s+/i, "").trim(), kw = String(g.keywords || "").split(",")[0].trim();
+    const qs = [/^groups about/i.test(g.name || "") ? "" : `site:linkedin.com/groups "${topic}"`, kw ? `site:linkedin.com/groups ${kw}` : `site:linkedin.com/groups ${topic}`].filter(Boolean);
+    const hits = [];
+    for (const q of qs) { const h = await search(q).catch(() => []); hits.push(...h); if (h.length > 1) break; }
+    return hits;
+  }));
+  const used = new Set();
+  return list.map((g, i) => {
+    const hit = (found[i] || []).find(h => h.id && !used.has(h.id));
+    if (!hit) return { name: g.name, keywords: g.keywords };
+    used.add(hit.id);
+    return { name: g.name, keywords: g.keywords, url: "https://www.linkedin.com/groups/" + hit.id + "/", title: hit.title || g.name };
+  });
 }
 
 // Reports made before v1.9.0: their single outreach email (old section 12) becomes the first sample email.
@@ -183,7 +238,12 @@ function cleanSearches(list) {
 }
 function cleanGroups(list) {
   if (!Array.isArray(list)) return null;
-  return list.map(x => ({ name: clip(x && x.name, 160).trim(), keywords: clip(x && x.keywords, 200).trim() })).filter(x => x.name && x.keywords).slice(0, 8);
+  return list.map(x => {
+    const o = { name: clip(x && x.name, 160).trim(), keywords: clip(x && x.keywords, 200).trim() };
+    const u = String(x && x.url || ""); const m = u.match(GROUP_RE);
+    if (m) { o.url = "https://www.linkedin.com/groups/" + m[1] + "/"; o.title = clip(x.title || o.name, 160).trim(); }
+    return o;
+  }).filter(x => x.name && x.keywords).slice(0, 8);
 }
 // Applies a save from the editor. body = { text?, approve?, searches?, groups? }. Returns the updated report.
 export function applySectionEdit(r, n, body, now = new Date()) {
@@ -214,7 +274,7 @@ export async function regenerateSection(env, r, n, instruction) {
   if (!p.sections[n]) throw Object.assign(new Error("The AI returned nothing for this section. Try again."), { status: 502 });
   const out = { text: p.sections[n] };
   if (n === 10 && p.searches.length) out.searches = p.searches;
-  if (n === 14 && p.groups.length) out.groups = p.groups;
+  if (n === 14 && p.groups.length) out.groups = await resolveGroups(p.groups);
   return out;
 }
 

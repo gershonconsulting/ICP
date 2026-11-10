@@ -78,3 +78,28 @@ test("dedupeReports keeps newest per company", () => {
   assert.deepEqual(kept.map(r => r.slug), ["app-meteorbiotech-com", "acme-com"]);
   assert.equal(dupes.length, 2);
 });
+
+test("Bing RSS parser keeps only real linkedin.com/groups pages, with clean titles", () => {
+  const xml = `<rss><channel><item><title>Warehouse Automation Professionals | Groups | LinkedIn</title><link>https://www.linkedin.com/groups/1234567/</link></item><item><title>Some post</title><link>https://www.linkedin.com/posts/abc</link></item><item><title>MHI &amp; Friends - LinkedIn</title><link>https://fr.linkedin.com/groups/987654</link></item></channel></rss>`;
+  assert.deepEqual(mod.parseBingRss(xml), [{ id: "1234567", title: "Warehouse Automation Professionals" }, { id: "987654", title: "MHI & Friends" }]);
+});
+test("DuckDuckGo HTML parser decodes redirect links", () => {
+  const html = `<a rel="nofollow" class="result__a" href="//duckduckgo.com/l/?uddg=https%3A%2F%2Fwww.linkedin.com%2Fgroups%2F55555%2F&amp;rut=x">Supply Chain <b>Leaders</b> | LinkedIn</a><a class="result__a" href="https://example.com">Nope</a>`;
+  assert.deepEqual(mod.parseDdgHtml(html), [{ id: "55555", title: "Supply Chain Leaders" }]);
+});
+test("resolveGroups adds direct links, never reuses one group twice, and never invents a link", async () => {
+  const calls = [];
+  const fake = async q => { calls.push(q); return q.includes("automation") ? [{ id: "111", title: "Warehouse Automation Network" }] : q.includes("MHI") ? [{ id: "111", title: "dup" }, { id: "222", title: "MHI Members" }] : []; };
+  const out = await mod.resolveGroups([{ name: "Groups about warehouse automation", keywords: "warehouse automation, robotics" }, { name: "MHI", keywords: "material handling" }, { name: "Nothing", keywords: "zzz" }], fake);
+  assert.ok(calls.includes("site:linkedin.com/groups warehouse automation"));
+  assert.ok(calls.includes('site:linkedin.com/groups "MHI"'));
+  assert.ok(calls.includes("site:linkedin.com/groups zzz"), "falls back to keywords when the name finds nothing");
+  assert.deepEqual(out[0], { name: "Groups about warehouse automation", keywords: "warehouse automation, robotics", url: "https://www.linkedin.com/groups/111/", title: "Warehouse Automation Network" });
+  assert.equal(out[1].url, "https://www.linkedin.com/groups/222/");
+  assert.equal(out[2].url, undefined);
+});
+test("competition asks for named competitors with websites, not categories", () => {
+  const p = mod.buildPrompt([7], { url: "u", today: "t" });
+  assert.match(p, /Competitor \| Website \| HQ \| What they sell/);
+  assert.match(p, /never a category or a description/);
+});
