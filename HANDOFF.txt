@@ -26,6 +26,14 @@ SALES NAVIGATOR (section 11) — rules in config/salesnav-rules.md
 - To add a verified ID: put it in config/salesnav-rules.md and in liUrl()/snMapping() in src/page.html.
 
 DONE ✅
+- ✅ v1.9.0 (2026-11-10): analysis restructured, still 12 points, numbered 01-12 by position.
+  Section KEYS stay stable for storage; display ORDER = [1,2,3,4,13,5,6,7,10,11,14,15] (TITLES/ORDER in src/index.js and
+  src/page.html must match). New: 13 Market size TAM/SAM/SOM (table + assumptions), 14 Dedicated LinkedIn groups (table +
+  report.groups → LinkedIn group-search links, never guessed group URLs), 15 Three sample emails (Executive intro = GPT USA
+  structure, Problem-led, Proof/peer-led). Removed: 8 Balanced scorecard, 9 Tradeshows/events (+ calendar, .ics, event
+  verification; events live on events.gershon.ai), 12 single email. Old reports: upgradeReport() shows old 12 as sample
+  email 1 (approval kept); 13/14 show "Not generated yet — Regenerate". Old 8/9 data stays in KV, hidden.
+  Matrix note is now "report <Mon YYYY> · N/12 sections" (no events count).
 - ✅ v1.8.0 (2026-11-10, PR #4 merged, ✅ live, health = 1.8.0): edit before the PDF.
   Each AI section except 11 (built from 3 + 10) has ✎ Edit (markdown textarea with Write/Preview), ↻ Regenerate (re-reads
   the site, rewrites that one section with the current text + optional instruction; returns a draft, saved only on

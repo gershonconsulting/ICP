@@ -37,7 +37,7 @@ test("matrix-stats: matches by email domain and company name", async () => {
   const b = await r.json();
   assert.equal(b.ok, true); assert.equal(b.platform, "icp"); assert.ok(!Number.isNaN(Date.parse(b.as_of)));
   assert.deepEqual(b.results, [
-    { key: "248", ok: true, note: "report Oct 2026 · 3/12 sections · 4 events" },
+    { key: "248", ok: true, note: "report Oct 2026 · 3/12 sections" },
     { key: "246", ok: false, note: "report empty" },
     { key: "212", ok: false, note: "no report" }
   ]);
