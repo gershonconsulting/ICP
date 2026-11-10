@@ -26,6 +26,14 @@ SALES NAVIGATOR (section 11) — rules in config/salesnav-rules.md
 - To add a verified ID: put it in config/salesnav-rules.md and in liUrl()/snMapping() in src/page.html.
 
 DONE ✅
+- ✅ v1.8.0 (2026-11-10, branch feature/edit-sections-before-pdf — ❌ not merged/deployed yet): edit before the PDF.
+  Each AI section except 11 (built from 3 + 10) has ✎ Edit (markdown textarea with Write/Preview), ↻ Regenerate (re-reads
+  the site, rewrites that one section with the current text + optional instruction; returns a draft, saved only on
+  "Save & approve") and ✓ Approve. report.review[n] = {approved, edited, at}; report.notes now stored for regenerations.
+  Review bar on the report; PDF / HTML / Send by email show a "not approved yet" list first and are blocked while an edit
+  is unsaved. Section 9 regenerate refreshes the verified events; section 10 regenerate refreshes the searches (11 follows).
+  Routes: PUT /api/reports/:slug/sections/:n {text?, approve?, searches?, events?}; POST /api/reports/:slug/sections/:n/regenerate {instruction?}.
+  Brand red switched to #FE1B04 (dark #d11200, tint #fff5f5) per the 2026-11-10 decision. Tests: test/review.test.js.
 - ✅ v1.7.0 (2026-11-09): no duplicate reports — /api/reports keeps the newest report per company (same root domain
   ignoring www/app/paths, or same company name ignoring case/accents/Inc/LLC); a new run deletes older copies of the same
   company. Sidebar: Recent | A–Z toggle (remembered per browser), letter headers in A–Z, report count, search box.

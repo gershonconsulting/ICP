@@ -5,7 +5,7 @@ import HOME from "./home.html";
 import SEED from "./seed.json";
 import { MATRIX_STATS_PATH, handleMatrixStats } from "./matrix-stats.js";
 
-export const VERSION = "1.7.0";
+export const VERSION = "1.8.0";
 const MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
 
 export const SECTIONS = ["Pitches creation","Problem identification","Ideal customer profiles","Market opportunity","Market entry justification","At a glance","Competition","Balanced scorecard","Tradeshow and conference opportunities","LinkedIn Sales Navigator","LinkedIn search links","Outreach email"];
@@ -87,7 +87,7 @@ export function windowBounds(now = new Date()) {
   return { start: s.toISOString().slice(0, 10), end: e.toISOString().slice(0, 10) };
 }
 
-export function buildPrompt(group, { url, name, notes, site, win, today }) {
+export function buildPrompt(group, { url, name, notes, site, win, today, instruction, current }) {
   const want = group.map(n => `Section ${n} (${SECTIONS[n - 1]}): ${SPEC[n]}`).join("\n");
   const markers = group.map(n => `=== SECTION ${n} ===`).join(", ");
   let extra = group.includes(10) ? `\n=== SEARCHES === 4-5 lines, one per Sales Navigator segment, each "Segment name | keywords", using exactly the same segment names as the ### headings of section 10, where keywords are 2-4 short INDUSTRY or TOPIC terms (not job titles) that people in that segment put in their LinkedIn profile, separated by commas (for example: spatial biology, genomics, single cell).` : "";
@@ -108,8 +108,15 @@ Sections to write:
 ${want}
 
 Events (section 9) must fall within ${win}; drop anything outside that window.
-
+${rewriteBlock(instruction, current)}
 Output format, exactly: first a line "=== COMPANY === <official company name>", then for each section a line with only its marker (${markers}) followed by the section content. Do not repeat these instructions or the section title in the content. Do not add anything else.${extra}`;
+}
+
+// Extra prompt block used when one section is regenerated from the report screen.
+export function rewriteBlock(instruction, current) {
+  const i = String(instruction || "").trim(), c = String(current || "").trim();
+  if (!i && !c) return "";
+  return `\nThis is a rewrite of an existing section.${c ? `\nCurrent version (improve on it, keep what is right):\n"""\n${c.slice(0, 6000)}\n"""` : ""}${i ? `\nEditor's instruction for this rewrite (follow it): ${i.slice(0, 600)}` : ""}\n`;
 }
 
 // Drop a first line where the model echoed the section title or its instruction.
@@ -179,7 +186,7 @@ export async function analyze(env, { url, name, notes }) {
   const site = await readSite(url);
   const ctx = { url, name, notes, site: site.text, win: window6(now), today: now.toLocaleDateString("en-US", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }) };
   const win = windowBounds(now); let events = [];
-  const report = { slug: slug(url), url, company: name || "", createdAt: now.toISOString(), window: ctx.win, windowStart: win.start, windowEnd: win.end, sections: {}, searches: [], events: [], source: { siteRead: site.ok, pages: site.pages || [], error: site.error || null, model: MODEL }, errors: [] };
+  const report = { slug: slug(url), url, company: name || "", notes: notes || "", createdAt: now.toISOString(), window: ctx.win, windowStart: win.start, windowEnd: win.end, sections: {}, searches: [], events: [], source: { siteRead: site.ok, pages: site.pages || [], error: site.error || null, model: MODEL }, errors: [] };
   await Promise.all(GROUPS.map(async g => {
     try {
       const p = parseOutput(await runAI(env, buildPrompt(g, ctx)), g);
@@ -195,6 +202,66 @@ export async function analyze(env, { url, name, notes }) {
   report.sections[9] = [report.sections[9], eventsTable(report.events)].filter(Boolean).join("\n\n");
   if (!report.company) report.company = url.replace(/^https?:\/\/(www\.)?/, "").replace(/\/.*$/, "");
   return report;
+}
+
+// ---- section review: edit, regenerate and approve before the PDF (v1.8.0) ----
+// Section 11 (Sales Navigator links) is built from sections 3 and 10, so it is never edited directly.
+export const EDITABLE = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12];
+export function reviewCount(r) {
+  const rv = (r && r.review) || {};
+  return { done: EDITABLE.filter(n => rv[n] && rv[n].approved).length, total: EDITABLE.length };
+}
+const clip = (v, n) => String(v ?? "").slice(0, n);
+function cleanSearches(list) {
+  if (!Array.isArray(list)) return null;
+  return list.map(x => ({ label: clip(x && x.label, 120).trim(), keywords: clip(x && x.keywords, 200).trim() })).filter(x => x.label && x.keywords).slice(0, 6);
+}
+function cleanEvents(list) {
+  if (!Array.isArray(list)) return null;
+  return list.map(e => ({ name: clip(e && e.name, 200).trim(), start: clip(e && e.start, 10), end: clip(e && e.end, 10), location: clip(e && e.location, 120), score: Math.max(1, Math.min(5, parseInt(e && e.score) || 3)), url: /^https?:\/\//i.test(String(e && e.url || "")) ? clip(e.url, 500) : "", verified: !!(e && e.verified) }))
+    .filter(e => e.name && ISO.test(e.start)).map(e => ({ ...e, end: ISO.test(e.end) && e.end >= e.start ? e.end : e.start })).slice(0, 8);
+}
+// Applies a save from the editor. body = { text?, approve?, searches?, events? }. Returns the updated report.
+export function applySectionEdit(r, n, body, now = new Date()) {
+  if (!EDITABLE.includes(n)) throw Object.assign(new Error("This section cannot be edited"), { status: 400 });
+  const b = body || {}; const out = { ...r, sections: { ...(r.sections || {}) }, review: { ...(r.review || {}) } };
+  let edited = !!(out.review[n] && out.review[n].edited);
+  if (b.text !== undefined) {
+    const t = String(b.text).replace(/\r/g, "").trim();
+    if (!t) throw Object.assign(new Error("The section cannot be empty"), { status: 400 });
+    if (t.length > 20000) throw Object.assign(new Error("The section is too long (20,000 characters maximum)"), { status: 400 });
+    if (t !== String(out.sections[n] || "").trim()) edited = true;
+    out.sections[n] = t;
+  }
+  if (n === 10) { const s = cleanSearches(b.searches); if (s && s.length) out.searches = s; }
+  if (n === 9) { const e = cleanEvents(b.events); if (e) out.events = e; }
+  if (b.approve === false) out.review[n] = { approved: false, edited, at: now.toISOString() };
+  else out.review[n] = { approved: true, edited, at: now.toISOString() };
+  out.updatedAt = now.toISOString();
+  return out;
+}
+// Section 9 = AI paragraph + generated events table; returns the paragraph only.
+export function sec9Paragraph(t) { return String(t || "").split(/(?:^|\n)\s*\|/)[0].replace(/\n*No dated US events were found in the window\.[^\n]*/g, "").trim(); }
+// Writes one section again with the AI. Returns a draft { text, searches?, events? }; nothing is saved here.
+export async function regenerateSection(env, r, n, instruction) {
+  if (!EDITABLE.includes(n)) throw Object.assign(new Error("This section cannot be regenerated"), { status: 400 });
+  const now = new Date(); const site = await readSite(r.url);
+  const win = r.windowStart && r.windowEnd ? { start: r.windowStart, end: r.windowEnd } : windowBounds(now);
+  // Section 9 stores the paragraph + the events table; only the paragraph goes back to the AI.
+  const current = n === 9 ? sec9Paragraph((r.sections || {})[9]) : (r.sections || {})[n];
+  const ctx = { url: r.url, name: r.company, notes: r.notes || "", site: site.text, win: r.window || window6(now), today: now.toLocaleDateString("en-US", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }), instruction, current };
+  const p = parseOutput(await runAI(env, buildPrompt([n], ctx)), [n]);
+  if (!p.sections[n]) throw Object.assign(new Error("The AI returned nothing for this section. Try again."), { status: 502 });
+  const out = { text: p.sections[n] };
+  if (n === 10 && p.searches.length) out.searches = p.searches;
+  if (n === 9) {
+    let events = r.events || [];
+    const fresh = p.events.filter(e => e.start >= win.start && e.start <= win.end);
+    if (fresh.length) events = (await verifyEvents(env, fresh, win)).filter(e => !e.drop && e.start >= win.start && e.start <= win.end).map(({ drop, ...e }) => e).sort((a, b) => a.start.localeCompare(b.start));
+    if (!events.length) events = r.events || [];
+    out.events = events; out.text = [sec9Paragraph(out.text), eventsTable(events)].filter(Boolean).join("\n\n");
+  }
+  return out;
 }
 
 // ---- auth (single team password, set on first visit) ----
@@ -332,6 +399,20 @@ export default {
         await env.STORE.put("report:" + r.slug, JSON.stringify(r));
         return json({ ok: true, id });
       } catch (e) { return json({ error: e.message }, e.status || 500); }
+    }
+    const sec = p.match(/^\/api\/reports\/([a-z0-9-]+)\/sections\/(\d{1,2})(\/regenerate)?$/);
+    if (sec) {
+      const r = await env.STORE.get("report:" + sec[1], "json"); if (!r) return json({ error: "Report not found" }, 404);
+      const n = +sec[2]; const b = await req.json().catch(() => ({}));
+      try {
+        if (sec[3] && req.method === "POST") return json(await regenerateSection(env, r, n, clip(b.instruction, 600)));
+        if (!sec[3] && req.method === "PUT") {
+          const next = applySectionEdit(r, n, b);
+          await env.STORE.put("report:" + r.slug, JSON.stringify(next));
+          return json({ ok: true, report: next, review: reviewCount(next) });
+        }
+      } catch (e) { return json({ error: e.message || String(e) }, e.status || 500); }
+      return json({ error: "Not found" }, 404);
     }
     const m = p.match(/^\/api\/reports\/([a-z0-9-]+)$/);
     if (m && req.method === "GET") { const r = await env.STORE.get("report:" + m[1], "json"); return r ? json(r) : json({ error: "Not found" }, 404); }

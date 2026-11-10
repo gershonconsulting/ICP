@@ -9,3 +9,4 @@ balanced scorecard, US events (next 6 months), Sales Navigator targeting, Linked
 - Deploy: push to `main` -> GitHub Actions -> tests -> KV ensured -> `wrangler deploy` (custom domain icp.gershon.ai declared in wrangler.toml).
 - Access: single team password, chosen on the first visit.
 - Sister app: events.gershon.ai (gershonconsulting/events-gershon-ai).
+- Review before the PDF (v1.8.0): every AI section can be edited, regenerated (with an optional instruction) and approved; the PDF, HTML and email use the approved text.
