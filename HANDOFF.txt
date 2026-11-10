@@ -26,7 +26,7 @@ SALES NAVIGATOR (section 11) — rules in config/salesnav-rules.md
 - To add a verified ID: put it in config/salesnav-rules.md and in liUrl()/snMapping() in src/page.html.
 
 DONE ✅
-- ✅ v1.8.0 (2026-11-10, branch feature/edit-sections-before-pdf — ❌ not merged/deployed yet): edit before the PDF.
+- ✅ v1.8.0 (2026-11-10, PR #4 merged, ✅ live, health = 1.8.0): edit before the PDF.
   Each AI section except 11 (built from 3 + 10) has ✎ Edit (markdown textarea with Write/Preview), ↻ Regenerate (re-reads
   the site, rewrites that one section with the current text + optional instruction; returns a draft, saved only on
   "Save & approve") and ✓ Approve. report.review[n] = {approved, edited, at}; report.notes now stored for regenerations.

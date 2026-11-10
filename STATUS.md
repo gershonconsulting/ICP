@@ -5,7 +5,7 @@ Deploy: Cloudflare Workers Builds (Worker icp-gershon-ai). GitHub link shows "di
 Deploy Hook "claude-deploy" or "Deploy" in the Cloudflare dashboard after each push. Full notes: HANDOFF.txt
 
 ## Done
-- ✅ v1.8.0 (branch feature/edit-sections-before-pdf, PR open, not merged/deployed) — review before the PDF: each AI
+- ✅ v1.8.0 LIVE 2026-11-10 (PR #4 merged, Deploy Hook run, /api/health = 1.8.0) — review before the PDF: each AI
   section (all but 11) has Edit (markdown + preview), Regenerate (optional instruction, draft only until saved) and
   Approve; review bar "x of 11 approved"; PDF/HTML/email ask first when sections are not approved and refuse while an
   edit is unsaved. API: PUT /api/reports/:slug/sections/:n, POST …/sections/:n/regenerate. Brand red → #FE1B04.
@@ -15,7 +15,6 @@ Deploy Hook "claude-deploy" or "Deploy" in the Cloudflare dashboard after each p
 - ✅ v1.5.0 — Sales Navigator links rebuilt, GPT USA-style email
 
 ## Open
-- ❌ v1.8.0: merge + Deploy Hook after Olivier tests (production needs his yes)
 - ❌ Verified LinkedIn IDs for industry, headcount, function
 - ❌ Some sites block reading (fallback r.jina.ai / paste in Notes)
 - ❌ Re-authorize Cloudflare GitHub app so pushes deploy on their own
