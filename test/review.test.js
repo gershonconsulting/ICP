@@ -8,7 +8,7 @@ const src = readFileSync(new URL("../src/index.js", import.meta.url), "utf8")
   .replace('from "./matrix-stats.js";', 'from "' + new URL("../src/matrix-stats.js", import.meta.url) + '";');
 const mod = await import("data:text/javascript," + encodeURIComponent(src));
 
-const base = () => ({ slug: "acme-com", url: "https://acme.com/", company: "Acme", sections: { 1: "Pitch", 9: "Para\n\n| Event | Dates |\n|---|---|\n| X | Y |", 10: "### Labs\nTitles: A" }, searches: [{ label: "Labs", keywords: "genomics" }], events: [] });
+const base = () => ({ slug: "acme-com", url: "https://acme.com/", company: "Acme", sections: { 1: "Pitch", 2: "P", 3: "I", 4: "M", 13: "T", 5: "E", 6: "G", 7: "C", 10: "### Labs\nTitles: A", 14: "| Group |", 15: "### Email 1" }, searches: [{ label: "Labs", keywords: "genomics" }], groups: [{ name: "AACR", keywords: "cancer research" }] });
 
 test("editing a section saves the text and approves it", () => {
   const r = mod.applySectionEdit(base(), 1, { text: "  New pitch \r\n", approve: true }, new Date("2026-11-10T00:00:00Z"));
@@ -26,9 +26,13 @@ test("the original report object is not mutated", () => {
   const b = base(); mod.applySectionEdit(b, 1, { text: "Changed" });
   assert.equal(b.sections[1], "Pitch"); assert.equal(b.review, undefined);
 });
-test("section 11 and unknown sections cannot be edited", () => {
-  assert.throws(() => mod.applySectionEdit(base(), 11, { text: "x" }), /cannot be edited/);
-  assert.throws(() => mod.applySectionEdit(base(), 13, { text: "x" }), /cannot be edited/);
+test("section 11 and removed sections (8 scorecard, 9 events, 12 old email) cannot be edited", () => {
+  for (const n of [11, 8, 9, 12, 16]) assert.throws(() => mod.applySectionEdit(base(), n, { text: "x" }), /cannot be edited/);
+});
+test("an empty section cannot be approved without text", () => {
+  const b = base(); delete b.sections[13];
+  assert.throws(() => mod.applySectionEdit(b, 13, { approve: true }), /empty/);
+  assert.equal(mod.applySectionEdit(b, 13, { text: "TAM table", approve: true }).sections[13], "TAM table");
 });
 test("empty and oversized text is refused", () => {
   assert.throws(() => mod.applySectionEdit(base(), 2, { text: "   " }), /cannot be empty/);
@@ -40,12 +44,9 @@ test("section 10 save can carry regenerated searches, sanitized", () => {
   const keep = mod.applySectionEdit(base(), 10, { text: "### Pharma", searches: [] });
   assert.deepEqual(keep.searches, [{ label: "Labs", keywords: "genomics" }]);
 });
-test("section 9 save can carry events, invalid ones dropped", () => {
-  const r = mod.applySectionEdit(base(), 9, { text: "P", events: [{ name: "SLAS", start: "2027-01-30", end: "2027-01-01", location: "San Diego, CA", score: 9, url: "javascript:x" }, { name: "Bad", start: "soon" }] });
-  assert.equal(r.events.length, 1);
-  assert.equal(r.events[0].end, "2027-01-30");
-  assert.equal(r.events[0].score, 5);
-  assert.equal(r.events[0].url, "");
+test("section 14 save can carry regenerated groups, sanitized", () => {
+  const r = mod.applySectionEdit(base(), 14, { text: "| G |", groups: [{ name: "Spatial biology", keywords: "spatial omics" }, { name: "x" }, 5] });
+  assert.deepEqual(r.groups, [{ name: "Spatial biology", keywords: "spatial omics" }]);
 });
 test("unapprove keeps the edited flag", () => {
   const a = mod.applySectionEdit(base(), 1, { text: "Changed" });
@@ -57,18 +58,13 @@ test("reviewCount covers the 11 editable sections", () => {
   let r = base(); for (const n of mod.EDITABLE) r = mod.applySectionEdit(r, n, { approve: true });
   assert.deepEqual(mod.reviewCount(r), { done: 11, total: 11 });
 });
-test("sec9Paragraph keeps the paragraph only", () => {
-  assert.equal(mod.sec9Paragraph("Para one.\n\n| Event | Dates |\n|---|---|\n| X | Y |\n\n✓ = dates checked"), "Para one.");
-  assert.equal(mod.sec9Paragraph("Para.\n\nNo dated US events were found in the window. Run again, or check events.gershon.ai."), "Para.");
-  assert.equal(mod.sec9Paragraph("| a | b |"), "");
-});
 test("rewrite prompt carries the current text and the editor's instruction", () => {
-  const p = mod.buildPrompt([2], { url: "u", win: "w", today: "t", current: "Old text", instruction: "shorter, for hospitals" });
+  const p = mod.buildPrompt([2], { url: "u", today: "t", current: "Old text", instruction: "shorter, for hospitals" });
   assert.match(p, /Current version \(improve on it/);
   assert.match(p, /Old text/);
   assert.match(p, /Editor's instruction for this rewrite \(follow it\): shorter, for hospitals/);
   assert.ok(p.includes("=== SECTION 2 ==="));
-  assert.ok(!mod.buildPrompt([2], { url: "u", win: "w", today: "t" }).includes("rewrite"));
+  assert.ok(!mod.buildPrompt([2], { url: "u", today: "t" }).includes("rewrite"));
 });
 
 // Route-level check with an in-memory KV and a fake Workers AI.
@@ -91,6 +87,12 @@ test("PUT /api/reports/:slug/sections/:n saves and returns the review count", as
   assert.deepEqual(d.review, { done: 1, total: 11 });
   assert.equal(JSON.parse(e.kv.get("report:acme-com")).sections[2], "Edited problem");
 });
+test("GET of an old report shows its email as sample email 1", async () => {
+  const e = env(""); await signedIn(e);
+  e.kv.set("report:old-com", JSON.stringify({ slug: "old-com", url: "https://old.com/", company: "Old", sections: { 12: "Hi there" } }));
+  const d = await (await call(e, "/api/reports/old-com", "GET")).json();
+  assert.match(d.sections[15], /Email 1 — Executive introduction\n\nHi there/);
+});
 test("PUT on section 11 is refused, unknown report is 404, signed-out is 401", async () => {
   const e = env(""); await signedIn(e);
   assert.equal((await call(e, "/api/reports/acme-com/sections/11", "PUT", { text: "x" })).status, 400);
@@ -106,7 +108,7 @@ test("POST .../regenerate returns a draft and saves nothing", async () => {
     const res = await call(e, "/api/reports/acme-com/sections/2/regenerate", "POST", { instruction: "shorter" });
     assert.equal(res.status, 200);
     assert.equal((await res.json()).text, "A sharper problem statement.");
-    assert.equal(JSON.parse(e.kv.get("report:acme-com")).sections[2], undefined);
+    assert.equal(JSON.parse(e.kv.get("report:acme-com")).sections[2], "P");
   } finally { globalThis.fetch = realFetch; }
 });
 test("regenerate reports an empty AI answer as an error", async () => {

@@ -5,23 +5,29 @@ import HOME from "./home.html";
 import SEED from "./seed.json";
 import { MATRIX_STATS_PATH, handleMatrixStats } from "./matrix-stats.js";
 
-export const VERSION = "1.8.0";
+export const VERSION = "1.9.0";
 const MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
 
-export const SECTIONS = ["Pitches creation","Problem identification","Ideal customer profiles","Market opportunity","Market entry justification","At a glance","Competition","Balanced scorecard","Tradeshow and conference opportunities","LinkedIn Sales Navigator","LinkedIn search links","Outreach email"];
-const GROUPS = [[1,2,3],[4,5,6],[7,8,9],[10,12]];
+// v1.9.0: section KEYS are stable storage ids (old reports keep working); ORDER is what is shown, numbered 01-12.
+// Removed from the analysis: 8 Balanced scorecard, 9 Tradeshows (events have their own platform, events.gershon.ai),
+// 12 single outreach email (replaced by 15, three sample emails). Added: 13 TAM/SAM/SOM, 14 LinkedIn groups, 15.
+export const TITLES = { 1: "Pitches creation", 2: "Problem identification", 3: "Ideal customer profiles", 4: "Market opportunity", 13: "Market size: TAM, SAM, SOM", 5: "Market entry justification", 6: "At a glance", 7: "Competition", 10: "LinkedIn Sales Navigator", 11: "LinkedIn search links", 14: "Dedicated LinkedIn groups", 15: "Sample outreach emails" };
+export const ORDER = [1, 2, 3, 4, 13, 5, 6, 7, 10, 11, 14, 15];
+export const SECTIONS = ORDER.map(k => TITLES[k]);
+const GROUPS = [[1, 2, 3], [4, 13, 5], [6, 7, 14], [10, 15]];
+const EMAIL_A = "Hi [First Name],\nI'm reaching out from <Company>, a <HQ city or country>-based <what the company is, in plain words> <one credibility anchor from the website, e.g. years of experience, origin, flagship product>.\nWe believe <the company's conviction about its market, in one short sentence>.\nWe're bringing that to <the US / the initial ICP> <one concrete proof point from the website: live customers, deployments, a US site, a partner>, while <one line on what comes next>.\nGiven [Company Name]'s work in [specific project or sector], I thought there could be an interesting opportunity to explore how <our product> might <complement or support> your <relevant activity>.\nWould you be open to a 20-minute introductory conversation next week?\nBest regards,\n[Your Name]\n<Company>\n<company domain>";
 const SPEC = {
 1:"Four pitches: one-sentence pitch, detailed pitch (one paragraph), kid-friendly pitch, and a pitch of exactly 10 words. Label each in bold.",
 2:"The central problem the company solves, why current approaches fall short, and the value proposition, in 2-4 short paragraphs.",
 3:"A markdown table with columns Priority | Industry | Decision-makers (6 rows, priority 1 to 6). Then: the recommended initial ICP in one paragraph, its buying triggers, and likely objections.",
-4:"A two-layer opportunity model (immediate commercial opportunity vs long-term platform opportunity) and an illustrative sizing: number of target US accounts x annual contract value or unit price = hypothetical annual opportunity. State that these are modeling assumptions, not established market-size figures.",
+4:"A two-layer opportunity model: the immediate commercial opportunity (who buys first and why) vs the long-term platform opportunity (where the company can expand). Qualitative only; the sizing figures belong to the TAM, SAM, SOM section.",
+13:"US market sizing in three layers. First a markdown table 'Layer | What it covers for this company | Illustrative US estimate | How it is calculated' with exactly three rows: TAM (Total Addressable Market: total US demand for this type of solution if the company had 100% market share), SAM (Serviceable Available Market: the part of the TAM that fits the company's actual product type, price point and the US segments/geography it can serve), SOM (Serviceable Obtainable Market: the realistic share it can capture in 3 years with its current budget, team and competition). Express each estimate as a range in US dollars per year, built bottom-up (number of US accounts x annual contract value or unit price) and say which figures are assumptions. SOM is typically a small single-digit percentage of SAM for a new entrant; justify the percentage. Then 2-3 bullets: the key assumptions to validate with customers, and where real figures can be found (industry reports, US Census/NAICS counts, analyst firms). State clearly that these are modeling estimates, not established market-size figures.",
 5:"Why the US now: the company's relevant commercial assets, any existing US footprint, and the recommended initial commercial strategy. End with what should be proven before expanding to other segments.",
 6:"A markdown table 'Indicator | Company' with 5-6 positioning facts taken from the website text (founding year, HQ, US presence, flagship product, funding, customers). Add one line noting these are company-provided facts, not audited figures.",
 7:"A markdown table 'Category | Examples | Differentiation to test' with 3-4 categories of US competitors or substitutes, naming real companies. Then one paragraph on the key commercial distinction, to be tested with customers rather than assumed.",
-8:"Illustrative first-year targets as a markdown table 'Perspective | Objective | KPI and target' covering Financial, Customer, Internal processes, Learning and growth. Then name the first commercial initiative.",
-9:"One short paragraph on which kinds of US tradeshows and conferences matter most for this company and why (the dated event list is produced separately).",
 10:"LinkedIn Sales Navigator targeting split into 4-5 industry-specific campaigns. For each: a ### heading with the segment, then a 'Titles:' line listing 3-5 short real LinkedIn job titles separated by commas (e.g. Director of Genomics, Head of Spatial Biology) and an 'Engagement signals:' line. End with one prioritization sentence.",
-12:"The outreach email the company sends to a US prospect, in the exact style of the USA Market Launch GPT: short, warm, executive, one idea per paragraph, no hype words, no bullet points, under 120 words. Follow this structure exactly, each part its own paragraph:\nHi [First Name],\nI'm reaching out from <Company>, a <HQ city or country>-based <what the company is, in plain words> <one credibility anchor from the website, e.g. years of experience, origin, flagship product>.\nWe believe <the company's conviction about its market, in one short sentence>.\nWe're bringing that to <the US / the initial ICP> <one concrete proof point from the website: live customers, deployments, a US site, a partner>, while <one line on what comes next>.\nGiven [Company Name]'s work in [specific project or sector], I thought there could be an interesting opportunity to explore how <our product> might <complement or support> your <relevant activity>.\nWould you be open to a 20-minute introductory conversation next week?\nBest regards,\n[Your Name]\n<Company>\n<company domain>\nOnly use facts from the website or notes; never invent customers or figures."
+14:"The LinkedIn groups where this company's US buyers and influencers gather, to join and engage in (comment, share expertise, never pitch). A markdown table 'Group | Who is in it | How to use it' with 6-8 rows. Name a real, well-known LinkedIn group only when you are confident it exists (typically the group of a US professional association or an established community); otherwise name the topic of the group to look for, in the form 'Groups about <topic>'. Then 2-3 bullets of group etiquette and a cadence (e.g. 2 useful comments a week per group). Add one line: membership sizes and activity must be checked on LinkedIn before joining.",
+15:"Three sample outreach emails to a US prospect, each with a different approach. For each email: a ### heading 'Email 1 — Executive introduction', 'Email 2 — Problem-led' and 'Email 3 — Proof and peer-led', then a line '**Subject:** <subject line, under 8 words>', then the email. All three: short, warm, executive, one idea per paragraph, no hype words, no bullet points, under 120 words, signed [Your Name] / <Company>, never invent customers or figures (only facts from the website or notes).\nEmail 1 follows this structure exactly, each part its own paragraph:\n" + EMAIL_A + "\nEmail 2 opens with the specific problem the prospect's role faces (from the ICP), adds one insight on why current approaches fall short, says in one line how the company solves it, and ends with a low-friction question (e.g. 'Is this a priority for your team this year?').\nEmail 3 opens with one concrete proof point from the website (a customer type, a result, a deployment, a partner, a publication), connects it to the prospect's situation, and ends with a clear 20-minute call request."
 };
 
 const json = (d, s = 200) => new Response(JSON.stringify(d), { status: s, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
@@ -75,24 +81,12 @@ export async function readSite(url) {
   return { ok: true, pages: pages.map(p => p.url), text };
 }
 
-function window6(now = new Date()) {
-  const o = { month: "long", year: "numeric", timeZone: "UTC" };
-  const f = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1)), t = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 6, 1));
-  return f.toLocaleDateString("en-US", o) + " to " + t.toLocaleDateString("en-US", o);
-}
-
-export function windowBounds(now = new Date()) {
-  const s = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1));
-  const e = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 7, 0));
-  return { start: s.toISOString().slice(0, 10), end: e.toISOString().slice(0, 10) };
-}
-
-export function buildPrompt(group, { url, name, notes, site, win, today, instruction, current }) {
-  const want = group.map(n => `Section ${n} (${SECTIONS[n - 1]}): ${SPEC[n]}`).join("\n");
+export function buildPrompt(group, { url, name, notes, site, today, instruction, current }) {
+  const want = group.map(n => `Section ${n} (${TITLES[n]}): ${SPEC[n]}`).join("\n");
   const markers = group.map(n => `=== SECTION ${n} ===`).join(", ");
   let extra = group.includes(10) ? `\n=== SEARCHES === 4-5 lines, one per Sales Navigator segment, each "Segment name | keywords", using exactly the same segment names as the ### headings of section 10, where keywords are 2-4 short INDUSTRY or TOPIC terms (not job titles) that people in that segment put in their LinkedIn profile, separated by commas (for example: spatial biology, genomics, single cell).` : "";
-  if (group.includes(9)) extra += `\n=== EVENTS === 5-7 lines, one per real US tradeshow or conference taking place within ${win}, each exactly "Event name | start YYYY-MM-DD | end YYYY-MM-DD | City, State | importance 1-5 | official website URL". US locations only.`;
-  return `You are the "USA Market Launch" analyst of Gershon Consulting, a New York firm that helps non-US companies enter the US market through LinkedIn outbound and commercial representation. Today is ${today}. US campaign window for events: ${win}.
+  if (group.includes(14)) extra += `\n=== GROUPS === 6-8 lines, one per row of the section 14 table, each "Group name or topic | 2-4 search keywords" (keywords that would find that group in LinkedIn's group search, e.g. "spatial biology").`;
+  return `You are the "USA Market Launch" analyst of Gershon Consulting, a New York firm that helps non-US companies enter the US market through LinkedIn outbound and commercial representation. Today is ${today}.
 
 Company website: ${url}
 Company name: ${name || "(infer from the website)"}
@@ -106,8 +100,6 @@ Write the following sections of the 12-point US market analysis for THIS company
 
 Sections to write:
 ${want}
-
-Events (section 9) must fall within ${win}; drop anything outside that window.
 ${rewriteBlock(instruction, current)}
 Output format, exactly: first a line "=== COMPANY === <official company name>", then for each section a line with only its marker (${markers}) followed by the section content. Do not repeat these instructions or the section title in the content. Do not add anything else.${extra}`;
 }
@@ -122,91 +114,64 @@ export function rewriteBlock(instruction, current) {
 // Drop a first line where the model echoed the section title or its instruction.
 export function cleanEcho(body, n) {
   const lines = body.split("\n"); const first = (lines[0] || "").replace(/[#*_:]/g, "").trim().toLowerCase();
-  const title = (SECTIONS[n - 1] || "").toLowerCase(), spec = (SPEC[n] || "").slice(0, 40).toLowerCase();
+  const title = (TITLES[n] || "").replace(/[#*_:]/g, "").toLowerCase(), spec = (SPEC[n] || "").slice(0, 40).toLowerCase();
   if (first && (first === title || first.startsWith(title + " ") || (spec && first.includes(spec.replace(/[#*_:]/g, "").slice(0, 30))))) lines.shift();
   return lines.join("\n").trim();
 }
 
+const pairs = body => body.split("\n").map(l => l.replace(/^[-*\d.\s]+/, "").split("|").map(s => s.trim())).filter(a => a.length >= 2 && a[0] && a[1]);
 export function parseOutput(text, group) {
-  const out = { sections: {}, searches: [], events: [], company: "" };
-  const parts = String(text).split(/^\s*=== *(COMPANY|SEARCHES|EVENTS|SECTION \d+) *===[^\n]*$/m);
+  const out = { sections: {}, searches: [], groups: [], company: "" };
+  const parts = String(text).split(/^\s*=== *(COMPANY|SEARCHES|GROUPS|EVENTS|SECTION \d+) *===[^\n]*$/m);
   // When the marker is on its own line, content follows; the COMPANY name may be on the marker line itself.
   const cm = String(text).match(/=== *COMPANY *===\s*([^\n]+)/); if (cm) out.company = cm[1].replace(/[*#]/g, "").trim();
   for (let i = 1; i < parts.length; i += 2) {
     const key = parts[i], body = (parts[i + 1] || "").trim();
     if (key.startsWith("SECTION")) { const n = +key.split(" ")[1]; if (group.includes(n) && body) out.sections[n] = cleanEcho(body, n); }
-    else if (key === "EVENTS") out.events = parseEvents(body);
-    else if (key === "SEARCHES") out.searches = body.split("\n").map(l => l.replace(/^[-*\d.\s]+/, "").split("|").map(s => s.trim())).filter(a => a.length >= 2 && a[0] && a[1]).map(a => ({ label: a[0].replace(/\*/g, ""), keywords: a[1].replace(/["*]/g, "") })).slice(0, 6);
+    else if (key === "SEARCHES") out.searches = pairs(body).map(a => ({ label: a[0].replace(/\*/g, ""), keywords: a[1].replace(/["*]/g, "") })).slice(0, 6);
+    else if (key === "GROUPS") out.groups = pairs(body).map(a => ({ name: a[0].replace(/\*/g, ""), keywords: a[1].replace(/["*]/g, "") })).slice(0, 8);
   }
   return out;
 }
 
-const ISO = /^\d{4}-\d{2}-\d{2}$/;
-export function parseEvents(body) {
-  return String(body).split("\n").map(l => l.replace(/^[-*\d.\s]+(?=[A-Za-z])/, "").split("|").map(x => x.trim().replace(/^\*+|\*+$/g, "")))
-    .filter(a => a.length >= 4 && a[0])
-    .map(a => ({ name: a[0], start: (a[1].match(/\d{4}-\d{2}-\d{2}/) || [""])[0], end: (a[2].match(/\d{4}-\d{2}-\d{2}/) || [""])[0], location: a[3] || "", score: Math.max(1, Math.min(5, parseInt(a[4]) || 3)), url: (String(a[5] || "").match(/https?:\/\/[^\s)>\]]+/) || [""])[0], verified: false }))
-    .filter(e => ISO.test(e.start)).map(e => ({ ...e, end: ISO.test(e.end) && e.end >= e.start ? e.end : e.start })).slice(0, 8);
-}
-const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-export function fmtRange(a, b) {
-  const [y1, m1, d1] = a.split("-").map(Number), [y2, m2, d2] = b.split("-").map(Number);
-  if (a === b) return `${MONTHS[m1 - 1]} ${d1}, ${y1}`;
-  if (y1 === y2 && m1 === m2) return `${MONTHS[m1 - 1]} ${d1}–${d2}, ${y1}`;
-  if (y1 === y2) return `${MONTHS[m1 - 1]} ${d1} – ${MONTHS[m2 - 1]} ${d2}, ${y1}`;
-  return `${MONTHS[m1 - 1]} ${d1}, ${y1} – ${MONTHS[m2 - 1]} ${d2}, ${y2}`;
-}
-export function eventsTable(events) {
-  if (!events.length) return "No dated US events were found in the window. Run again, or check events.gershon.ai.";
-  const rows = events.map(e => `| ${e.url ? `[${e.name}](${e.url})` : e.name} | ${fmtRange(e.start, e.end)}${e.verified ? " ✓" : " (to confirm)"} | ${e.location} | ${e.score}/5 |`).join("\n");
-  return `| Event | Dates | Location | Importance |\n|---|---|---|---|\n${rows}\n\n✓ = dates checked on the event's official website. Reconfirm registration and booth deadlines before spending.`;
-}
-// Check each event's dates against its official website (best effort).
-export async function verifyEvents(env, events, win) {
-  return Promise.all(events.map(async e => {
-    if (!e.url) return e;
-    try {
-      const text = htmlToText(await getPage(e.url)).slice(0, 7000);
-      const out = await runAI(env, `Text from the official website of "${e.name}" (${e.url}):\n${text}\n\nFind the dates and city of the edition of this event that takes place between ${win.start} and ${win.end}. Reply with exactly one line: START=YYYY-MM-DD; END=YYYY-MM-DD; CITY=City, State; COUNTRY=Country — or reply NONE if the text does not state those dates.`, 140);
-      const st = (out.match(/START=(\d{4}-\d{2}-\d{2})/) || [])[1], en = (out.match(/END=(\d{4}-\d{2}-\d{2})/) || [])[1], city = (out.match(/CITY=([^;\n]+)/) || [])[1], country = ((out.match(/COUNTRY=([^;\n]+)/) || [])[1] || "").trim();
-      if (country && !/^(us|usa|u\.s\.a?\.?|united states( of america)?)$/i.test(country)) return { ...e, drop: true };
-      if (st && st >= win.start && st <= win.end) return { ...e, start: st, end: en && en >= st ? en : st, location: city ? city.trim() : e.location, verified: true };
-    } catch {}
-    return e;
-  }));
-}
-
-async function runAI(env, prompt, maxTokens = 3000) {
+async function runAI(env, prompt, maxTokens = 3500) {
   const r = await env.AI.run(MODEL, { messages: [{ role: "user", content: prompt }], max_tokens: maxTokens, temperature: 0.3 });
   return typeof r === "string" ? r : (r.response ?? r.result?.response ?? "");
 }
+const todayStr = now => now.toLocaleDateString("en-US", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
 
 export async function analyze(env, { url, name, notes }) {
   const now = new Date();
   const site = await readSite(url);
-  const ctx = { url, name, notes, site: site.text, win: window6(now), today: now.toLocaleDateString("en-US", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }) };
-  const win = windowBounds(now); let events = [];
-  const report = { slug: slug(url), url, company: name || "", notes: notes || "", createdAt: now.toISOString(), window: ctx.win, windowStart: win.start, windowEnd: win.end, sections: {}, searches: [], events: [], source: { siteRead: site.ok, pages: site.pages || [], error: site.error || null, model: MODEL }, errors: [] };
+  const ctx = { url, name, notes, site: site.text, today: todayStr(now) };
+  const report = { slug: slug(url), url, company: name || "", notes: notes || "", createdAt: now.toISOString(), version: VERSION, sections: {}, searches: [], groups: [], source: { siteRead: site.ok, pages: site.pages || [], error: site.error || null, model: MODEL }, errors: [] };
   await Promise.all(GROUPS.map(async g => {
     try {
       const p = parseOutput(await runAI(env, buildPrompt(g, ctx)), g);
       Object.assign(report.sections, p.sections);
       if (p.searches.length) report.searches = p.searches;
-      if (p.events.length) events = p.events;
+      if (p.groups.length) report.groups = p.groups;
       if (!report.company && p.company) report.company = p.company;
       const missing = g.filter(n => !p.sections[n]); if (missing.length) report.errors.push("Sections " + missing.join(", ") + " came back empty");
     } catch (e) { report.errors.push("Sections " + g.join(", ") + ": " + (e.message || e)); }
   }));
-  events = events.filter(e => e.start >= win.start && e.start <= win.end);
-  report.events = (await verifyEvents(env, events, win)).filter(e => !e.drop && e.start >= win.start && e.start <= win.end).map(({ drop, ...e }) => e).sort((a, b) => a.start.localeCompare(b.start));
-  report.sections[9] = [report.sections[9], eventsTable(report.events)].filter(Boolean).join("\n\n");
   if (!report.company) report.company = url.replace(/^https?:\/\/(www\.)?/, "").replace(/\/.*$/, "");
   return report;
 }
 
+// Reports made before v1.9.0: their single outreach email (old section 12) becomes the first sample email.
+// Old sections 8 and 9 stay stored but are no longer shown; 13 and 14 show as "not generated" until regenerated.
+export function upgradeReport(r) {
+  if (!r || !r.sections) return r;
+  const s = r.sections; if (String(s[15] || "").trim() || !String(s[12] || "").trim()) return r;
+  const out = { ...r, sections: { ...s, 15: "### Email 1 — Executive introduction\n\n" + String(s[12]).trim() } };
+  if (r.review && r.review[12]) out.review = { ...r.review, 15: r.review[12] };
+  return out;
+}
+
 // ---- section review: edit, regenerate and approve before the PDF (v1.8.0) ----
 // Section 11 (Sales Navigator links) is built from sections 3 and 10, so it is never edited directly.
-export const EDITABLE = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12];
+export const EDITABLE = ORDER.filter(n => n !== 11);
 export function reviewCount(r) {
   const rv = (r && r.review) || {};
   return { done: EDITABLE.filter(n => rv[n] && rv[n].approved).length, total: EDITABLE.length };
@@ -216,12 +181,11 @@ function cleanSearches(list) {
   if (!Array.isArray(list)) return null;
   return list.map(x => ({ label: clip(x && x.label, 120).trim(), keywords: clip(x && x.keywords, 200).trim() })).filter(x => x.label && x.keywords).slice(0, 6);
 }
-function cleanEvents(list) {
+function cleanGroups(list) {
   if (!Array.isArray(list)) return null;
-  return list.map(e => ({ name: clip(e && e.name, 200).trim(), start: clip(e && e.start, 10), end: clip(e && e.end, 10), location: clip(e && e.location, 120), score: Math.max(1, Math.min(5, parseInt(e && e.score) || 3)), url: /^https?:\/\//i.test(String(e && e.url || "")) ? clip(e.url, 500) : "", verified: !!(e && e.verified) }))
-    .filter(e => e.name && ISO.test(e.start)).map(e => ({ ...e, end: ISO.test(e.end) && e.end >= e.start ? e.end : e.start })).slice(0, 8);
+  return list.map(x => ({ name: clip(x && x.name, 160).trim(), keywords: clip(x && x.keywords, 200).trim() })).filter(x => x.name && x.keywords).slice(0, 8);
 }
-// Applies a save from the editor. body = { text?, approve?, searches?, events? }. Returns the updated report.
+// Applies a save from the editor. body = { text?, approve?, searches?, groups? }. Returns the updated report.
 export function applySectionEdit(r, n, body, now = new Date()) {
   if (!EDITABLE.includes(n)) throw Object.assign(new Error("This section cannot be edited"), { status: 400 });
   const b = body || {}; const out = { ...r, sections: { ...(r.sections || {}) }, review: { ...(r.review || {}) } };
@@ -233,34 +197,24 @@ export function applySectionEdit(r, n, body, now = new Date()) {
     if (t !== String(out.sections[n] || "").trim()) edited = true;
     out.sections[n] = t;
   }
+  if (b.approve !== false && !String(out.sections[n] || "").trim()) throw Object.assign(new Error("This section is empty: regenerate or write it before approving"), { status: 400 });
   if (n === 10) { const s = cleanSearches(b.searches); if (s && s.length) out.searches = s; }
-  if (n === 9) { const e = cleanEvents(b.events); if (e) out.events = e; }
+  if (n === 14) { const g = cleanGroups(b.groups); if (g && g.length) out.groups = g; }
   if (b.approve === false) out.review[n] = { approved: false, edited, at: now.toISOString() };
   else out.review[n] = { approved: true, edited, at: now.toISOString() };
   out.updatedAt = now.toISOString();
   return out;
 }
-// Section 9 = AI paragraph + generated events table; returns the paragraph only.
-export function sec9Paragraph(t) { return String(t || "").split(/(?:^|\n)\s*\|/)[0].replace(/\n*No dated US events were found in the window\.[^\n]*/g, "").trim(); }
-// Writes one section again with the AI. Returns a draft { text, searches?, events? }; nothing is saved here.
+// Writes one section again with the AI. Returns a draft { text, searches?, groups? }; nothing is saved here.
 export async function regenerateSection(env, r, n, instruction) {
   if (!EDITABLE.includes(n)) throw Object.assign(new Error("This section cannot be regenerated"), { status: 400 });
   const now = new Date(); const site = await readSite(r.url);
-  const win = r.windowStart && r.windowEnd ? { start: r.windowStart, end: r.windowEnd } : windowBounds(now);
-  // Section 9 stores the paragraph + the events table; only the paragraph goes back to the AI.
-  const current = n === 9 ? sec9Paragraph((r.sections || {})[9]) : (r.sections || {})[n];
-  const ctx = { url: r.url, name: r.company, notes: r.notes || "", site: site.text, win: r.window || window6(now), today: now.toLocaleDateString("en-US", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }), instruction, current };
+  const ctx = { url: r.url, name: r.company, notes: r.notes || "", site: site.text, today: todayStr(now), instruction, current: (r.sections || {})[n] };
   const p = parseOutput(await runAI(env, buildPrompt([n], ctx)), [n]);
   if (!p.sections[n]) throw Object.assign(new Error("The AI returned nothing for this section. Try again."), { status: 502 });
   const out = { text: p.sections[n] };
   if (n === 10 && p.searches.length) out.searches = p.searches;
-  if (n === 9) {
-    let events = r.events || [];
-    const fresh = p.events.filter(e => e.start >= win.start && e.start <= win.end);
-    if (fresh.length) events = (await verifyEvents(env, fresh, win)).filter(e => !e.drop && e.start >= win.start && e.start <= win.end).map(({ drop, ...e }) => e).sort((a, b) => a.start.localeCompare(b.start));
-    if (!events.length) events = r.events || [];
-    out.events = events; out.text = [sec9Paragraph(out.text), eventsTable(events)].filter(Boolean).join("\n\n");
-  }
+  if (n === 14 && p.groups.length) out.groups = p.groups;
   return out;
 }
 
@@ -274,18 +228,9 @@ async function authed(req, env) {
 async function newSession(env) { const t = crypto.randomUUID().replace(/-/g, ""); await env.STORE.put("session:" + t, "1", { expirationTtl: 60 * 60 * 24 * 60 }); return t; }
 const setCookie = t => `icp=${t}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${60 * 60 * 24 * 60}`;
 
-// Meteor Biotech sample: events with dates verified on the organizers' websites (Oct 2026).
-const SEED_EVENTS = [
-  { name: "SITC 2026 Annual Meeting (immuno-oncology)", start: "2026-11-04", end: "2026-11-08", location: "Phoenix, AZ", score: 4, url: "https://www.sitcancer.org/2026", verified: true },
-  { name: "SLAS2027 International Conference & Exhibition", start: "2027-01-30", end: "2027-02-03", location: "San Diego, CA", score: 3, url: "https://www.slas.org/2027", verified: true },
-  { name: "AGBT 2027 General Meeting (genomics technology)", start: "2027-03-01", end: "2027-03-04", location: "Orlando, FL", score: 5, url: "https://www.agbt.org", verified: true },
-  { name: "AACR Annual Meeting 2027", start: "2027-04-02", end: "2027-04-07", location: "Orlando, FL", score: 5, url: "https://www.aacr.org", verified: true }
-];
-const SEED_9 = "For Meteor, the right rooms are where spatial-biology users and buyers meet: immuno-oncology and cancer research meetings (tumor microenvironment teams), genomics technology meetings (core directors and sequencing leaders) and lab instrumentation shows (core facility and automation buyers). USCAP 2027 is relevant for pathology but takes place in Vancouver, Canada, so it is outside this US list.";
 async function ensureSeed(env) {
   if (await env.STORE.get("seeded:v3")) return;
-  const seed = { ...SEED, windowStart: "2026-11-01", windowEnd: "2027-04-30", events: SEED_EVENTS, sections: { ...SEED.sections, 9: SEED_9 + "\n\n" + eventsTable(SEED_EVENTS) } };
-  await env.STORE.put("report:" + SEED.slug, JSON.stringify(seed));
+  await env.STORE.put("report:" + SEED.slug, JSON.stringify(SEED));
   await env.STORE.put("seeded:v3", "1");
 }
 
@@ -354,7 +299,7 @@ export default {
       if (Date.now() - last < 600000) return json({ error: "Self-test ran recently, retry later" }, 429);
       await env.STORE.put("selftest:last", String(Date.now()));
       const r = await analyze(env, { url: "https://www.cloudflare.com/", name: "", notes: "" });
-      return json({ ok: Object.keys(r.sections).length === 11 && !r.errors.length, company: r.company, filled: Object.keys(r.sections), searches: r.searches, events: r.events, errors: r.errors, source: r.source, sections: r.sections });
+      return json({ ok: Object.keys(r.sections).length === EDITABLE.length && !r.errors.length, company: r.company, filled: Object.keys(r.sections), searches: r.searches, groups: r.groups, errors: r.errors, source: r.source, sections: r.sections });
     }
     const html = b => new Response(b, { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
     if (p === "/" || p === "/index.html") return html(HOME);
@@ -402,7 +347,7 @@ export default {
     }
     const sec = p.match(/^\/api\/reports\/([a-z0-9-]+)\/sections\/(\d{1,2})(\/regenerate)?$/);
     if (sec) {
-      const r = await env.STORE.get("report:" + sec[1], "json"); if (!r) return json({ error: "Report not found" }, 404);
+      const r = upgradeReport(await env.STORE.get("report:" + sec[1], "json")); if (!r) return json({ error: "Report not found" }, 404);
       const n = +sec[2]; const b = await req.json().catch(() => ({}));
       try {
         if (sec[3] && req.method === "POST") return json(await regenerateSection(env, r, n, clip(b.instruction, 600)));
@@ -415,7 +360,7 @@ export default {
       return json({ error: "Not found" }, 404);
     }
     const m = p.match(/^\/api\/reports\/([a-z0-9-]+)$/);
-    if (m && req.method === "GET") { const r = await env.STORE.get("report:" + m[1], "json"); return r ? json(r) : json({ error: "Not found" }, 404); }
+    if (m && req.method === "GET") { const r = upgradeReport(await env.STORE.get("report:" + m[1], "json")); return r ? json(r) : json({ error: "Not found" }, 404); }
     if (m && req.method === "DELETE") { await env.STORE.delete("report:" + m[1]); return json({ ok: true }); }
     if (p === "/api/analyze" && req.method === "POST") {
       const b = await req.json(); const url = normalizeUrl(b.url);

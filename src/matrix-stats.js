@@ -12,7 +12,7 @@
 // Matching: a person matches a saved ICP report by work-email domain == the report's website
 // domain (freemail ignored), else by company name (case/accents/legal suffixes ignored).
 // ok   = a saved 12-point report with at least one section exists for the company.
-// note = "report <Mon YYYY> · N/12 sections · E events" (latest report wins); "no report".
+// note = "report <Mon YYYY> · N/12 sections" (latest report wins); "no report".
 // Reads KV only (one list + one GET per report) — never writes. It sits before the team
 // password gate in src/index.js, so the sign-in flow is not involved.
 
@@ -72,11 +72,13 @@ export function matchReport(reports, person) {
 }
 
 export function noteFor(r) {
-  const n = Object.values(r.sections || {}).filter(v => String(v || "").trim()).length;
+  // The 12 sections shown since v1.9.0 (old 12 = single email counts as 15, its successor).
+  const sec = r.sections || {}, has = k => String(sec[k] || "").trim();
+  const n = [1, 2, 3, 4, 13, 5, 6, 7, 10, 11, 14, 15].filter(k => has(k) || (k === 15 && has(12)) || (k === 11 && has(10))).length;
   if (!n) return { ok: false, note: "report empty" };
   const d = new Date(r.createdAt || "");
   const when = Number.isNaN(d.getTime()) ? "" : ` ${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
-  return { ok: true, note: `report${when} · ${Math.min(n, 12)}/12 sections · ${(r.events || []).length} events` };
+  return { ok: true, note: `report${when} · ${n}/12 sections` };
 }
 
 export async function handleMatrixStats(request, env) {
