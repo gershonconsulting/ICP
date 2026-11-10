@@ -45,6 +45,7 @@ test("prompt covers every AI section across groups, with TAM/SAM/SOM, groups and
   assert.match(all, /=== GROUPS ===/);
   assert.match(all, /Email 1 — Executive introduction/); assert.match(all, /Email 2 — Problem-led/); assert.match(all, /Email 3 — Proof and peer-led/);
   assert.ok(!/=== EVENTS ===|tradeshow|scorecard/i.test(all));
+  assert.match(mod.buildPrompt([15], { url: "u", today: "t" }), /never mention Gershon Consulting/);
 });
 test("cleanEcho drops echoed instruction line", () => {
   const p = mod.parseOutput("=== SECTION 4 ===\nMarket opportunity: A two-layer opportunity model: the immediate...\nReal content", [4]);
