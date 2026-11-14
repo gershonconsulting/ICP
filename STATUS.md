@@ -5,6 +5,10 @@ Deploy: Cloudflare Workers Builds (Worker icp-gershon-ai). GitHub link shows "di
 Deploy Hook "claude-deploy" or "Deploy" in the Cloudflare dashboard after each push. Full notes: HANDOFF.txt
 
 ## Done
+- ❌ v1.9.2 (PR open) — 11 LinkedIn groups: real direct links (linkedin.com/groups/<id>) found via Bing RSS, then
+  DuckDuckGo HTML, from the Worker; group search link only when no page is found (never invented). 08 Competition:
+  named competitors table (Competitor | Website | HQ | What they sell | How they compete). Search from Cloudflare
+  untested until live: check /api/selftest "groups[].url".
 - ✅ v1.9.0 LIVE 2026-11-10 (v1.9.1: emails written as the analysed company, never as Gershon; SOM 1-5% of SAM) — sections now: 01 Pitches · 02 Problem · 03 ICPs · 04 Market opportunity · 05 TAM/SAM/SOM (new) ·
   06 Entry · 07 At a glance · 08 Competition · 09 Sales Nav · 10 Search links · 11 LinkedIn groups (new) · 12 Three sample
   emails (new, replaces the single email). Removed: Balanced scorecard, Tradeshows/events (calendar, .ics). Old reports

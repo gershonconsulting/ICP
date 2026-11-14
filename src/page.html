@@ -262,11 +262,13 @@ const TITLES={1:"Pitches creation",2:"Problem identification",3:"Ideal customer 
 const ORDER=[1,2,3,4,13,5,6,7,10,11,14,15];
 const SECTIONS=ORDER.map(k=>TITLES[k]);
 const num=k=>String(ORDER.indexOf(k)+1).padStart(2,"0");
-// Section 14: one LinkedIn group search per group (always valid, unlike guessed group URLs).
-const grpUrl=g=>"https://www.linkedin.com/search/results/groups/?keywords="+encodeURIComponent(String(g.keywords||g.name).split(",")[0].trim());
+// Section 14: direct group page when search found one (linkedin.com/groups/<id>), otherwise a LinkedIn group search.
+const grpUrl=g=>g.url||("https://www.linkedin.com/search/results/groups/?keywords="+encodeURIComponent(String(g.keywords||g.name).split(",")[0].trim()));
+const grpName=g=>g.url?(g.title||g.name):g.name;
+const grpSub=g=>g.url?("Direct link · found for: "+g.name):("No direct page found yet — LinkedIn group search: "+g.keywords);
 function groupsHtml(r,doc){const g=r.groups||[];if(!g.length)return "";
-  if(doc)return '<p style="margin:12px 0 6px;font-weight:700">Find these groups on LinkedIn</p>'+g.map(x=>`<p style="margin:0 0 6px"><a href="${grpUrl(x)}" target="_blank">${esc(x.name)}</a> <span style="color:#6b7280;font-size:12px">— search: ${esc(x.keywords)}</span></p>`).join("");
-  return '<div class="sn-h">Find these groups on LinkedIn</div><div class="links">'+g.map(x=>`<a href="${grpUrl(x)}" target="_blank" rel="noopener"><span>${esc(x.name)}<small>LinkedIn group search: ${esc(x.keywords)}</small></span><span class="go-ic">↗</span></a>`).join("")+'</div>'}
+  if(doc)return '<p style="margin:12px 0 6px;font-weight:700">LinkedIn groups — direct links</p>'+g.map(x=>`<p style="margin:0 0 6px"><a href="${esc(grpUrl(x))}" target="_blank">${esc(grpName(x))}</a> <span style="color:#6b7280;font-size:12px">— ${esc(grpSub(x))}</span></p>`).join("");
+  return '<div class="sn-h">LinkedIn groups — direct links</div><div class="links">'+g.map(x=>`<a href="${esc(grpUrl(x))}" target="_blank" rel="noopener"><span>${esc(grpName(x))}<small>${esc(grpSub(x))}</small></span><span class="go-ic">↗</span></a>`).join("")+'</div>'}
 const $=s=>document.querySelector(s);
 let current=null, reports=[], busy=false, timer;
 let histSort="recent";try{histSort=localStorage.getItem("icp:sort")==="az"?"az":"recent"}catch(e){}
@@ -572,7 +574,7 @@ function openEditor(n,regen){
     <textarea aria-label="Section ${num(n)} text" spellcheck="true"></textarea>
     <div class="pv body" hidden></div>
     <div class="ed-ai"><input placeholder="Optional instruction for the AI — e.g. shorter, focus on hospitals, more formal" aria-label="Instruction for the AI" maxlength="600"><button class="btn btn-ghost" data-act="regen">↻ Regenerate with AI</button></div>
-    <div class="ed-row"><span class="hint">${n===14?"The LinkedIn search links under the table are refreshed when you regenerate. ":""}Markdown: **bold**, “- ” bullets, “| a | b |” tables.</span><button class="btn btn-ghost" data-act="cancel">Cancel</button><button class="btn btn-primary" data-act="save">✓ Save &amp; approve</button></div>
+    <div class="ed-row"><span class="hint">${n===14?"The direct group links under the table are looked up again when you regenerate. ":""}Markdown: **bold**, “- ” bullets, “| a | b |” tables.</span><button class="btn btn-ghost" data-act="cancel">Cancel</button><button class="btn btn-primary" data-act="save">✓ Save &amp; approve</button></div>
   </div>`;
   const ed=$("#ed"+n),ta=ed.querySelector("textarea");
   ta.value=editing[n].text;ta.style.height=Math.min(640,Math.max(260,ta.scrollHeight+12))+"px";
