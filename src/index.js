@@ -5,7 +5,7 @@ import HOME from "./home.html";
 import SEED from "./seed.json";
 import { MATRIX_STATS_PATH, handleMatrixStats } from "./matrix-stats.js";
 
-export const VERSION = "1.9.2";
+export const VERSION = "1.9.3"; // v1.9.3 (2026-11-14): landing card icons and band tinted with the brand red instead of light blue (Olivier, Nov 10)
 const MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
 
 // v1.9.0: section KEYS are stable storage ids (old reports keep working); ORDER is what is shown, numbered 01-12.
