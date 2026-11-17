@@ -30,20 +30,23 @@ test("parseOutput reads the GROUPS block of section 14", () => {
   assert.match(p.sections[14], /AACR/);
   assert.deepEqual(p.groups[1], { name: "Groups about spatial biology", keywords: "spatial biology, spatial omics" });
 });
-test("12 sections shown; scorecard, events and the single email are gone", () => {
+test("12 sections shown; scorecard, events and emails are gone, sales strategy is 09", () => {
   assert.equal(mod.ORDER.length, 12);
   assert.deepEqual(mod.SECTIONS.slice(4, 5), ["Market size: TAM, SAM, SOM"]);
   for (const gone of [8, 9, 12]) assert.ok(!mod.ORDER.includes(gone));
   assert.ok(!mod.SECTIONS.some(t => /scorecard|tradeshow|conference/i.test(t)));
-  assert.equal(mod.SECTIONS[11], "Sample outreach emails");
+  assert.equal(mod.SECTIONS[8], "Direct and indirect sales strategy");
+  assert.ok(!mod.ORDER.includes(15));
+  assert.ok(!mod.SECTIONS.includes("Sample outreach emails"));
   assert.ok(mod.SECTIONS.includes("Dedicated LinkedIn groups"));
 });
-test("prompt covers every AI section across groups, with TAM/SAM/SOM, groups and three emails", () => {
-  const all = [[1,2,3],[4,13,5],[6,7,14],[10,15]].map(g => mod.buildPrompt(g, { url: "u", today: "t" })).join("");
+test("prompt covers every AI section across groups, with TAM/SAM/SOM, groups and sales strategy", () => {
+  const all = [[1,2,3],[4,13,5],[6,7,14],[16,10]].map(g => mod.buildPrompt(g, { url: "u", today: "t" })).join("");
   for (const n of mod.EDITABLE) assert.ok(all.includes("=== SECTION " + n + " ==="), "section " + n);
   assert.match(all, /TAM \(Total Addressable Market/); assert.match(all, /SAM \(Serviceable Available Market/); assert.match(all, /SOM \(Serviceable Obtainable Market/);
   assert.match(all, /=== GROUPS ===/);
-  assert.match(all, /Email 1 — Executive introduction/); assert.match(all, /Email 2 — Problem-led/); assert.match(all, /Email 3 — Proof and peer-led/);
+  assert.match(all, /Direct sales/); assert.match(all, /Distributors \/ resellers/); assert.match(all, /Recommendation:/);
+  assert.ok(!/Email 1 — Executive introduction/.test(all));
   assert.ok(!/=== EVENTS ===|tradeshow|scorecard/i.test(all));
   assert.match(mod.buildPrompt([15], { url: "u", today: "t" }), /never mention Gershon Consulting/);
 });
