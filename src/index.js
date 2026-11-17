@@ -5,7 +5,7 @@ import HOME from "./home.html";
 import SEED from "./seed.json";
 import { MATRIX_STATS_PATH, handleMatrixStats } from "./matrix-stats.js";
 
-export const VERSION = "1.10.0"; // v1.10.0 (2026-11-16): sample emails removed; new 09 Direct and indirect sales strategy (Olivier, Nov 16)
+export const VERSION = "1.10.1"; // v1.10.1 (2026-11-17): home footer shows this constant. v1.10.0 (2026-11-16): sample emails removed; new 09 Direct and indirect sales strategy (Olivier, Nov 16)
 const MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
 
 // v1.9.0: section KEYS are stable storage ids (old reports keep working); ORDER is what is shown, numbered 01-12.
@@ -324,7 +324,7 @@ export function siteKey(u) {
   return parts.slice(MULTI_TLD.test(h) ? -3 : -2).join(".");
 }
 export function nameKey(n) {
-  return String(n || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+  return String(n || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "")
     .replace(/\b(inc|llc|ltd|limited|corp|corporation|co|company|gmbh|sas|sa|sarl|bv|ag|plc|pty|srl|spa)\b\.?/g, "")
     .replace(/[^a-z0-9]/g, "");
 }
@@ -364,7 +364,7 @@ export default {
       return json({ ok: Object.keys(r.sections).length === EDITABLE.length && !r.errors.length, company: r.company, filled: Object.keys(r.sections), searches: r.searches, groups: r.groups, errors: r.errors, source: r.source, sections: r.sections });
     }
     const html = b => new Response(b, { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
-    if (p === "/" || p === "/index.html") return html(HOME);
+    if (p === "/" || p === "/index.html") return html(HOME.replace("__APP_VERSION__", VERSION));
     if (p === "/app" || p === "/app/") return html(PAGE);
     if (!p.startsWith("/api/")) return new Response("Not found", { status: 404 });
 
