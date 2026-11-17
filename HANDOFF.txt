@@ -62,3 +62,5 @@ OPEN ❌
 - ❌ Some sites block automated reading (meteorbiotech.com → 403). App falls back to r.jina.ai, then asks to paste text in Notes.
 - ❌ Optional: re-authorize Cloudflare's GitHub app so pushes deploy without the hook.
 - ❌ Next idea: auto-run for Basil-coloured prospect calls on Olivier's calendar, draft the GPT USA email 48h before.
+
+2026-11-17 ICP v1.10.1 (nightly): home footer now shows the live version (placeholder __APP_VERSION__ replaced by VERSION in src/index.js), so page and /api/health always agree; the old 'v1.5.0' text was only a CSS comment (reworded). package.json 1.0.0 -> 1.10.1. Branch nightly/2026-11-17-ICP-version. Merged to main; live check result recorded in the nightly report. Bump the version only in src/index.js (VERSION) and package.json.
