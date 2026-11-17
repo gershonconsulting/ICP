@@ -5,6 +5,11 @@ Deploy: Cloudflare Workers Builds (Worker icp-gershon-ai). GitHub link shows "di
 Deploy Hook "claude-deploy" or "Deploy" in the Cloudflare dashboard after each push. Full notes: HANDOFF.txt
 
 ## Done
+- ❌ v1.10.0 (2026-11-16, Olivier): 12 Sample outreach emails REMOVED; new 09 Direct and indirect sales strategy
+  (key 16: recommendation Direct/Indirect/Hybrid, models table with fit, named US partner types, 90d/6m/12m path, KPIs).
+  Order now: 01 Pitches · 02 Problem · 03 ICPs · 04 Opportunity · 05 TAM/SAM/SOM · 06 Entry · 07 At a glance ·
+  08 Competition · 09 Direct & indirect sales · 10 Sales Nav · 11 Search links · 12 LinkedIn groups. Old emails stay stored, hidden.
+  Old reports show 09 as "not generated" until Regenerate. 37/37 tests pass. Live once Deploy Hook runs.
 - ✅ v1.9.2 MERGED to main 2026-11-14 (PR #7, 37/37 unit tests pass) — but ❌ NOT LIVE until the Deploy Hook runs
   (live /api/health still 1.9.1 at merge time). 11 LinkedIn groups: real direct links (linkedin.com/groups/<id>) found
   via Bing RSS, then DuckDuckGo HTML, from the Worker; group search link only when no page is found (never invented).

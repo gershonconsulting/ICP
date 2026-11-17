@@ -258,8 +258,8 @@ html,body{max-width:100%;overflow-x:hidden}
 <script>
 const MARK='<svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="icpg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FE1B04"/><stop offset=".5" stop-color="#FE1B04"/><stop offset="1" stop-color="#d11200"/></linearGradient></defs><rect x="2" y="2" width="60" height="60" rx="18" fill="url(#icpg)"/><circle cx="32" cy="32" r="17" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="3"/><circle cx="32" cy="32" r="9.5" fill="none" stroke="#fff" stroke-opacity=".85" stroke-width="3"/><circle cx="32" cy="32" r="3.6" fill="#fff"/><path d="M32 32 L49 15" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/><path d="M44 14 h6 v6" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 // v1.9.0: keys are stable storage ids, ORDER is the displayed 01-12 order (same list as src/index.js).
-const TITLES={1:"Pitches creation",2:"Problem identification",3:"Ideal customer profiles",4:"Market opportunity",13:"Market size: TAM, SAM, SOM",5:"Market entry justification",6:"At a glance",7:"Competition",10:"LinkedIn Sales Navigator",11:"LinkedIn search links",14:"Dedicated LinkedIn groups",15:"Sample outreach emails"};
-const ORDER=[1,2,3,4,13,5,6,7,10,11,14,15];
+const TITLES={1:"Pitches creation",2:"Problem identification",3:"Ideal customer profiles",4:"Market opportunity",13:"Market size: TAM, SAM, SOM",5:"Market entry justification",6:"At a glance",7:"Competition",16:"Direct and indirect sales strategy",10:"LinkedIn Sales Navigator",11:"LinkedIn search links",14:"Dedicated LinkedIn groups",15:"Sample outreach emails"};
+const ORDER=[1,2,3,4,13,5,6,7,16,10,11,14];
 const SECTIONS=ORDER.map(k=>TITLES[k]);
 const num=k=>String(ORDER.indexOf(k)+1).padStart(2,"0");
 // Section 14: direct group page when search found one (linkedin.com/groups/<id>), otherwise a LinkedIn group search.

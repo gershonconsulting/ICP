@@ -8,7 +8,7 @@ const src = readFileSync(new URL("../src/index.js", import.meta.url), "utf8")
   .replace('from "./matrix-stats.js";', 'from "' + new URL("../src/matrix-stats.js", import.meta.url) + '";');
 const mod = await import("data:text/javascript," + encodeURIComponent(src));
 
-const base = () => ({ slug: "acme-com", url: "https://acme.com/", company: "Acme", sections: { 1: "Pitch", 2: "P", 3: "I", 4: "M", 13: "T", 5: "E", 6: "G", 7: "C", 10: "### Labs\nTitles: A", 14: "| Group |", 15: "### Email 1" }, searches: [{ label: "Labs", keywords: "genomics" }], groups: [{ name: "AACR", keywords: "cancer research" }] });
+const base = () => ({ slug: "acme-com", url: "https://acme.com/", company: "Acme", sections: { 1: "Pitch", 2: "P", 3: "I", 4: "M", 13: "T", 5: "E", 6: "G", 7: "C", 10: "### Labs\nTitles: A", 14: "| Group |", 16: "**Recommendation:** Hybrid" }, searches: [{ label: "Labs", keywords: "genomics" }], groups: [{ name: "AACR", keywords: "cancer research" }] });
 
 test("editing a section saves the text and approves it", () => {
   const r = mod.applySectionEdit(base(), 1, { text: "  New pitch \r\n", approve: true }, new Date("2026-11-10T00:00:00Z"));
@@ -26,8 +26,8 @@ test("the original report object is not mutated", () => {
   const b = base(); mod.applySectionEdit(b, 1, { text: "Changed" });
   assert.equal(b.sections[1], "Pitch"); assert.equal(b.review, undefined);
 });
-test("section 11 and removed sections (8 scorecard, 9 events, 12 old email) cannot be edited", () => {
-  for (const n of [11, 8, 9, 12, 16]) assert.throws(() => mod.applySectionEdit(base(), n, { text: "x" }), /cannot be edited/);
+test("section 11 and removed sections (8 scorecard, 9 events, 12 and 15 emails) cannot be edited", () => {
+  for (const n of [11, 8, 9, 12, 15]) assert.throws(() => mod.applySectionEdit(base(), n, { text: "x" }), /cannot be edited/);
 });
 test("an empty section cannot be approved without text", () => {
   const b = base(); delete b.sections[13];
