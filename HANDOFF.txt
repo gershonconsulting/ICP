@@ -1,4 +1,4 @@
-ICP.gershon.ai — HANDOFF (v1.7.0, 2026-11-09)
+ICP.gershon.ai — HANDOFF (v1.10.1, 2026-11-18)
 ==============================================
 
 LIVE: https://icp.gershon.ai  (also https://icp-gershon-ai.oattia.workers.dev)
@@ -54,7 +54,7 @@ DONE ✅
 - ✅ Custom domain icp.gershon.ai attached by wrangler (routes custom_domain)
 
 OPEN ❌
-- ❌ v1.6.0 (2026-10-30 nightly, branch nightly/2026-10-30-matrix-stats): POST /api/matrix-stats (src/matrix-stats.js) for the
+- ✅ v1.6.0 (merged to main, commit 4a284bc): POST /api/matrix-stats (src/matrix-stats.js) for the
   weekly Client Platform Matrix, column "icp". Read-only (KV report:*), auth = SHA-256 of the existing matrix secret.
   After merge: POST the Deploy Hook, then SQL block 9 in task repo supabase/sql/2026-10-27_matrix_live_endpoints.sql.
 - ❌ Verified IDs still missing for industry, company headcount, function (keywords stand in for industry).
@@ -64,3 +64,5 @@ OPEN ❌
 - ❌ Next idea: auto-run for Basil-coloured prospect calls on Olivier's calendar, draft the GPT USA email 48h before.
 
 2026-11-17 ICP v1.10.1 (nightly): home footer now shows the live version (placeholder __APP_VERSION__ replaced by VERSION in src/index.js), so page and /api/health always agree; the old 'v1.5.0' text was only a CSS comment (reworded). package.json 1.0.0 -> 1.10.1. Branch nightly/2026-11-17-ICP-version. Merged to main; live check result recorded in the nightly report. Bump the version only in src/index.js (VERSION) and package.json.
+
+2026-11-18 nightly: docs refreshed (version 1.10.1, deploy route Cloudflare Workers Builds + Deploy Hook, worker icp-gershon-ai at icp.gershon.ai). Header version and the v1.6.0 matrix-stats item corrected.
